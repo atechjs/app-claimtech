@@ -1,0 +1,16 @@
+import useSWR from "swr";
+import { getAxiosFetcher } from "../../utils/AxiosFetcher";
+import getApiUrl from "../../utils/BeUrl";
+
+export default function useValutaSelect() {
+  const fetcher = getAxiosFetcher;
+  const { data, error, isLoading } = useSWR(
+    getApiUrl() + "api/valuta/select",
+    fetcher
+  );
+  return {
+    valutaList: data,
+    isLoading,
+    isError: error,
+  };
+}

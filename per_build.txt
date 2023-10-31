@@ -1,0 +1,3 @@
+COMANDO:
+yarn build
+pm2 start yarn -- start --port 5500
