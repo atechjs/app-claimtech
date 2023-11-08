@@ -28,7 +28,11 @@ export default function Page() {
 
   useEffect(() => {
     if (data === undefined) return;
-    reset({ id: data.id, codice: data.codice });
+    reset({
+      id: data.id,
+      codice: data.codice,
+      codiceInglese: data.codiceInglese,
+    });
   }, [data]);
 
   const form = useForm({

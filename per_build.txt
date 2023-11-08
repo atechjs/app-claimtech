@@ -1,3 +1,11 @@
 COMANDO:
 yarn build
 pm2 start yarn -- start --port 5500
+
+NO
+SEGUIRE COMMENTO DI w-renk a questo link:
+https://stackoverflow.com/questions/71081224/pm2-is-unable-to-find-start-script
+Di seguito i comandi:
+FARE LA BUILD(yarn install e poi yarn build)
+pm2 start ecosystem.config.js
+pm2 save
