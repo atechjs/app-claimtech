@@ -110,7 +110,7 @@ export default function Page() {
               >
                 <EuroIcon fontSize="14" />
                 <Typography variant="body2">
-                  Valore euro: <b>{notaAccredito.valoreValuta}</b>
+                  Valore euro: <b>{notaAccredito.valoreEuro}</b>
                 </Typography>
               </Stack>
             </Stack>

@@ -7,6 +7,7 @@ export const formattaOdl = (odl) => {
 export const formattaPartita = (partita) => {
   //23/CP01001/01
   const arr = partita.split("/");
+  if (arr.length < 2) return partita;
   return arr[1].substring(0, 3) + "/" + arr[1].substring(3);
 };
 

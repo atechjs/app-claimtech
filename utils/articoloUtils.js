@@ -1,7 +1,11 @@
 export const formattaArticolo = (articolo) => {
   const arr = articolo.split("/");
-  if (arr.length < 3) return articolo;
-  return arr[0] + "/" + arr[1] + "/" + arr[2];
+  try {
+    if (arr.length < 3) return articolo;
+    return arr[0] + "/" + arr[1] + "/" + arr[2];
+  } catch (error) {
+    return articolo;
+  }
 };
 
 export const getCodiciArticoloUnivoci = (codiceArticoloList) => {
