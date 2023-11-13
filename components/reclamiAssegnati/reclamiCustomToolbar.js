@@ -189,12 +189,15 @@ export default function ReclamiCustomToolbar({
   };
 
   const handleCreaNotaAccreditoSubmit = (data) => {
+    //TODO DA MODIFICARE
     data = {
       ...data,
-      idFornituraCausaReclamoList: data.idFornituraCausaReclamoList.map(
-        (x) => x.id
-      ),
+      fornituraCausaReclamoList: data.fornituraCausaReclamoList.map((x) => ({
+        id: x.id,
+        valoreEuro: x.valoreContestazioneEuro,
+      })),
     };
+    console.log("data", data);
     instance
       .post(getApiUrl() + "api/reclamo/nuovaNotaAccredito", data)
       .then(() => {

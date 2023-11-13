@@ -120,12 +120,54 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
     setStep(0);
   };
 
+  const calcolaValoriNotaAccreditoEuro = async () => {
+    let out = [];
+    for (const fornitura of fornituraCausaReclamoSelezionata) {
+      if (getCodiceValuta() === "EUR") {
+        out = [
+          ...out,
+          {
+            ...fornitura,
+            valoreContestazioneEuro: fornitura.valoreContestazione,
+          },
+        ];
+      } else {
+        const s = await getConvertito(fornitura.valoreContestazione);
+        out = [
+          ...out,
+          {
+            ...fornitura,
+            valoreContestazioneEuro: s,
+          },
+        ];
+      }
+    }
+    return out;
+  };
+
+  const getConvertito = (valoreContestazione) => {
+    return axios
+      .get(
+        "https://api.currencybeacon.com/v1/convert?from=" +
+          getCodiceValuta() +
+          "&to=EUR&amount=" +
+          valoreContestazione +
+          "&api_key=" +
+          getConverterApiKey()
+      )
+      .then((response) => {
+        return approssima(response.data.response.value);
+      });
+  };
+
   const onFormSubmit = (data) => {
-    onSubmit({
-      idFornituraCausaReclamoList: fornituraCausaReclamoSelezionata,
-      ...data,
-      data: dayjs(data.data).format("DD/MM/YYYY"),
-    });
+    calcolaValoriNotaAccreditoEuro().then((result) =>
+      onSubmit({
+        fornituraCausaReclamoList: result,
+        ...data,
+        data: dayjs(data.data).format("DD/MM/YYYY"),
+      })
+    );
   };
 
   function isNumeric(str) {
@@ -168,6 +210,23 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
       )
       .then((response) => {
         setValue("valoreEuro", approssima(response.data.response.value));
+      });
+  };
+
+  const convertiERitorna = (valore) => {
+    if (getCodiceValuta() === "EUR") return Promise.resolve(valore);
+    //C'è da capire come fare la conversione
+    return axios
+      .get(
+        "https://api.currencybeacon.com/v1/convert?from=" +
+          getCodiceValuta() +
+          "&to=EUR&amount=" +
+          valore +
+          "&api_key=" +
+          getConverterApiKey()
+      )
+      .then((response) => {
+        return approssima(response.data.response.value);
       });
   };
 

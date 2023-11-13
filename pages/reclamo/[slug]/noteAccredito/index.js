@@ -39,6 +39,7 @@ export default function Page() {
   };
 
   const handleOnSubmitCreaNotaAccredito = (values) => {
+    //TODO DA MODIFICARE
     values = {
       ...values,
       idFornituraCausaReclamoList: values.idFornituraCausaReclamoList.map(
