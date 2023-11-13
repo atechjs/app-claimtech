@@ -12,6 +12,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import DynamicFormIcon from "@mui/icons-material/DynamicForm";
 import FactoryIcon from "@mui/icons-material/Factory";
 import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
+import AllInboxIcon from "@mui/icons-material/AllInbox";
 export default function Layout({ children }) {
   //Il data fetching deve essere fatto qua usare SWR
   //data fetching dell'utente con relativi permessi e creazione web sockets per notifiche
@@ -73,6 +74,12 @@ export default function Layout({ children }) {
       link: "/gruppiUtente",
       icon: <PeopleIcon />,
       ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE"],
+    },
+    {
+      label: "Liste distribuzione",
+      link: "/listeDistribuzione",
+      icon: <AllInboxIcon />,
+      ruoli: ["ROLE_AMMINISTRATORE"],
     },
   ]);
 

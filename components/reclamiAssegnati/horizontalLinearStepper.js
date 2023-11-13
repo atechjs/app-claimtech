@@ -5,10 +5,15 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Paper, ThemeProvider } from "@mui/material";
+import { Paper, Stack, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material";
 
-export default function HorizontalLinearStepper({ step, stepList }) {
+export default function HorizontalLinearStepper({
+  step,
+  stepList,
+  onStepClick = () => {},
+  buttonIndietro = false,
+}) {
   const [activeStep, setActiveStep] = React.useState(step);
 
   React.useEffect(() => {
@@ -37,19 +42,24 @@ export default function HorizontalLinearStepper({ step, stepList }) {
 
   return (
     <ThemeProvider theme={getMuiTheme}>
-      <Box>
+      <Stack direction={"row"}>
+        {buttonIndietro && activeStep > 0 ? (
+          <Button onClick={() => onStepClick(activeStep - 1)}>Indietro</Button>
+        ) : null}
         <Stepper activeStep={activeStep}>
-          {steps.map((label) => {
+          {steps.map((label, index) => {
             const stepProps = {};
             const labelProps = {};
             return (
               <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps}>{label}</StepLabel>
+                <StepLabel {...labelProps} onClick={() => onStepClick(index)}>
+                  {label}
+                </StepLabel>
               </Step>
             );
           })}
         </Stepper>
-      </Box>
+      </Stack>
     </ThemeProvider>
   );
 }

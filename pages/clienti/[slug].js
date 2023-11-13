@@ -137,7 +137,6 @@ export default function Page() {
   };
 
   const aggiungiClienteForm = (data) => {
-    console.log("data", data);
     const formClienteList = getValues("formClienteList");
     if (
       formClienteList.find(

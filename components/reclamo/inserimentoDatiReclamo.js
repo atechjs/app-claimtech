@@ -34,6 +34,7 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
       idCausaReclamo: null,
       noteGenerali: null,
       includiRateo: false,
+      inviaComunicazioni: true,
     },
     resolver: yupResolver(schema),
   });
@@ -141,17 +142,28 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
             <></>
           )}
         </Stack>
-        <Controller
-          control={control}
-          name={"includiRateo"}
-          render={({ field: { onChange, value } }) => (
-            <FormControlLabel
-              control={<Checkbox checked={value} onChange={onChange} />}
-              label="Includi nel rateo"
-            />
-          )}
-        />
-
+        <Stack direction={"row"} spacing={1}>
+          <Controller
+            control={control}
+            name={"includiRateo"}
+            render={({ field: { onChange, value } }) => (
+              <FormControlLabel
+                control={<Checkbox checked={value} onChange={onChange} />}
+                label="Includi nel rateo"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name={"inviaComunicazioni"}
+            render={({ field: { onChange, value } }) => (
+              <FormControlLabel
+                control={<Checkbox checked={value} onChange={onChange} />}
+                label="Invia comunicazioni"
+              />
+            )}
+          />
+        </Stack>
         <TextField
           {...register("noteGenerali")}
           size="small"

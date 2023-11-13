@@ -40,6 +40,7 @@ export default function Page() {
       codiceClienteReclamo: "",
       includiRateo: false,
       noteGenerali: "",
+      inviaComunicazioni: false,
     },
   });
   const { register, handleSubmit, formState, reset, control, getValues } = form;
@@ -185,6 +186,25 @@ export default function Page() {
                               <Checkbox checked={value} onChange={onChange} />
                             }
                             label="Includi nel rateo"
+                          />
+                        )}
+                      />
+                    )}
+                    {!modifica ? (
+                      <LabelInfo
+                        label="Invia comunicazioni"
+                        value={data.inviaComunicazioni ? "SI" : "NO"}
+                      />
+                    ) : (
+                      <Controller
+                        control={control}
+                        name={"inviaComunicazioni"}
+                        render={({ field: { onChange, value } }) => (
+                          <FormControlLabel
+                            control={
+                              <Checkbox checked={value} onChange={onChange} />
+                            }
+                            label="Invia comunicazioni"
                           />
                         )}
                       />

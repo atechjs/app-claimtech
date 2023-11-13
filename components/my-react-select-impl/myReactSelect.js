@@ -19,6 +19,8 @@ export default function MyReactSelect({
   isFullWidth,
   styles,
   autoFocus,
+  autoSize,
+  menuPortalTarget,
 }) {
   const [allOptions, setAllOptions] = useState(options);
   useEffect(() => {
@@ -106,6 +108,8 @@ export default function MyReactSelect({
               noOptionsMessage={() => "Nessun opzione"}
               isFullWidth={isFullWidth}
               autoFocus={autoFocus}
+              autosize={autoSize}
+              menuPortalTarget={menuPortalTarget}
               {...field}
             />
           );

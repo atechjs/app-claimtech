@@ -130,12 +130,18 @@ export default function Page() {
 
   const width = windowSize.current[0];
 
+  const onStepClick = (s) => {
+    if (s < step) setStep(s);
+  };
+
   return (
     <Stack direction={"column"} spacing={1}>
       <NestedAppbar title={"Nuovo reclamo"}>
         <HorizontalLinearStepper
           step={step}
           width={windowSize.current[0] - 240}
+          onStepClick={onStepClick}
+          buttonIndietro={true}
         />
       </NestedAppbar>
       <Stack direction={"column"} p={2}>
