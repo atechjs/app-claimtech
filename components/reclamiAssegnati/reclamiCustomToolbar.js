@@ -113,7 +113,7 @@ export default function ReclamiCustomToolbar({
   const tuttiStessoCliente = () => {
     let map = {};
     for (let i = 0; i < reclamiSelezionati.length; i++) {
-      map = { ...map, [reclamiSelezionati[i][12]]: true };
+      map = { ...map, [reclamiSelezionati[i][11]]: true };
     }
     return Object.keys(map).length == 1;
   };
@@ -121,7 +121,7 @@ export default function ReclamiCustomToolbar({
   const tuttiStessaValuta = () => {
     let map = {};
     for (let i = 0; i < reclamiSelezionati.length; i++) {
-      map = { ...map, [reclamiSelezionati[i][18]]: true };
+      map = { ...map, [reclamiSelezionati[i][19]]: true };
     }
     return Object.keys(map).length == 1;
   };
@@ -129,7 +129,7 @@ export default function ReclamiCustomToolbar({
   const tuttiStessoForm = () => {
     let map = {};
     for (let i = 0; i < reclamiSelezionati.length; i++) {
-      map = { ...map, [reclamiSelezionati[i][17]]: true };
+      map = { ...map, [reclamiSelezionati[i][18]]: true };
     }
     return Object.keys(map).length == 1;
   };
@@ -189,7 +189,6 @@ export default function ReclamiCustomToolbar({
   };
 
   const handleCreaNotaAccreditoSubmit = (data) => {
-    //TODO DA MODIFICARE
     data = {
       ...data,
       fornituraCausaReclamoList: data.fornituraCausaReclamoList.map((x) => ({
@@ -197,7 +196,6 @@ export default function ReclamiCustomToolbar({
         valoreEuro: x.valoreContestazioneEuro,
       })),
     };
-    console.log("data", data);
     instance
       .post(getApiUrl() + "api/reclamo/nuovaNotaAccredito", data)
       .then(() => {
@@ -241,7 +239,7 @@ export default function ReclamiCustomToolbar({
   const displayForniturePerStatoFornitura = () => {
     if (reclamiSelezionati === undefined) return;
     const fornituraList = reclamiSelezionati
-      .flatMap((x) => x[22])
+      .flatMap((x) => x[23])
       .flatMap((x) => x.causaReclamoList);
     const perStatiFornitura = fornituraList.reduce((group, fornitura) => {
       const { idStato } = fornitura;

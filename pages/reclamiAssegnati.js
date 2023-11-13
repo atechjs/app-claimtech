@@ -345,10 +345,11 @@ export default function Page() {
         sort: true,
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
+          console.log("rowData", rowData);
           const codiceReclamoCliente = rowData[4];
-          const tagList = rowData[7];
-          const aperto = rowData[8];
-          const codiceTipologiaReclamo = rowData[9];
+          const tagList = rowData[8];
+          const aperto = rowData[9];
+          const codiceTipologiaReclamo = rowData[10];
           return (
             <Stack direction={"column"}>
               <Stack
@@ -429,17 +430,28 @@ export default function Page() {
     },
     {
       name: "timestampCreazione",
-      label: "Data apertura/chiusura",
+      label: "Data apertura",
       options: {
         filter: false,
         sort: true,
         display: true,
         customBodyRender: (value, tableMeta, update) => {
-          return (
-            <ValueWithIcon
-              value={dayjs(value).format("DD/MM/YYYY")}
-              icon={<CalendarMonthIcon fontSize="small" />}
-            />
+          return <span>{dayjs(value).format("DD/MM/YYYY")}</span>;
+        },
+      },
+    },
+    {
+      name: "timestampChiusura",
+      label: "Data chiusura",
+      options: {
+        filter: false,
+        sort: true,
+        display: true,
+        customBodyRender: (value, tableMeta, update) => {
+          return value === undefined || value == null ? (
+            <span>-</span>
+          ) : (
+            <span>{dayjs(value).format("DD/MM/YYYY")}</span>
           );
         },
       },
@@ -454,7 +466,6 @@ export default function Page() {
           names: [],
           logic(codList, value) {
             const numList = getNumList(codList.flatMap((x) => x.codice));
-            console.log("numList", numList);
             return numList.find((x) => x !== Number(value[0]));
           },
         },
@@ -502,7 +513,7 @@ export default function Page() {
         sort: false,
         display: false,
         filterType: "custom",
-        filterList: actionSalvataggio.ottieniFiltroDaStato(10),
+        filterList: actionSalvataggio.ottieniFiltroDaStato(11),
         customFilterListOptions:
           autocompleteCustomFilterListOptions(actionSalvataggio),
         filterOptions: autocompleteFilterOption(
@@ -521,7 +532,7 @@ export default function Page() {
         display: true,
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
-          const descrizioneCliente = rowData[12];
+          const descrizioneCliente = rowData[13];
           return (
             <Stack direction={"column"}>
               <span>{value}</span>
@@ -566,7 +577,7 @@ export default function Page() {
         display: true,
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
-          const valorizzazioneValuta = rowData[15];
+          const valorizzazioneValuta = rowData[16];
           return (
             <Stack direction={"column"}>
               {getCodiciArticoloUnivoci(value).map((x) => (
@@ -792,14 +803,14 @@ export default function Page() {
     responsive: "standard",
     renderExpandableRow: (rowData, rowMeta) => {
       const idReclamo = rowData[0];
-      const idForm = rowData[17];
-      const codiceValuta = rowData[18];
-      const costoCartaAdesivo = rowData[19];
-      const costoRibobinatrice = rowData[20];
-      const costoFermoMacchina = rowData[21];
-      const partitaList = rowData[22];
-      const columnData = rowData[23];
-      const exprValuta = rowData[24];
+      const idForm = rowData[18];
+      const codiceValuta = rowData[19];
+      const costoCartaAdesivo = rowData[20];
+      const costoRibobinatrice = rowData[21];
+      const costoFermoMacchina = rowData[22];
+      const partitaList = rowData[23];
+      const columnData = rowData[24];
+      const exprValuta = rowData[25];
       const modificaLista = false;
       return (
         <>

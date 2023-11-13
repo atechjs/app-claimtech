@@ -39,12 +39,12 @@ export default function Page() {
   };
 
   const handleOnSubmitCreaNotaAccredito = (values) => {
-    //TODO DA MODIFICARE
     values = {
       ...values,
-      idFornituraCausaReclamoList: values.idFornituraCausaReclamoList.map(
-        (x) => x.id
-      ),
+      fornituraCausaReclamoList: values.fornituraCausaReclamoList.map((x) => ({
+        id: x.id,
+        valoreEuro: x.valoreEuro,
+      })),
     };
     instance
       .post(getApiUrl() + "api/reclamo/nuovaNotaAccredito", values)
