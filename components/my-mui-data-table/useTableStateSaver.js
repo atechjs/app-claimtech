@@ -29,7 +29,6 @@ export function useTableStateSaver() {
     // collection of reducer methods
     {
       async salvaFilterList(state, filterList) {
-        console.log("filterList", filterList);
         return { ...state, filterList: filterList };
       },
       async salvaOrdinamento(state, ordinamento) {

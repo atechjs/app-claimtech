@@ -11,7 +11,16 @@ import { LoadingButton } from "@mui/lab";
 
 export default function DownloadReportReclami({ idReclamoList, handleClose }) {
   const [loading, setLoading] = useState(false);
-  const { visualizzazioneList } = useVisualizzazioneSelect();
+
+  const setVisualizzazioneTutti = (values) => {
+    form.setValue(
+      "idVisualizzazione",
+      values.find((x) => x.label === "TUTTI").value
+    );
+  };
+  const { visualizzazioneList } = useVisualizzazioneSelect(
+    setVisualizzazioneTutti
+  );
   const instance = GetCurrentAxiosInstance();
 
   const estensioneOptions = [

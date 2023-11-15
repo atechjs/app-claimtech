@@ -149,7 +149,6 @@ export default function Page() {
     let cl = getValues("campoList");
     const idx = cl.findIndex((campo) => campo.codice === codice);
     if (idx !== -1) {
-      console.log("values", values);
       cl[idx] = values;
       setValue("campoList", cl);
       setCampoList(cl);

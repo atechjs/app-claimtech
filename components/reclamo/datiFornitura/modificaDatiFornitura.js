@@ -522,7 +522,6 @@ export default function ModificaDatiFornitura({
   };
 
   const onSubmitEliminaPartita = (indexList) => {
-    console.log("indexList", indexList);
     const newData = data.filter(
       (d, index) => indexList.find((x) => x === index) === undefined
     );
@@ -661,6 +660,7 @@ export default function ModificaDatiFornitura({
       <DialogInfo
         opened={dialogInfoOpen}
         infoData={infoSelezionato}
+        codiceValuta={codiceValuta}
         handleClose={() => setDialogInfoOpen(false)}
       />
     </Stack>

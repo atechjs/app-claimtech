@@ -81,11 +81,6 @@ export default function CondivisioneUtente({ onSubmit, onBack }) {
     }
   };
 
-  const test = () => {
-    console.log("gruppiSel", gruppiSelezionati);
-    console.log("utentiSel", utentiSelezionati);
-  };
-
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>

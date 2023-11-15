@@ -30,8 +30,6 @@ export default function SelezioneDatiFornitura({
     );
     return find !== undefined;
   };
-  console.log("partitaList", partitaList);
-  console.log("datReclamo", dataReclamo);
   return (
     <Paper>
       <Stack direction={"column"} spacing={1} p={1}>

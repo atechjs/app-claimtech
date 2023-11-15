@@ -341,11 +341,11 @@ export default function Page() {
       name: "numero",
       label: "Reclamo",
       options: {
-        filter: false,
+        filter: true,
+        filterType: "textField",
         sort: true,
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
-          console.log("rowData", rowData);
           const codiceReclamoCliente = rowData[4];
           const tagList = rowData[8];
           const aperto = rowData[9];
@@ -466,14 +466,23 @@ export default function Page() {
           names: [],
           logic(codList, value) {
             const numList = getNumList(codList.flatMap((x) => x.codice));
-            return numList.find((x) => x !== Number(value[0]));
+            console.log("numList", numList);
+            const o = numList.find((x) => x === Number(value[0]));
+            console.log("o", o);
+            return o === undefined;
           },
         },
         sort: true,
         display: true,
         customBodyRenderLite: (dataIndex, rowIndex) => {
-          return getPartiteUnivoche(
-            reclamiList[dataIndex].partitaList.map((x) => x.codice)
+          return (
+            <Stack direction={"column"}>
+              {getPartiteUnivoche(
+                reclamiList[dataIndex].partitaList.map((x) => x.codice)
+              ).map((x) => (
+                <span>{x}</span>
+              ))}
+            </Stack>
           );
         },
       },
@@ -536,7 +545,9 @@ export default function Page() {
           return (
             <Stack direction={"column"}>
               <span>{value}</span>
-              <span>{descrizioneCliente}</span>
+              <span>
+                <b>{descrizioneCliente}</b>
+              </span>
             </Stack>
           );
         },

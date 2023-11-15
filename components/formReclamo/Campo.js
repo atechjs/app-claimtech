@@ -412,10 +412,6 @@ export default function Campo({
                 "Visualizzazioni",
                 ["TUTTI"].concat(
                   data.idVisualizzazioneList.map((optionValue) => {
-                    console.log(
-                      "getValues",
-                      getValues("idVisualizzazioneList")
-                    );
                     const finded = visualizzazioniList.find(
                       (option) => option.value === optionValue
                     );
