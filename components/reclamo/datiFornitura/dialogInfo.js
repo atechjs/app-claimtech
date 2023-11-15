@@ -97,7 +97,7 @@ export default function DialogInfo({
             label={
               "Coefficiente " + codiceValuta + "/" + infoData.unitaMisuraFattura
             }
-            value={(infoData.valoreFattura / infoData.qtaFattura).toFixed(2)}
+            value={(infoData.valoreFattura / infoData.qtaFattura).toFixed(4)}
           />
         </Stack>
         <Button
