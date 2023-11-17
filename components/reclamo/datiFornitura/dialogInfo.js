@@ -17,7 +17,6 @@ export default function DialogInfo({
 }) {
   const [open, setOpen] = React.useState(opened);
   const instance = GetCurrentAxiosInstance();
-  console.log("infoData", infoData);
   React.useEffect(() => {
     setOpen(opened);
   }, [opened]);

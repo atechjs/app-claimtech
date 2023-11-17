@@ -13,6 +13,7 @@ import DynamicFormIcon from "@mui/icons-material/DynamicForm";
 import FactoryIcon from "@mui/icons-material/Factory";
 import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import AllInboxIcon from "@mui/icons-material/AllInbox";
+import EuroIcon from "@mui/icons-material/Euro";
 export default function Layout({ children }) {
   //Il data fetching deve essere fatto qua usare SWR
   //data fetching dell'utente con relativi permessi e creazione web sockets per notifiche
@@ -47,6 +48,17 @@ export default function Layout({ children }) {
       ruoli: [],
     },
     {
+      label: "Stat. N.C.",
+      link: "/statNoteAccredito",
+      icon: <EuroIcon />,
+      ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE"],
+    },
+    {
+      label: "divider",
+      key: "divider2",
+      ruoli: [],
+    },
+    {
       label: "Clienti",
       link: "/clienti",
       icon: <PersonIcon />,
@@ -60,7 +72,7 @@ export default function Layout({ children }) {
     },
     {
       label: "divider",
-      key: "divider2",
+      key: "divider3",
       ruoli: [],
     },
     {

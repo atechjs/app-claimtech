@@ -21,6 +21,7 @@ export default function MyReactSelect({
   autoFocus,
   autoSize,
   menuPortalTarget,
+  labelPosition = "top",
 }) {
   const [allOptions, setAllOptions] = useState(options);
   useEffect(() => {
@@ -74,7 +75,12 @@ export default function MyReactSelect({
     }
   }
   return (
-    <Stack direction={"column"}>
+    <Stack
+      direction={labelPosition === "top" ? "column" : "row"}
+      justifyContent="flex-start"
+      alignItems={labelPosition === "left" ? "center" : null}
+      spacing={labelPosition === "left" ? 1 : null}
+    >
       <Typography variant="button">{label}</Typography>
       <Controller
         control={control}

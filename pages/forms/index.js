@@ -82,6 +82,14 @@ export default function Page() {
         sort: true,
       },
     },
+    {
+      name: "versione",
+      label: "Versione",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
   ];
 
   return (

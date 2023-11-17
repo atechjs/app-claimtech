@@ -97,6 +97,30 @@ export default function Page() {
         sort: true,
       },
     },
+    {
+      name: "costoCartaAdesivo",
+      label: "Costo carta e adesivo",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "costoFermoMacchina",
+      label: "Costo fermo macchina",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "costoRibobinatrice",
+      label: "Costo ribobinatrice",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
   ];
   return (
     <Box p={2}>
