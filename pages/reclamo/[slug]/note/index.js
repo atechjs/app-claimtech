@@ -197,7 +197,6 @@ export default function Page() {
         <Stack
           direction={"column"}
           p={1}
-          spacing={1}
           component="form"
           noValidate
           onSubmit={handleSubmit(submitForm)}
