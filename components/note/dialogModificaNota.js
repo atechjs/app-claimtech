@@ -46,7 +46,6 @@ export default function DialogModificaNota({
     values.files.forEach((file) => {
       formData.append("files", file);
     });
-    console.log("fileList", values.fileList);
     formData.append(
       "fileList",
       values.fileList.map((x) => x.id)
