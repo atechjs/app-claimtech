@@ -16,7 +16,9 @@ export default function useGetStatNc(id) {
           "&dataFine=" +
           arg.dataFine.format("DD/MM/YYYY") +
           "&idValuta=" +
-          arg.idValuta
+          arg.idValuta +
+          "&raggruppamento=" +
+          arg.raggruppamento
       )
       .then((response) => {
         return response.data;

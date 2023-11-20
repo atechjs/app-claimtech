@@ -285,6 +285,7 @@ export default function ModificaDatiFornitura({
           //1 - Sostituisco a EXPR i valori che servono
           const code = dependency.codiceDipendente;
           let expr = dependency.expr;
+          console.log("rowData", rowData);
           expr = expr.replace("[value]", value);
           expr = expr.replace("[coefFattura]", rapportoValore);
           expr = expr.replace("[kgFattura]", kgFatt);
@@ -292,9 +293,9 @@ export default function ModificaDatiFornitura({
           expr = expr.replace("[cCartaAdesivo]", costoCartaAdesivo);
           expr = expr.replace("[cRibob]", costoRibobinatrice);
           expr = expr.replace("[cFermoMacchina]", costoFermoMacchina);
-          expr = expr.replace("[spessoreArticolo]", rowData.spessoreArticolo);
-          expr = expr.replace("[altezzaArticolo]", rowData.altezzaArticolo);
-          expr = expr.replace("[lunghezzaArticolo]", rowData.lunghezzaArticolo);
+          expr = expr.replace("[spessoreArticolo]", rowData.spessore);
+          expr = expr.replace("[altezzaArticolo]", rowData.altezza);
+          expr = expr.replace("[lunghezzaArticolo]", rowData.lunghezza);
           //2 - Parso e calcolo il risultato
           const result = approssima(math.evaluate(expr));
           //3 - Salvo il risultato a code

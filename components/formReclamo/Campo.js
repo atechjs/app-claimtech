@@ -162,6 +162,8 @@ export default function Campo({
   };
 
   const aggiungiDipendenzaOnSubmit = (codiceDipendente, values) => {
+    console.log("codiceDipendente", codiceDipendente);
+    console.log("values", values);
     if (codiceDipendente === null) {
       if (
         getValues("associazioneList").find(
@@ -179,15 +181,13 @@ export default function Campo({
       const idxSameCodice = getValues("associazioneList").findIndex(
         (x) => x.codiceDipendente === values.codiceDipendente
       );
-      //Sostanzialmente qua dovrei modificare idx solo se idxSameCodice è uguale a -1?
-      if (idxSameCodice === -1) {
-        const nuovo = getValues("associazioneList").filter(
-          (x) => x.codiceDipendente !== codiceDipendente
-        );
-        const finalValue = [...nuovo, values];
-        setValue("associazioneList", finalValue);
-        setAssociazioneList(finalValue);
-      }
+      //Prendo tutte le associazioni tranne quella che dovrei modificare e la reinserisco
+      const filtrato = getValues("associazioneList").filter(
+        (item, index) => index != idxSameCodice
+      );
+      const finalValue = [...filtrato, values];
+      setValue("associazioneList", finalValue);
+      setAssociazioneList(finalValue);
     }
     handleClose();
   };

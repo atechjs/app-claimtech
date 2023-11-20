@@ -2,7 +2,7 @@ import React from "react";
 import InputLayout from "./inputLayout";
 import MyReactSelect from "../../../components/my-react-select-impl/myReactSelect";
 
-export default function InputValuta({ name, label, options, control }) {
+export default function InputSelect({ name, label, options, control }) {
   return (
     <InputLayout>
       {options ? (

@@ -16,10 +16,21 @@ import { Controller, useForm } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import InputPeriodo from "./inputs/inputPeriodo";
-import InputValuta from "./inputs/inputValuta";
+import InputSelect from "./inputs/inputSelect";
 import useValutaSelect from "../../components/fetching/useValutaSelect";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import useGetStatNc from "../../components/fetching/statistiche/useGetStatNc";
+import CardStatoFornitura from "./cards/cardStatoFornitura";
+import CardGrafico from "./cards/cardGrafico";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 export default function Page() {
   const { data: statData, trigger, isMutating } = useGetStatNc();
 
@@ -31,14 +42,20 @@ export default function Page() {
       dataInizio: getValues("dataInizio"),
       dataFine: getValues("dataFine"),
       idValuta: idValuta,
+      raggruppamento: getValues("raggruppamento"),
     });
   };
   const { valutaList } = useValutaSelect(onValuteCaricate);
+  const raggruppamentoList = [
+    { label: "PER MESE", value: "MESE" },
+    { label: "PER ANNO", value: "ANNO" },
+  ];
   const form = useForm({
     defaultValues: {
       dataInizio: dayjs().add(-1, "M").startOf("month"),
       dataFine: dayjs().add(-1, "M").endOf("month"),
       idValuta: null,
+      raggruppamento: "MESE",
     },
   });
   const {
@@ -55,6 +72,16 @@ export default function Page() {
 
   const onFormSubmit = (values) => {
     trigger(values);
+  };
+
+  const creaCardTotale = (list) => {
+    const count = list.reduce((accumulator, object) => {
+      return accumulator + object.count;
+    }, 0);
+    const sum = list.reduce((accumulator, object) => {
+      return accumulator + object.sum;
+    }, 0);
+    return <CardStatoFornitura data={{ codice: "TOTALE", count, sum }} />;
   };
   return (
     <Stack direction={"column"} width={"100%"} spacing={2} p={2}>
@@ -76,11 +103,17 @@ export default function Page() {
           label={"Fine periodo*"}
           control={control}
         />
-        <InputValuta
+        <InputSelect
           name="idValuta"
           label={"Valuta considerata*"}
           control={control}
           options={valutaList}
+        />
+        <InputSelect
+          name="raggruppamento"
+          label={"Raggruppamento*"}
+          control={control}
+          options={raggruppamentoList}
         />
         <Button
           type="submit"
@@ -97,7 +130,7 @@ export default function Page() {
       ) : isMutating ? (
         <LinearProgress />
       ) : (
-        <>
+        <Stack direction={"column"} width={"100%"} spacing={1}>
           <Stack direction={"row"} width={"100%"} spacing={1}>
             <Paper>
               <Stack
@@ -185,31 +218,83 @@ export default function Page() {
                   );
                 })}
               </Grid>
-              <Stack
-                direction="row"
-                justifyContent="space-evenly"
-                alignItems="stretch"
-                spacing={1}
-              >
-                {statData.statoList.map((data) => (
-                  <Card>
-                    <Stack direction={"column"} p={1}>
-                      <Typography variant="button" color={"primary"}>
-                        {data.codice}
-                      </Typography>
-                      <Typography variant="button">
-                        Numero: <b>{data.count}</b>
-                      </Typography>
-                      <Typography variant="button">
-                        Valore totale: <b>{data.sum}</b>
-                      </Typography>
-                    </Stack>
-                  </Card>
-                ))}
-              </Stack>
+              <Paper>
+                <Stack
+                  width={"100%"}
+                  p={1}
+                  justifyContent="center"
+                  alignItems="center"
+                  spacing={1}
+                >
+                  <Typography variant="button">
+                    Situazione cause reclamo(considerando{" "}
+                    {
+                      valutaList.find((x) => x.value === getValues("idValuta"))
+                        .label
+                    }{" "}
+                    come valuta)
+                  </Typography>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-evenly"
+                    alignItems="stretch"
+                    spacing={1}
+                  >
+                    {statData.statoList.map((data) => (
+                      <CardStatoFornitura data={data} />
+                    ))}
+                    {creaCardTotale(statData.statoList)}
+                  </Stack>
+                </Stack>
+              </Paper>
             </Stack>
           </Stack>
-        </>
+          <Stack direction={"row"} spacing={1} width={"100%"}>
+            <Box width={"100%"}>
+              <CardGrafico title={"Andamento euro note accredito emesse"}>
+                <ResponsiveContainer width="100%" height="100%" aspect={5}>
+                  <AreaChart
+                    width={500}
+                    height={200}
+                    data={statData.notaAccreditoDataList}
+                    margin={{
+                      top: 10,
+                      right: 30,
+                      left: 0,
+                      bottom: 0,
+                    }}
+                  >
+                    <defs>
+                      <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                        <stop
+                          offset="5%"
+                          stopColor="#82ca9d"
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#82ca9d"
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" />
+                    <YAxis />
+                    <Tooltip />
+                    <Area
+                      type="monotone"
+                      dataKey="sum"
+                      stroke="#82ca9d"
+                      fillOpacity={1}
+                      fill="url(#colorUv)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardGrafico>
+            </Box>
+          </Stack>
+        </Stack>
       )}
     </Stack>
   );
