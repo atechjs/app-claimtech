@@ -15,13 +15,11 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import InputPeriodo from "./inputs/inputPeriodo";
-import InputSelect from "./inputs/inputSelect";
 import useValutaSelect from "../../components/fetching/useValutaSelect";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import useGetStatNc from "../../components/fetching/statistiche/useGetStatNc";
-import CardStatoFornitura from "./cards/cardStatoFornitura";
-import CardGrafico from "./cards/cardGrafico";
+import CardStatoFornitura from "../../components/statNoteAccredito/cards/cardStatoFornitura";
+import CardGrafico from "../../components/statNoteAccredito/cards/cardGrafico";
 import {
   Area,
   AreaChart,
@@ -31,6 +29,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import InputPeriodo from "../../components/statNoteAccredito/inputs/inputPeriodo";
+import InputSelect from "../../components/statNoteAccredito/inputs/inputSelect";
 export default function Page() {
   const { data: statData, trigger, isMutating } = useGetStatNc();
 
