@@ -25,7 +25,7 @@ export default function MyTableCell({ getValue, row, column, table }) {
   };
 
   const handleCheck = (event) => {
-    const val = event.target.checked ? "BLOCCATA" : "NON_BLOCCATA";
+    const val = event.target.checked;
     setValue(val);
     tableMeta?.updateData(row, column, val, columnMeta);
   };
@@ -92,9 +92,7 @@ export default function MyTableCell({ getValue, row, column, table }) {
     return (
       <FormGroup>
         <FormControlLabel
-          control={
-            <Checkbox checked={value === "BLOCCATA"} onChange={handleCheck} />
-          }
+          control={<Checkbox checked={value} onChange={handleCheck} />}
         />
       </FormGroup>
     );

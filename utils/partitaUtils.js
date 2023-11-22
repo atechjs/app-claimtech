@@ -9,7 +9,11 @@ export const getPartitaList = (columnsData, list) => {
     idCausaReclamoList.forEach((fornituraCausaReclamo) => {
       let campi = [];
       columnsData.forEach(
-        (colonna) => (campi = [...campi, { codice: colonna.codice, value: 0 }])
+        (colonna) =>
+          (campi = [
+            ...campi,
+            { codice: colonna.codice, value: 0, rendi: false },
+          ])
       );
 
       let objCausaReclamo = {

@@ -9,9 +9,11 @@ import {
   IconButton,
   Chip,
   Tooltip,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import useTipoCampoSelect from "../../components/fetching/useTipoCampoSelect";
 import useUnitaMisuraSelect from "../../components/fetching/useUnitaMisuraSelect";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
@@ -51,6 +53,7 @@ export default function Campo({
       numSequenza: mod ? data.numSequenza : null,
       idTipo: null,
       idUnitaMisura: null,
+      includiNelReso: false,
       idVisualizzazioneList: [],
       associazioneList: [],
     },
@@ -85,7 +88,8 @@ export default function Campo({
       isBlank(values.nomeInglese) ||
       values.numSequenza === null ||
       values.idTipo === null ||
-      values.idUnitaMisura === null
+      values.idUnitaMisura === null ||
+      values.includiNelReso === null
     );
   };
 
@@ -117,6 +121,7 @@ export default function Campo({
       numSequenza: data.numSequenza,
       idTipo: data.idTipo,
       idUnitaMisura: data.idUnitaMisura,
+      includiNelReso: data.includiNelReso,
       idVisualizzazioneList: data.idVisualizzazioneList,
       associazioneList: data.associazioneList,
     });
@@ -162,8 +167,6 @@ export default function Campo({
   };
 
   const aggiungiDipendenzaOnSubmit = (codiceDipendente, values) => {
-    console.log("codiceDipendente", codiceDipendente);
-    console.log("values", values);
     if (codiceDipendente === null) {
       if (
         getValues("associazioneList").find(
@@ -370,6 +373,16 @@ export default function Campo({
                 }}
               />
             ) : null}
+            <Controller
+              control={control}
+              name={"includiNelReso"}
+              render={({ field: { onChange, value } }) => (
+                <FormControlLabel
+                  control={<Checkbox checked={value} onChange={onChange} />}
+                  label="Includi nel reso"
+                />
+              )}
+            />
             {visualizzazioniList ? (
               <MyReactSelect
                 control={control}
@@ -405,6 +418,11 @@ export default function Campo({
               )
             ) : (
               <></>
+            )}
+            {textFieldReadOnly(
+              "includiNelReso",
+              "Includi nel reso?",
+              data.includiNelReso ? "SI" : "NO"
             )}
             {visualizzazioniList ? (
               textFieldReadOnly(

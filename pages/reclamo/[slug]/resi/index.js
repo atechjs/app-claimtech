@@ -90,6 +90,9 @@ export default function Page() {
                   <Typography>
                     Causa: <b>{fornitura.codiceCausa}</b>
                   </Typography>
+                  <Typography>
+                    Campo: <b>{fornitura.nomeCampo}</b>
+                  </Typography>
                 </Stack>
               ))}
             </Stack>

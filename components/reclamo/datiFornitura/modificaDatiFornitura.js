@@ -95,6 +95,23 @@ export default function ModificaDatiFornitura({
         options: causaList,
       },
     ];
+    let colonne = [];
+    data.forEach((colonna) => {
+      colonne = [...colonne, colonna];
+      if (colonna.includiNelReso) {
+        colonne = [
+          ...colonne,
+          {
+            id: colonna.id,
+            codice: colonna.codice + "_includiNelReso",
+            nome: colonna.nome + " da rendere",
+            codiceTipo: "CHECK",
+            associazioneList: [],
+            options: [],
+          },
+        ];
+      }
+    });
     const colonneDopoCampi = [
       {
         id: "partitaCausaReclamo_valoreContestazione",
@@ -113,7 +130,7 @@ export default function ModificaDatiFornitura({
         options: [],
       },
     ];
-    return colonneFisse.concat(data).concat(colonneDopoCampi);
+    return colonneFisse.concat(colonne).concat(colonneDopoCampi);
   };
 
   const mapToColumnsArray = (columnsData) => {
@@ -145,7 +162,12 @@ export default function ModificaDatiFornitura({
             };
           } else {
             partitaCausaReclamo["campi"].forEach(
-              (campo) => (newObj = { ...newObj, [campo.codice]: campo.value })
+              (campo) =>
+                (newObj = {
+                  ...newObj,
+                  [campo.codice]: campo.value,
+                  [campo.codice + "_includiNelReso"]: campo.rendi,
+                })
             );
           }
         });
@@ -251,7 +273,7 @@ export default function ModificaDatiFornitura({
           case "TEXT":
           case "TEXTSTRING":
           case "MULTISELECT":
-            //TODO Se sono codicePartita devo cambiare anche tempData con mio stesso codice
+          case "CHECK":
             if (columnId === "codicePartitaCliente")
               tempData = modificaTempDataCodicePartitaCliente(
                 value,
@@ -270,7 +292,6 @@ export default function ModificaDatiFornitura({
               rowIndex,
               columnId
             );
-
             break;
         }
 
@@ -418,7 +439,14 @@ export default function ModificaDatiFornitura({
               [campo.replace("partitaCausaReclamo_", "")]: value,
             };
           if (columnsData.find((x) => x.codice === campo) && isNumber(value)) {
-            campi = [...campi, { campo: campo, value: value }];
+            const keyCampoReso = campo + "_includiNelReso";
+            const altriCampi = Object.keys(fornituraCausaReclamo);
+            const campoReso = altriCampi.find((x) => x === keyCampoReso);
+            const rendi =
+              campoReso !== undefined
+                ? fornituraCausaReclamo[campoReso]
+                : false;
+            campi = [...campi, { campo: campo, value: value, rendi: rendi }];
           }
         });
         objFornituraCausaReclamo = {
@@ -436,6 +464,7 @@ export default function ModificaDatiFornitura({
       };
       fornituraList = [...fornituraList, fornituraData];
     });
+    console.log("fornituraList", fornituraList);
     return fornituraList;
   };
 
@@ -466,7 +495,6 @@ export default function ModificaDatiFornitura({
       valorizzazioneTotaleClienteValuta: valorizzazioneTotaleClienteValuta,
       partitaList: fornituraList,
     };
-
     if (idReclamo === undefined) {
       onSubmit(obj);
       return;
@@ -484,7 +512,11 @@ export default function ModificaDatiFornitura({
             (x) => x.index === index
           );
           if (objFinded !== undefined) {
-            d = { ...d, id: objFinded.id };
+            d = {
+              ...d,
+              id: objFinded.idFornitura,
+              partitaCausaReclamo_id: objFinded.idFornituraCausaReclamo,
+            };
           }
           dataFinale = [...dataFinale, d];
         });
@@ -638,7 +670,7 @@ export default function ModificaDatiFornitura({
         />
       </Stack>
       <Divider />
-      {/*<pre>{JSON.stringify(data, null, "\t")}</pre>*/}
+      {<pre>{JSON.stringify(data, null, "\t")}</pre>}
       <DialogAggiungiPartita
         opened={dialogAggiungiOpen}
         handleClose={() => setDialogAggiungiOpen(false)}

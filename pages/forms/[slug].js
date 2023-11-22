@@ -129,6 +129,7 @@ export default function Page() {
       numSequenza: numSequenza,
       idTipo: null,
       idUnitaMisura: null,
+      includiNelReso: false,
       idVisualizzazioneList: [],
       associazioneList: [],
     };

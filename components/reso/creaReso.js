@@ -23,6 +23,7 @@ export default function CreaReso({ dataList, onSubmit }) {
     const campoList = fornituraCausaReclamo.campoList;
     return campoList;
   };
+  const TAG_RESO = "_reso";
   const mapDataList = (dataList) => {
     const colonnaData = getColonnaDataFromDataList(dataList);
     let outList = [];
@@ -48,12 +49,14 @@ export default function CreaReso({ dataList, onSubmit }) {
                 [campo.codice]: fornituraCausaReclamo.campoList.find(
                   (y) => y.codice === campo.codice
                 ).value,
+                [campo.codice + TAG_RESO]: campo.rendi,
               })
           );
           outList = [...outList, mappedObj];
         });
       });
     });
+    outList.sort((a, b) => a.codiceFornitura > b.codiceFornitura);
     return outList;
   };
   const [data, setData] = useState(mapDataList(dataList));
@@ -102,6 +105,14 @@ export default function CreaReso({ dataList, onSubmit }) {
     );
   };
 
+  const setValueCampoReso = (item, campo, value) => {
+    setData(
+      data.map((d) =>
+        d.id === item.id ? { ...d, [campo + TAG_RESO]: value } : d
+      )
+    );
+  };
+
   const setValueCampo = (item, campo, value) => {
     setData(data.map((d) => (d.id === item.id ? { ...d, [campo]: value } : d)));
   };
@@ -118,7 +129,10 @@ export default function CreaReso({ dataList, onSubmit }) {
       let campoList = [];
       Object.keys(d).forEach((key) => {
         if (columnData.find((x) => x.codice === key))
-          campoList = [...campoList, { codice: key, value: d[key] }];
+          campoList = [
+            ...campoList,
+            { codice: key, value: d[key], reso: d[key + TAG_RESO] },
+          ];
         else finalObj = { ...finalObj, [key]: d[key] };
       });
       finalObj = { ...finalObj, campoList };
@@ -176,54 +190,85 @@ export default function CreaReso({ dataList, onSubmit }) {
                   <TableCell>Descrizione cliente</TableCell>
                   <TableCell>Codice articolo</TableCell>
                   <TableCell>Causa</TableCell>
-                  {getColonnaDataFromDataList(dataList).map((x) => (
-                    <TableCell>{x.nome}</TableCell>
-                  ))}
+                  {getColonnaDataFromDataList(dataList).map((x) => {
+                    return (
+                      <>
+                        {x.rendi ? <TableCell>Reso</TableCell> : "-"}
+                        <TableCell>{x.nome}</TableCell>
+                      </>
+                    );
+                  })}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.map((x) => {
-                  const columnData = getColonnaDataFromDataList(dataList);
-                  const campiKeys = Object.keys(x).filter((y) =>
-                    columnData.find((z) => z.codice === y)
-                  );
+                {data
+                  .sort(function (a, b) {
+                    return ("" + a.codiceFornitura).localeCompare(
+                      b.codiceFornitura
+                    );
+                  })
+                  .map((x) => {
+                    const columnData = getColonnaDataFromDataList(dataList);
 
-                  return (
-                    <TableRow>
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={x.selezionato}
-                          onClick={() => handleToggle(x)}
-                        />
-                      </TableCell>
-                      <TableCell>{x.numero}</TableCell>
-                      <TableCell>{x.codiceReclamoCliente}</TableCell>
-                      <TableCell>{x.codiceFornitura}</TableCell>
-                      <TableCell>{x.codicePartitaCliente}</TableCell>
-                      <TableCell>{x.descrizioneCliente}</TableCell>
-                      <TableCell>{x.codiceArticolo}</TableCell>
-                      <TableCell>{x.codiceCausa}</TableCell>
-                      {columnData.map((column) => {
-                        return (
-                          <TableCell>
-                            <TextField
-                              label="VALORE"
-                              fullWidth
-                              variant="outlined"
-                              type="number"
-                              value={x[column.codice]}
-                              onChange={(e) =>
-                                setValueCampo(x, column.codice, e.target.value)
-                              }
-                              autoComplete="off"
-                            />
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
+                    return (
+                      <TableRow>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            color="primary"
+                            checked={x.selezionato}
+                            onClick={() => handleToggle(x)}
+                          />
+                        </TableCell>
+                        <TableCell>{x.numero}</TableCell>
+                        <TableCell>{x.codiceReclamoCliente}</TableCell>
+                        <TableCell>{x.codiceFornitura}</TableCell>
+                        <TableCell>{x.codicePartitaCliente}</TableCell>
+                        <TableCell>{x.descrizioneCliente}</TableCell>
+                        <TableCell>{x.codiceArticolo}</TableCell>
+                        <TableCell>{x.codiceCausa}</TableCell>
+                        {columnData.map((column) => {
+                          return (
+                            <>
+                              {column.rendi ? (
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    color="primary"
+                                    checked={x[column.codice + TAG_RESO]}
+                                    onChange={(e) =>
+                                      setValueCampoReso(
+                                        x,
+                                        column.codice,
+                                        e.target.checked
+                                      )
+                                    }
+                                  />
+                                </TableCell>
+                              ) : (
+                                "-"
+                              )}
+                              <TableCell>
+                                <TextField
+                                  label="VALORE"
+                                  fullWidth
+                                  variant="outlined"
+                                  type="number"
+                                  value={x[column.codice]}
+                                  onChange={(e) =>
+                                    setValueCampo(
+                                      x,
+                                      column.codice,
+                                      e.target.value
+                                    )
+                                  }
+                                  autoComplete="off"
+                                />
+                              </TableCell>
+                            </>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </TableContainer>
