@@ -29,6 +29,8 @@ import DialogCreaReso from "../reso/dialogCreaReso";
 import AssignmentReturnedIcon from "@mui/icons-material/AssignmentReturned";
 import DialogDownloadReportReclami from "../downloadReportReclami/dialogDownloadReportReclami";
 import SummarizeIcon from "@mui/icons-material/Summarize";
+import DialogModificaRateo from "../modificaRateo/dialogModificaRateo";
+
 export default function ReclamiCustomToolbar({
   selectedRows,
   displayData,
@@ -40,6 +42,7 @@ export default function ReclamiCustomToolbar({
     useState(false);
 
   const [openedDialogTags, setOpenedDialogTags] = useState(false);
+  const [openedDialogRateo, setOpenedDialogRateo] = useState(false);
   const [openedDialogCreaReso, setOpenedDialogCreaReso] = useState(false);
   const [openedDialogCreaNotaAccredito, setOpenedDialogCreaNotaAccredito] =
     useState(false);
@@ -63,6 +66,14 @@ export default function ReclamiCustomToolbar({
   const handleCloseOpenTags = () => {
     setOpenedDialogTags(false);
     onUpdateReclami();
+  };
+
+  const handleClickOpenDialogRateo = () => {
+    setOpenedDialogRateo(true);
+  };
+
+  const handleClickCloseDialogRateo = () => {
+    setOpenedDialogRateo(false);
   };
 
   const handleClickOpenDialogCreaReso = () => {
@@ -165,14 +176,43 @@ export default function ReclamiCustomToolbar({
     instance
       .post(getApiUrl() + "api/reclamo/associaTag", {
         idReclamoList: idReclamoList,
+        assegna: list.assegna,
         tags: list.tags,
       })
       .then(() => {
-        mandaNotifica("Tags associati correttamente", "success");
+        mandaNotifica(
+          list.assegna
+            ? "Tags associati correttamente"
+            : "Tags rimossi correttamente",
+          "success"
+        );
         onUpdateReclami();
         handleCloseOpenTags();
       })
-      .catch(() => mandaNotifica("Impossibile associare i tags", "error"));
+      .catch(() =>
+        mandaNotifica(
+          list.assegna
+            ? "Impossibile associare i tags"
+            : "Impossibile rimuovere i tags",
+          "error"
+        )
+      );
+  };
+
+  const handleOnModificaRateo = (data) => {
+    const idReclamoList = reclamiSelezionati.map((reclamo) => reclamo[0]);
+    instance
+      .post(getApiUrl() + "api/reclamo/modificaIncludiNelRateo", {
+        idReclamoList: idReclamoList,
+        includiRateo: data.includiRateo,
+      })
+      .then(() => {
+        mandaNotifica("Campo includi nel rateo aggiornato", "success");
+        handleClickCloseDialogRateo();
+      })
+      .catch((error) =>
+        mandaNotifica("Impossibile aggiornare il rateo", "error")
+      );
   };
 
   const handleCreaResoSubmit = (data) => {
@@ -306,15 +346,26 @@ export default function ReclamiCustomToolbar({
           <ShareIcon />
         </IconButton>
       </Tooltip>
-      <Tooltip title="Assegna tag">
+      <Tooltip title="Gestisci tag">
         <IconButton
-          aria-label="delete"
+          aria-label="aggiungiTags"
           size="small"
           onClick={() => handleClickOpenTags()}
         >
           <TagIcon />
         </IconButton>
       </Tooltip>
+      <Tooltip title="Modifica rateo">
+        <IconButton
+          aria-label="modifica rateo"
+          size="small"
+          color="info"
+          onClick={() => handleClickOpenDialogRateo()}
+        >
+          R
+        </IconButton>
+      </Tooltip>
+      <Divider orientation="vertical" flexItem />
       <Tooltip title="Genera report">
         <IconButton
           aria-label="generate report"
@@ -327,6 +378,7 @@ export default function ReclamiCustomToolbar({
           <SummarizeIcon />
         </IconButton>
       </Tooltip>
+      <Divider orientation="vertical" flexItem />
       <Tooltip
         title={
           isResoDisabilitato()
@@ -375,6 +427,11 @@ export default function ReclamiCustomToolbar({
         opened={openedDialogTags}
         handleClose={handleCloseOpenTags}
         handleOnSubmit={handleOnTagsSubmit}
+      />
+      <DialogModificaRateo
+        opened={openedDialogRateo}
+        handleClose={handleClickCloseDialogRateo}
+        handleOnSubmit={handleOnModificaRateo}
       />
       <DialogCreaReso
         opened={openedDialogCreaReso}

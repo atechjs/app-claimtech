@@ -150,13 +150,26 @@ export default function ReclamoAppBar({ data, onSync }) {
       .post(getApiUrl() + "api/reclamo/associaTag", {
         idReclamoList: [data.id],
         tags: list.tags,
+        assegna: list.assegna,
       })
       .then(() => {
-        mandaNotifica("Tags associati correttamente", "success");
+        mandaNotifica(
+          list.assegna
+            ? "Tags associati correttamente"
+            : "Tags rimossi correttamente",
+          "success"
+        );
         handleCloseOpenTags();
         onSync();
       })
-      .catch(() => mandaNotifica("Impossibile associare i tags", "error"));
+      .catch(() =>
+        mandaNotifica(
+          list.assegna
+            ? "Impossibile associare i tags"
+            : "Impossibile rimuovere i tags",
+          "error"
+        )
+      );
   };
 
   if (data === undefined)

@@ -1,9 +1,9 @@
 import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
-import AssegnaTag from "./assegnaTag";
+import ModificaRateo from "./modificaRateo";
 
-export default function DialogAssegnaTag({
+export default function DialogModificaRateo({
   opened,
   handleClose,
   handleOnSubmit,
@@ -20,8 +20,8 @@ export default function DialogAssegnaTag({
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth>
-      <DialogTitle>Gestisci tag</DialogTitle>
-      <AssegnaTag onSubmit={handleOnSubmit} onBack={handleOnBack} />
+      <DialogTitle>Modifica rateo</DialogTitle>
+      <ModificaRateo onSubmit={handleOnSubmit} onBack={handleOnBack} />
     </Dialog>
   );
 }

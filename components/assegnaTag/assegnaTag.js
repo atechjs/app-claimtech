@@ -9,9 +9,15 @@ export default function AssegnaTag({ onSubmit, onBack }) {
 
   const form = useForm({
     defaultValues: {
+      assegna: true,
       tags: [],
     },
   });
+
+  const operazioneList = [
+    { label: "ASSEGNA", value: true },
+    { label: "RIMUOVI", value: false },
+  ];
 
   const {
     register,
@@ -42,14 +48,22 @@ export default function AssegnaTag({ onSubmit, onBack }) {
       sx={{ mt: 1 }}
       onSubmit={handleSubmit(handleInternalSubmit)}
       direction={"column"}
-      spacing={2}
-      p={2}
+      spacing={1}
+      p={1}
     >
+      <MyReactSelect
+        control={control}
+        name="assegna"
+        label="Operazione"
+        options={operazioneList}
+        menuPosition="fixed"
+        styles={selectStyles}
+      />
       {tagList ? (
         <MyReactSelect
           control={control}
           name="tags"
-          label="Tag da assegnare"
+          label="Tag"
           options={tagList}
           menuPosition="fixed"
           styles={selectStyles}
@@ -70,7 +84,7 @@ export default function AssegnaTag({ onSubmit, onBack }) {
           variant="contained"
           disabled={watch("tags").length === 0}
         >
-          Aggiungi
+          Conferma
         </Button>
         <Button variant="text" onClick={() => onBack()}>
           Annulla
