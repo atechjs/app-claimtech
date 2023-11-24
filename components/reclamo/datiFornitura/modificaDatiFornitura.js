@@ -670,7 +670,7 @@ export default function ModificaDatiFornitura({
         />
       </Stack>
       <Divider />
-      {<pre>{JSON.stringify(data, null, "\t")}</pre>}
+      {/*<pre>{JSON.stringify(data, null, "\t")}</pre>*/}
       <DialogAggiungiPartita
         opened={dialogAggiungiOpen}
         handleClose={() => setDialogAggiungiOpen(false)}
