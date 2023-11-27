@@ -25,12 +25,13 @@ export default function DialogInfo({
     const idReclamo = infoData.idReclamo;
     const nomePdf = infoData.nomePdf;
     const codiceFattura = infoData.codiceFattura;
+    const nomePdfDef = nomePdf.replace("\\", "@");
     const url =
       getApiUrl() +
       "api/reclamo/pdfFattura?idReclamo=" +
       idReclamo +
       "&nomePdf=" +
-      nomePdf;
+      nomePdfDef;
     instance({
       url,
       method: "GET",
