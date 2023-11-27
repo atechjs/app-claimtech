@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useVisualizzazioneSelect from "../fetching/useVisualizzazioneSelect";
-import { useForm } from "react-hook-form";
-import { Button, Stack } from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import { Button, Stack, Checkbox, FormControlLabel } from "@mui/material";
 import MyReactSelect from "../my-react-select-impl/myReactSelect";
 import GetCurrentAxiosInstance from "../../utils/Axios";
 import getApiUrl from "../../utils/BeUrl";
@@ -31,6 +31,7 @@ export default function DownloadReportReclami({ idReclamoList, handleClose }) {
     defaultValues: {
       idVisualizzazione: null,
       estensione: "EXCEL",
+      includiCampi: true,
     },
   });
   const {
@@ -120,6 +121,18 @@ export default function DownloadReportReclami({ idReclamoList, handleClose }) {
         menuPosition="fixed"
         styles={selectStyles}
       />
+      {watch("estensione") === "EXCEL" ? (
+        <Controller
+          control={control}
+          name={"includiCampi"}
+          render={({ field: { onChange, value } }) => (
+            <FormControlLabel
+              control={<Checkbox checked={value} onChange={onChange} />}
+              label="Includi campi"
+            />
+          )}
+        />
+      ) : null}
       <Stack direction={"row-reverse"} spacing={1}>
         <LoadingButton
           type="submit"
