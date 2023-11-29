@@ -13,19 +13,7 @@ import getApiUrl from "../../utils/BeUrl";
 import { mandaNotifica } from "../../utils/ToastUtils";
 import { useRouter } from "next/router";
 import ValidazioneForm from "../../components/reclamo/validazioneForm";
-/*
-Possono esistere reclami che non hanno ODL?
-Dal reclamo devo prendere il cliente
-Passo 1 -
-Se esiste il cliente visualizzo i suoi dati in formato non modificabile
-altrimenti con caselle di testo e devo inserire dati del cliente.
-(FORM,VALUTA,ALTRO???)
-Passo 2 -
-Ottengo dati bobine da Embyon, ottengo form, creo le combinazioni e le presento all'utente
-L'utente compila il form
-Passo 3(Opzionale) - Note e file aggiuntivi
-A questo punto il programma crea il reclamo
-*/
+import dayjs from "dayjs";
 
 export default function Page() {
   const [step, setStep] = useState(0);
@@ -73,7 +61,10 @@ export default function Page() {
     const obj = { ...dataReclamo, ...data };
     setDataReclamo(obj);
     instance
-      .post(getApiUrl() + "api/reclamo/nuovo", obj)
+      .post(getApiUrl() + "api/reclamo/nuovo", {
+        ...obj,
+        timestampCreazione: dayjs(obj.timestampCreazione).format("DD/MM/YYYY"),
+      })
       .then((response) => {
         router.push(response.data + "/generale");
       })

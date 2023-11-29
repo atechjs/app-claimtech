@@ -68,6 +68,7 @@ export default function InserimentoDatiFornitura({
             columnsData={formData.campoList}
             exprValuta={formData.exprValuta}
             onSubmit={onDatiFornituraInseriti}
+            abilitaModifica={true}
           />
         ) : (
           <></>

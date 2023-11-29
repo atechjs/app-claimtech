@@ -15,6 +15,8 @@ import { Controller, useForm } from "react-hook-form";
 import MyReactSelect from "../my-react-select-impl/myReactSelect";
 import useTipologiaReclamoSelect from "../fetching/useTipologiaReclamoSelect";
 import useCausaSelect from "../fetching/useCausaSelect";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
   const { tipologiaReclamoList } = useTipologiaReclamoSelect();
@@ -29,6 +31,7 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
     defaultValues: {
       codiceCliente: dataReclamo.codiceCliente,
       descrizioneCliente: dataReclamo.descrizioneCliente,
+      timestampCreazione: dayjs(),
       idTipologiaReclamo: 1,
       codiceReclamoCliente: null,
       idCausaReclamo: null,
@@ -107,6 +110,28 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
           />
         </Stack>
         <Divider />
+        <Controller
+          name="timestampCreazione"
+          control={control}
+          rules={{ required: "La data è obbligatoria" }}
+          defaultValue={null}
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <DatePicker
+              label="Aperto il"
+              format="DD/MM/YYYY"
+              value={dayjs(value)}
+              control={control}
+              onChange={(event) => onChange(event)}
+              slotProps={{
+                textField: {
+                  error: !!error,
+                  helperText: error?.message,
+                  size: "small",
+                },
+              }}
+            />
+          )}
+        />
         <TextField
           {...register("codiceReclamoCliente")}
           size="small"
@@ -148,11 +173,32 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
             name={"includiRateo"}
             render={({ field: { onChange, value } }) => (
               <FormControlLabel
-                control={<Checkbox checked={value} onChange={onChange} />}
+                control={
+                  <Checkbox
+                    checked={value}
+                    onChange={(e) => {
+                      setValue("esercizioRateo", null);
+                      onChange(e.target.checked);
+                    }}
+                  />
+                }
                 label="Includi nel rateo"
               />
             )}
           />
+          {watch("includiRateo") === true ? (
+            <TextField
+              {...register("esercizioRateo")}
+              size="small"
+              margin="normal"
+              id="esercizioRateo"
+              label="Esercizio rateo"
+              name="esercizioRateo"
+              error={!!errors.esercizioRateo}
+              helperText={errors.esercizioRateo?.message}
+              type="number"
+            />
+          ) : null}
           <Controller
             control={control}
             name={"inviaComunicazioni"}

@@ -28,11 +28,16 @@ import GetCurrentAxiosInstance from "../../../../utils/Axios";
 import getApiUrl from "../../../../utils/BeUrl";
 import { mandaNotifica } from "../../../../utils/ToastUtils";
 import LabelInfo from "../../../../components/reclamo/LabelInfo";
+import useTipologiaReclamoSelect from "../../../../components/fetching/useTipologiaReclamoSelect";
+import MyReactSelect from "../../../../components/my-react-select-impl/myReactSelect";
+import { DatePicker } from "@mui/x-date-pickers";
+import usePermessiReclamoUtente from "../../../../components/fetching/usePermessiReclamoUtente";
 
 export default function Page() {
   const router = useRouter();
   const [modifica, setModifica] = useState(false);
   const instance = GetCurrentAxiosInstance();
+  const { tipologiaReclamoList } = useTipologiaReclamoSelect();
 
   const { data, mutate } = useReclamoGenerale(router.query.slug);
   const form = useForm({
@@ -41,9 +46,20 @@ export default function Page() {
       includiRateo: false,
       noteGenerali: "",
       inviaComunicazioni: false,
+      idTipologiaReclamo: null,
+      timestampCreazione: dayjs(),
+      esercizioRateo: dayjs().get("y"),
     },
   });
-  const { register, handleSubmit, formState, reset, control, getValues } = form;
+  const {
+    register,
+    handleSubmit,
+    formState,
+    reset,
+    control,
+    getValues,
+    watch,
+  } = form;
 
   const abilitaModifica = () => {
     setModifica(true);
@@ -52,7 +68,12 @@ export default function Page() {
 
   const salvaModifiche = () => {
     instance
-      .post(getApiUrl() + "api/reclamo/updateGenerale", getValues())
+      .post(getApiUrl() + "api/reclamo/updateGenerale", {
+        ...getValues(),
+        timestampCreazione: dayjs(getValues().timestampCreazione).format(
+          "DD/MM/YYYY"
+        ),
+      })
       .then(() => {
         mandaNotifica("Reclamo aggiornato correttamente", "success");
         setModifica(false);
@@ -93,8 +114,20 @@ export default function Page() {
       </Stack>
     );
   };
+  const selectStyles = {
+    menu: (base) => ({
+      ...base,
+      zIndex: 100,
+    }),
+  };
 
-  if (data === undefined) return <CircularProgress />;
+  const onPermessiCaricati = (data) => {
+    setPermessiReclamoUtente(data);
+  };
+  usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
+
+  if (data === undefined || !permessiReclamoUtente) return <CircularProgress />;
   return (
     <Box p={1}>
       <Grid container spacing={2}>
@@ -111,18 +144,63 @@ export default function Page() {
                 </AccordionSummary>
                 <AccordionDetails>
                   <Stack direction={"column"} divider={<Divider />} spacing={1}>
-                    <Stack direction={"row"} spacing={2}>
-                      <LabelInfo
-                        label="Tipologia reclamo"
-                        value={data.codiceTipologiaReclamo}
-                      />
+                    <Stack
+                      direction={"row"}
+                      spacing={2}
+                      justifyContent="flex-start"
+                      alignItems="flex-end"
+                    >
+                      {!modifica || data.statoChiusura ? (
+                        <LabelInfo
+                          label="Tipologia reclamo"
+                          value={data.codiceTipologiaReclamo}
+                        />
+                      ) : tipologiaReclamoList ? (
+                        <MyReactSelect
+                          control={control}
+                          name="idTipologiaReclamo"
+                          label="Tipologia reclamo"
+                          options={tipologiaReclamoList}
+                          styles={selectStyles}
+                        />
+                      ) : (
+                        <></>
+                      )}
                       <LabelInfo label="Numero" value={data.numero} />
-                      <LabelInfo
-                        label="Creato il"
-                        value={dayjs(data.timestampCreazione).format(
-                          "DD/MM/YYYY [alle] HH:mm:ss"
-                        )}
-                      />
+                      {!modifica ? (
+                        <LabelInfo
+                          label="Aperto il"
+                          value={dayjs(data.timestampCreazione).format(
+                            "DD/MM/YYYY [alle] HH:mm:ss"
+                          )}
+                        />
+                      ) : (
+                        <Controller
+                          name="timestampCreazione"
+                          control={control}
+                          rules={{ required: "La data è obbligatoria" }}
+                          defaultValue={null}
+                          render={({
+                            field: { onChange, value },
+                            fieldState: { error },
+                          }) => (
+                            <DatePicker
+                              label="Aperto il"
+                              format="DD/MM/YYYY"
+                              value={dayjs(value)}
+                              control={control}
+                              onChange={(event) => onChange(event)}
+                              slotProps={{
+                                textField: {
+                                  error: !!error,
+                                  helperText: error?.message,
+                                  size: "small",
+                                },
+                              }}
+                            />
+                          )}
+                        />
+                      )}
                       {data.timestampChiusura ? (
                         <LabelInfo
                           label="Chiuso il"
@@ -171,25 +249,45 @@ export default function Page() {
                       />
                     </Stack>
                     <LabelInfo label="Valuta" value={data.codiceValuta} />
-                    {!modifica ? (
-                      <LabelInfo
-                        label="Includi nel rateo"
-                        value={data.includiRateo ? "SI" : "NO"}
-                      />
-                    ) : (
-                      <Controller
-                        control={control}
-                        name={"includiRateo"}
-                        render={({ field: { onChange, value } }) => (
-                          <FormControlLabel
-                            control={
-                              <Checkbox checked={value} onChange={onChange} />
-                            }
-                            label="Includi nel rateo"
+                    <Stack direction={"row"} spacing={2}>
+                      {!modifica ? (
+                        <LabelInfo
+                          label="Includi nel rateo"
+                          value={data.includiRateo ? "SI" : "NO"}
+                        />
+                      ) : (
+                        <Controller
+                          control={control}
+                          name={"includiRateo"}
+                          render={({ field: { onChange, value } }) => (
+                            <FormControlLabel
+                              control={
+                                <Checkbox checked={value} onChange={onChange} />
+                              }
+                              label="Includi nel rateo"
+                            />
+                          )}
+                        />
+                      )}
+                      {!modifica ? (
+                        data.esercizioRateo ? (
+                          <LabelInfo
+                            label="Esercizio rateo"
+                            value={data.esercizioRateo}
                           />
-                        )}
-                      />
-                    )}
+                        ) : null
+                      ) : (
+                        <TextField
+                          {...register("esercizioRateo")}
+                          size="small"
+                          margin="normal"
+                          id="esercizioRateo"
+                          label="Esercizio rateo"
+                          name="esercizioRateo"
+                          type="number"
+                        />
+                      )}
+                    </Stack>
                     {!modifica ? (
                       <LabelInfo
                         label="Invia comunicazioni"
@@ -232,6 +330,7 @@ export default function Page() {
                           variant="outlined"
                           color="warning"
                           onClick={() => abilitaModifica()}
+                          disabled={!permessiReclamoUtente.modifica}
                         >
                           Modifica
                         </Button>

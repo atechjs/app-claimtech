@@ -38,7 +38,7 @@ import { getCodiciArticoloUnivoci } from "../../utils/articoloUtils";
 import { getCodiciLineaUnivoci } from "../../utils/lineaUtils";
 import DialogDownloadReportReclami from "../downloadReportReclami/dialogDownloadReportReclami";
 
-export default function ReclamoAppBar({ data, onSync }) {
+export default function ReclamoAppBar({ data, onSync, permessiReclamoUtente }) {
   if (data === undefined) return;
   const router = useRouter();
   const instance = GetCurrentAxiosInstance();
@@ -274,6 +274,7 @@ export default function ReclamoAppBar({ data, onSync }) {
                     options={fasiList}
                     value={fasiList.find((x) => x.value === data.idFase)}
                     onChange={(newValue) => onUpdateReclamiHere(newValue)}
+                    isDisabled={!permessiReclamoUtente.modifica}
                   />
                 ) : (
                   <></>

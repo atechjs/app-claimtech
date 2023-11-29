@@ -12,7 +12,9 @@ export default function SelectCambiaFase({
   onUpdateReclami,
   fl,
   idFase,
+  disabled,
 }) {
+  console.log("disabled", disabled);
   const form = useForm({
     defaultValues: {
       reclamiList: reclamiList,
@@ -81,8 +83,9 @@ export default function SelectCambiaFase({
             transform: "none",
           }),
         }}
+        isDisabled={disabled}
       />
-      <Button type="submit" variant="outlined">
+      <Button type="submit" variant="outlined" disabled={disabled}>
         Salva
       </Button>
     </Stack>

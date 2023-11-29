@@ -1,17 +1,17 @@
 import {
   Avatar,
   Box,
-  Button,
   Chip,
   CircularProgress,
   Container,
-  Divider,
-  FormLabel,
   Stack,
+  Autocomplete,
   TextField,
   ThemeProvider,
   Typography,
   createTheme,
+  FormLabel,
+  FormGroup,
 } from "@mui/material";
 import Layout from "../components/layout";
 import NestedLayout from "../components/nestedLayout";
@@ -58,8 +58,17 @@ import {
   formattaArticolo,
   getCodiciArticoloUnivoci,
 } from "../utils/articoloUtils";
+import { getCodiciCausaUnivoci } from "../utils/causaUtils";
+import useCausaSelect from "../components/fetching/useCausaSelect";
+import useStatoFornituraSelect from "../components/fetching/useStatoFornituraSelect";
+import { DateField } from "@mui/x-date-pickers/DateField";
+import { getStatiFornituraList } from "../utils/partitaUtils";
 
 export default function Page() {
+  var isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
+  dayjs.extend(isSameOrBefore);
+  var isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
+  dayjs.extend(isSameOrAfter);
   //const [filtroSelezionato, setFiltroSelezionato] = useState(undefined);
   const [idFiltroSelezionatoInterno, setIdFiltroSelezionatoInterno] =
     useState(-1);
@@ -78,6 +87,8 @@ export default function Page() {
   const instance = GetCurrentAxiosInstance();
   const [righeSelezionate, setRigheSelezionate] = useState([]);
   const { clientiList: optionsClienti } = useClienteSelect();
+  const { causaList } = useCausaSelect();
+  const { statoFornituraList } = useStatoFornituraSelect();
   //idReclamoModificato è utilizzato per il dialog di condivisione a seguito salvataggio
   const [idReclamoModificato, setIdReclamoModificato] = useState(undefined);
   useEffect(() => {
@@ -343,6 +354,13 @@ export default function Page() {
       options: {
         filter: true,
         filterType: "textField",
+        filterOptions: {
+          names: [],
+          logic(val, value) {
+            const numeroReclamo = Number(value[0]);
+            return val !== numeroReclamo;
+          },
+        },
         sort: true,
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
@@ -432,27 +450,165 @@ export default function Page() {
       name: "timestampCreazione",
       label: "Data apertura",
       options: {
-        filter: false,
+        filter: true,
         sort: true,
         display: true,
         customBodyRender: (value, tableMeta, update) => {
           return <span>{dayjs(value).format("DD/MM/YYYY")}</span>;
         },
+        filterType: "custom",
+        customFilterListOptions: {
+          render: (v) => {
+            if (v[0] && v[1]) {
+              return [
+                `Da: ${v[0].format("DD/MM/YYYY")}`,
+                `A: ${v[1].format("DD/MM/YYYY")}`,
+              ];
+            } else if (v[0]) {
+              return `Da: ${v[0].format("DD/MM/YYYY")}`;
+            } else if (v[1]) {
+              return `A: ${v[1].format("DD/MM/YYYY")}`;
+            }
+            return [];
+          },
+          update: (filterList, filterPos, index) => {
+            if (filterPos === 0) {
+              filterList[index].splice(filterPos, 1, "");
+            } else if (filterPos === 1) {
+              filterList[index].splice(filterPos, 1);
+            } else if (filterPos === -1) {
+              filterList[index] = [];
+            }
+
+            return filterList;
+          },
+        },
+        filterOptions: {
+          names: [],
+          logic(data, filters) {
+            const timestampCreazione = dayjs(data);
+            if (filters[0] && filters[1]) {
+              return !(
+                !timestampCreazione.isSameOrBefore(filters[0]) &&
+                !timestampCreazione.isSameOrAfter(filters[1])
+              );
+            } else if (filters[0]) {
+              return !timestampCreazione.isSameOrAfter(filters[0]);
+            } else if (filters[1]) {
+              return !timestampCreazione.isSameOrBefore(filters[1]);
+            }
+            return false;
+          },
+          display: (filterList, onChange, index, column) => (
+            <Stack spacing={1}>
+              <FormLabel>Data apertura</FormLabel>
+              <FormGroup row>
+                <DateField
+                  id="dataAperturaDa"
+                  name="dataAperturaDa"
+                  label="Da"
+                  value={filterList[index][0] || ""}
+                  onChange={(newValue) => {
+                    filterList[index][0] = dayjs(newValue);
+                    onChange(filterList[index], index, column);
+                  }}
+                  slotProps={{
+                    textField: { size: "small" },
+                  }}
+                  style={{ width: "45%", marginRight: "5%" }}
+                />
+                <DateField
+                  id="dataAperturaA"
+                  name="dataAperturaA"
+                  label="A"
+                  value={filterList[index][1] || ""}
+                  onChange={(newValue) => {
+                    filterList[index][1] = dayjs(newValue);
+                    onChange(filterList[index], index, column);
+                  }}
+                  slotProps={{
+                    textField: { size: "small" },
+                  }}
+                  style={{ width: "45%", marginRight: "5%" }}
+                />
+              </FormGroup>
+            </Stack>
+          ),
+        },
       },
     },
     {
-      name: "timestampChiusura",
-      label: "Data chiusura",
+      name: "partitaList",
+      label: "Cause",
       options: {
-        filter: false,
+        filter: true,
         sort: true,
         display: true,
-        customBodyRender: (value, tableMeta, update) => {
-          return value === undefined || value == null ? (
-            <span>-</span>
-          ) : (
-            <span>{dayjs(value).format("DD/MM/YYYY")}</span>
+        filterType: "custom",
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          return (
+            <Stack direction={"column"}>
+              {getCodiciCausaUnivoci(
+                reclamiList[dataIndex].partitaList.flatMap((x) =>
+                  x.causaReclamoList.map((y) => y.codiceCausa)
+                )
+              ).map((causa) => {
+                return <span>{causa}</span>;
+              })}
+            </Stack>
           );
+        },
+        customFilterListOptions: {
+          render: (v) =>
+            v
+              .filter((x) => x !== undefined && x !== null)
+              .map((l) => l.label.toUpperCase()),
+          update: (filterList, filterPos, index) => {
+            filterList[index].splice(filterPos, 1);
+            actionSalvataggio.resetFiltro(index);
+            return filterList;
+          },
+        },
+        filterOptions: {
+          logic: (val, filters) => {
+            const causaSelezionata = filters[0];
+            if (!causaSelezionata || causaSelezionata === null) return false;
+            console.log("causaSelezionata", causaSelezionata);
+            const idCausaSelezionata = causaSelezionata.value;
+            const causaList = val.flatMap((x) =>
+              x.causaReclamoList.map((y) => y.idCausa)
+            );
+            return (
+              causaList.find((x) => x === idCausaSelezionata) === undefined
+            );
+          },
+          display: (filterList, onChange, index, column) => {
+            return (
+              <Autocomplete
+                key={"fornituraCausaReclamoList"}
+                options={causaList}
+                sx={{ width: "50vh", maxWidth: "100%" }}
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value.value
+                }
+                onChange={(e, value) => {
+                  filterList[index] = [value];
+                  onChange(filterList[index], index, column);
+                }}
+                size="small"
+                fullWidth
+                renderInput={(params) => (
+                  <TextField
+                    label={"Causa"}
+                    fullWidth
+                    size="small"
+                    {...params}
+                  />
+                )}
+              />
+            );
+          },
         },
       },
     },
@@ -466,9 +622,7 @@ export default function Page() {
           names: [],
           logic(codList, value) {
             const numList = getNumList(codList.flatMap((x) => x.codice));
-            console.log("numList", numList);
             const o = numList.find((x) => x === Number(value[0]));
-            console.log("o", o);
             return o === undefined;
           },
         },
@@ -623,7 +777,7 @@ export default function Page() {
       options: {
         filter: false,
         sort: true,
-        display: true,
+        display: false,
         customBodyRender: (value, tableMeta, update) => {
           return (
             <Stack
@@ -687,9 +841,67 @@ export default function Page() {
       name: "partitaList",
       label: "partitaList",
       options: {
-        filter: false,
+        filter: true,
         sort: false,
         display: false,
+        filterType: "custom",
+        customFilterListOptions: {
+          render: (v) =>
+            v
+              .filter((x) => x !== undefined && x !== null)
+              .map((l) => l.label.toUpperCase()),
+          update: (filterList, filterPos, index) => {
+            filterList[index].splice(filterPos, 1);
+            actionSalvataggio.resetFiltro(index);
+            return filterList;
+          },
+        },
+        filterOptions: {
+          logic: (val, filters) => {
+            const statoFornituraSelezionato = filters[0];
+            if (
+              !statoFornituraSelezionato ||
+              statoFornituraSelezionato === null
+            )
+              return false;
+            const idStatoFornituraSelezionato = statoFornituraSelezionato.value;
+            const statoFornituraList = val.flatMap((x) =>
+              x.causaReclamoList.map((y) => y.idStato)
+            );
+            return (
+              statoFornituraList.find(
+                (x) => x === idStatoFornituraSelezionato
+              ) === undefined
+            );
+          },
+          display: (filterList, onChange, index, column) => {
+            return (
+              <Autocomplete
+                key={"partitaList"}
+                options={statoFornituraList}
+                sx={{ width: "50vh", maxWidth: "100%" }}
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value.value
+                }
+                onChange={(e, value) => {
+                  filterList[index] = [value];
+                  onChange(filterList[index], index, column);
+                }}
+                size="small"
+                fullWidth
+                renderInput={(params) => (
+                  <TextField
+                    label={"Stato fornitura"}
+                    fullWidth
+                    size="small"
+                    {...params}
+                  />
+                )}
+              />
+            );
+          },
+        },
       },
     },
     {
@@ -717,6 +929,45 @@ export default function Page() {
         filter: false,
         sort: true,
         display: false,
+      },
+    },
+    {
+      name: "modifica",
+      label: "modifica",
+      options: {
+        filter: false,
+        sort: false,
+        display: false,
+      },
+    },
+    {
+      name: "partitaList",
+      label: "Stati",
+      options: {
+        filter: true,
+        sort: true,
+        display: true,
+        filterType: "custom",
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          const map = getStatiFornituraList(
+            reclamiList[dataIndex].partitaList.flatMap((x) =>
+              x.causaReclamoList.map((y) => y.codiceStato)
+            )
+          );
+          return (
+            <Stack direction={"column"} spacing={1}>
+              {Object.keys(map).map((codiceStato) => {
+                return (
+                  <Chip
+                    label={codiceStato + "(" + map[codiceStato].length + ")"}
+                    color="primary"
+                    size="small"
+                  />
+                );
+              })}
+            </Stack>
+          );
+        },
       },
     },
   ];

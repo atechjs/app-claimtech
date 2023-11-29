@@ -53,6 +53,7 @@ export default function ModificaDatiFornitura({
   onSubmit,
   modificaLista,
   widthOffset,
+  abilitaModifica = false,
 }) {
   const instance = GetCurrentAxiosInstance();
   const { causaList } = useCausaSelect();
@@ -578,7 +579,7 @@ export default function ModificaDatiFornitura({
               onClick={() => salvaValori()}
               startIcon={<SaveIcon />}
               size="large"
-              disabled={data.length === 0}
+              disabled={!abilitaModifica || data.length === 0}
             >
               Salva
             </Button>
@@ -589,6 +590,7 @@ export default function ModificaDatiFornitura({
                   onClick={() => setDialogAggiungiOpen(true)}
                   startIcon={<AddIcon />}
                   size="small"
+                  disabled={!abilitaModifica}
                 >
                   Aggiungi partite
                 </Button>
@@ -598,6 +600,7 @@ export default function ModificaDatiFornitura({
                   onClick={() => setDialogCopiaOpen(true)}
                   startIcon={<ContentCopyIcon />}
                   size="small"
+                  disabled={!abilitaModifica}
                 >
                   Copia
                 </Button>
@@ -607,6 +610,7 @@ export default function ModificaDatiFornitura({
                   onClick={() => setDialogEliminaOpen(true)}
                   startIcon={<RemoveIcon />}
                   size="small"
+                  disabled={!abilitaModifica}
                 >
                   Elimina
                 </Button>

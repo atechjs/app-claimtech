@@ -17,10 +17,17 @@ import GetCurrentAxiosInstance from "../../../../utils/Axios";
 import getApiUrl from "../../../../utils/BeUrl";
 import { mandaNotifica } from "../../../../utils/ToastUtils";
 import DialogCondivisioneUtenti from "../../../../components/condivisioneUtente/DialogCondivisioneUtenti";
+import Select from "react-select";
+import usePermessiReclamoUtente from "../../../../components/fetching/usePermessiReclamoUtente";
 
 export default function Page() {
   const router = useRouter();
   const instance = GetCurrentAxiosInstance();
+
+  const modificaOptions = [
+    { label: "SI", value: true },
+    { label: "NO", value: false },
+  ];
 
   const onDataCaricata = (data) => {
     setList(data);
@@ -29,8 +36,13 @@ export default function Page() {
     router.query.slug,
     onDataCaricata
   );
+
+  const onPermessiCaricati = (data) => {
+    setPermessiReclamoUtente(data);
+  };
+  usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
   const [list, setList] = useState(undefined);
-  const [salva, setSalva] = useState(false);
 
   const [dialogCondivisioneOpended, setDialogCondivisioneOpened] =
     useState(false);
@@ -57,14 +69,13 @@ export default function Page() {
 
   const rimuovi = (id) => {
     setList(list.filter((x) => x.idUtente !== id));
-    setSalva(true);
   };
 
   const onSalva = () => {
     instance
       .post(getApiUrl() + "api/reclamo/updateCondivisione", {
         id: router.query.slug,
-        idUtenteList: list.map((x) => x.idUtente),
+        utenteList: list,
       })
       .then(() =>
         mandaNotifica("Condivisione modificata con successo", "success")
@@ -77,7 +88,16 @@ export default function Page() {
       );
   };
 
-  if (!list) return;
+  const onSelectChange = (utente, selected) => {
+    const newValue = !selected || selected == null ? null : selected.value;
+    setList(
+      list.map((ut) =>
+        ut.idUtente !== utente.idUtente ? ut : { ...utente, modifica: newValue }
+      )
+    );
+  };
+
+  if (!list || !permessiReclamoUtente) return;
   return (
     <Stack direction={"column"} spacing={1} p={1}>
       <Paper sx={{ p: 1 }}>
@@ -85,16 +105,18 @@ export default function Page() {
         <Stack direction={"row"} spacing={1}>
           <Button
             variant="contained"
+            onClick={() => onSalva()}
+            disabled={!permessiReclamoUtente.modifica}
+          >
+            Salva
+          </Button>
+          <Button
+            variant="outlined"
             startIcon={<AddIcon />}
             onClick={() => handleOpenDialogCondivisione()}
           >
             Nuova
           </Button>
-          {salva ? (
-            <Button variant="outlined" onClick={() => onSalva()}>
-              Salva
-            </Button>
-          ) : null}
         </Stack>
       </Paper>
       <TableContainer component={Paper}>
@@ -104,15 +126,35 @@ export default function Page() {
               <TableCell>Nome</TableCell>
               <TableCell>Cognome</TableCell>
               <TableCell>Username</TableCell>
+              <TableCell>Può modificare?</TableCell>
               <TableCell>Azione</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {list.map((l) => (
+            {list.map((l, index) => (
               <TableRow key={l.idUtente}>
                 <TableCell>{l.nome}</TableCell>
                 <TableCell>{l.cognome}</TableCell>
                 <TableCell>{l.username}</TableCell>
+                <TableCell>
+                  {
+                    <Select
+                      options={modificaOptions}
+                      onChange={(e) => onSelectChange(l, e)}
+                      autosize={true}
+                      menuPortalTarget={document.body}
+                      menuPosition={"fixed"}
+                      value={
+                        modificaOptions.find(
+                          (option) => option.value === l.modifica
+                        ) || null
+                      }
+                      isDisabled={
+                        index === 0 || !permessiReclamoUtente.modifica
+                      }
+                    />
+                  }
+                </TableCell>
                 <TableCell>
                   {l.cancellabile ? (
                     <Button
@@ -120,6 +162,7 @@ export default function Page() {
                       color="error"
                       variant="outlined"
                       startIcon={<RemoveIcon />}
+                      disabled={!permessiReclamoUtente.modifica}
                     >
                       Elimina
                     </Button>

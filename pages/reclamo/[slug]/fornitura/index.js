@@ -15,6 +15,7 @@ import GetCurrentAxiosInstance from "../../../../utils/Axios";
 import getApiUrl from "../../../../utils/BeUrl";
 import { mandaNotifica } from "../../../../utils/ToastUtils";
 import DialogCondivisioneUtenti from "../../../../components/condivisioneUtente/DialogCondivisioneUtenti";
+import usePermessiReclamoUtente from "../../../../components/fetching/usePermessiReclamoUtente";
 
 export default function Page() {
   const router = useRouter();
@@ -30,7 +31,13 @@ export default function Page() {
     trigger({ id: router.query.slug });
   }, [isReady]);
 
-  if (data === undefined) return <CircularProgress />;
+  const onPermessiCaricati = (data) => {
+    setPermessiReclamoUtente(data);
+  };
+  usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
+
+  if (data === undefined || !permessiReclamoUtente) return <CircularProgress />;
 
   const onDatiFornituraInseriti = (dataAggiornata, responseData) => {
     if (responseData.richiedeCondivisione) {
@@ -76,6 +83,7 @@ export default function Page() {
         exprValuta={data.exprValuta}
         onSubmit={onDatiFornituraInseriti}
         modificaLista={true}
+        abilitaModifica={permessiReclamoUtente.modifica}
       />
       <DialogCondivisioneUtenti
         opened={openedDialogCondivisione}

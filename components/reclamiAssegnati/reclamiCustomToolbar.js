@@ -145,6 +145,13 @@ export default function ReclamiCustomToolbar({
     return Object.keys(map).length == 1;
   };
 
+  const tuttiModificaAbilitata = () => {
+    for (let i = 0; i < reclamiSelezionati.length; i++) {
+      if (!reclamiSelezionati[i][27]) return false;
+    }
+    return true;
+  };
+
   const { fasiList, isValidating, mutate } = useFaseSelettore(
     tuttiStessaFase() ? reclamiSelezionati[0][2] : null
   );
@@ -205,6 +212,7 @@ export default function ReclamiCustomToolbar({
       .post(getApiUrl() + "api/reclamo/modificaIncludiNelRateo", {
         idReclamoList: idReclamoList,
         includiRateo: data.includiRateo,
+        esercizioRateo: data.esercizioRateo,
       })
       .then(() => {
         mandaNotifica("Campo includi nel rateo aggiornato", "success");
@@ -331,6 +339,7 @@ export default function ReclamiCustomToolbar({
           onUpdateReclami={onUpdateReclamiHere}
           fl={fasiList}
           idFase={reclamiSelezionati[0][2]}
+          disabled={!tuttiModificaAbilitata()}
         />
       ) : (
         <></>
@@ -361,6 +370,7 @@ export default function ReclamiCustomToolbar({
           size="small"
           color="info"
           onClick={() => handleClickOpenDialogRateo()}
+          disabled={!tuttiModificaAbilitata()}
         >
           R
         </IconButton>

@@ -35,3 +35,13 @@ export const getPartitaList = (columnsData, list) => {
   });
   return finalPartitaList;
 };
+
+export const getStatiFornituraList = (list) => {
+  let map = {};
+  for (let i = 0; i < list.length; i++) {
+    const obj = list[i];
+    let exArr = !map[obj] || map[obj] === null ? [] : map[obj];
+    map = { ...map, [obj]: [...exArr, obj] };
+  }
+  return map;
+};

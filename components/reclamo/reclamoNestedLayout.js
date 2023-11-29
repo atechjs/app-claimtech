@@ -9,16 +9,33 @@ import authServ from "../../services/auth.service";
 import getApiUrl from "../../utils/BeUrl";
 import ReclamoTabSelector from "./reclamoTabSelector";
 import { mandaNotifica } from "../../utils/ToastUtils";
+import usePermessiReclamoUtente from "../fetching/usePermessiReclamoUtente";
+import axios from "axios";
 
 export default function ReclamoNestedLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const { isReady } = router;
   const [token, setToken] = useState(undefined);
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
   useEffect(() => {
     setToken(authServ.getCurrentJwtToken());
   }, []);
-
+  useEffect(() => {
+    if (!router.query.slug || !token) return;
+    const instance = axios.create();
+    instance.defaults.headers.common["Authorization"] = "Bearer " + token;
+    instance.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
+    instance
+      .get(
+        getApiUrl() +
+          "api/reclamo/permessiReclamoUtente?id=" +
+          router.query.slug
+      )
+      .then((response) => {
+        setPermessiReclamoUtente(response.data);
+      });
+  }, [router.query.slug, token]);
   const onErrorCall = () => {
     mandaNotifica("Impossibile caricare il reclamo", "error");
   };
@@ -29,7 +46,7 @@ export default function ReclamoNestedLayout({ children }) {
     onErrorCall
   );
 
-  if (data === undefined || isMutating)
+  if (data === undefined || isMutating || !permessiReclamoUtente)
     return (
       <Layout>
         <ReclamoAppBar data={undefined}></ReclamoAppBar>
@@ -52,9 +69,17 @@ export default function ReclamoNestedLayout({ children }) {
 
   return (
     <Layout>
-      <ReclamoAppBar data={data} onSync={onSync} />
+      <ReclamoAppBar
+        data={data}
+        onSync={onSync}
+        permessiReclamoUtente={permessiReclamoUtente}
+      />
       <Stack direction={"column"}>
-        <ReclamoTabSelector id={data.id} value={getSelectedTab()} />
+        <ReclamoTabSelector
+          id={data.id}
+          value={getSelectedTab()}
+          permessiReclamoUtente={permessiReclamoUtente}
+        />
         {children}
       </Stack>
     </Layout>
