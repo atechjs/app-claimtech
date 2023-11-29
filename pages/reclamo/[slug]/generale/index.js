@@ -125,7 +125,9 @@ export default function Page() {
     setPermessiReclamoUtente(data);
   };
   usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
-  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState({
+    modifica: true,
+  });
 
   if (data === undefined || !permessiReclamoUtente) return <CircularProgress />;
   return (

@@ -32,12 +32,15 @@ export default function Page() {
   }, [isReady]);
 
   const onPermessiCaricati = (data) => {
+    console.log("permessi caricati");
     setPermessiReclamoUtente(data);
   };
   usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
-  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState({
+    modifica: true,
+  });
 
-  if (data === undefined || !permessiReclamoUtente) return <CircularProgress />;
+  if (data === undefined) return <CircularProgress />;
 
   const onDatiFornituraInseriti = (dataAggiornata, responseData) => {
     if (responseData.richiedeCondivisione) {

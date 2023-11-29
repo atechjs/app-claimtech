@@ -24,7 +24,9 @@ export default function Page() {
     setPermessiReclamoUtente(data);
   };
   usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
-  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState({
+    modifica: true,
+  });
   if (!permessiReclamoUtente) return;
   return (
     <Stack direction={"column"} spacing={1} p={1}>
