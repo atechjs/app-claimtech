@@ -91,6 +91,22 @@ export default function Page() {
         sort: true,
       },
     },
+    {
+      name: "minValore",
+      label: "Valore reclamo minimo",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "maxValore",
+      label: "Valore reclamo massimo",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
   ];
   return (
     <Box p={2}>

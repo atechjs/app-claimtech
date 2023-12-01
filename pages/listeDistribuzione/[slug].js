@@ -58,6 +58,8 @@ export default function Page() {
     reset({
       id: data.id,
       codice: data.codice,
+      minValoreReclamo: data.minValoreReclamo,
+      maxValoreReclamo: data.maxValoreReclamo,
       idStabilimento: data.idStabilimento,
       destinatarioList: data.destinatarioList,
     });
@@ -67,6 +69,8 @@ export default function Page() {
     defaultValues: {
       id: null,
       codice: null,
+      minValoreReclamo: 0,
+      maxValoreReclamo: 0,
       idStabilimento: null,
       destinatarioList: [],
     },
@@ -170,6 +174,36 @@ export default function Page() {
             ) : (
               <></>
             )}
+            <TextField
+              {...register("minValoreReclamo", {
+                required: "Il valore minimo è obbligatorio",
+              })}
+              size="small"
+              margin="normal"
+              required
+              id="minValoreReclamo"
+              label="Valore reclamo minimo"
+              defaultValue={0}
+              name="minValoreReclamo"
+              error={!!errors.minValoreReclamo}
+              helperText={errors.minValoreReclamo?.message}
+              type="number"
+            />
+            <TextField
+              {...register("maxValoreReclamo", {
+                required: "Il valore massimo è obbligatorio",
+              })}
+              size="small"
+              margin="normal"
+              required
+              id="maxValoreReclamo"
+              label="Valore reclamo massimo"
+              defaultValue={0}
+              name="maxValoreReclamo"
+              error={!!errors.maxValoreReclamo}
+              helperText={errors.maxValoreReclamo?.message}
+              type="number"
+            />
             {stabilimentiList ? (
               <MyReactSelect
                 control={control}
