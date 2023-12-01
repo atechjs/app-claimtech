@@ -1074,6 +1074,7 @@ export default function Page() {
       const columnData = rowData[24];
       const exprValuta = rowData[25];
       const modificaLista = false;
+      const permessiModifica = rowData[27];
       return (
         <>
           <tr>
@@ -1092,6 +1093,7 @@ export default function Page() {
                   onSubmit={onModificaFornituraSubmit}
                   modificaLista={modificaLista}
                   widthOffset={450}
+                  abilitaModifica={permessiModifica}
                 />
               </Box>
             </td>

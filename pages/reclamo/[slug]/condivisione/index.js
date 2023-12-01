@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReclamoNestedLayout from "../../../../components/reclamo/reclamoNestedLayout";
 import useReclamoCondivisione from "../../../../components/fetching/useReclamoCondivisione";
 import { useRouter } from "next/router";
-import { Button, Paper, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  Paper,
+  Stack,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { getTraduzioneTabella } from "../../../../components/my-mui-data-table/traduzioneTabella";
 import MUIDataTable from "mui-datatables";
@@ -37,13 +43,17 @@ export default function Page() {
     onDataCaricata
   );
 
+  useEffect(() => {
+    mutatePermessi();
+  }, []);
   const onPermessiCaricati = (data) => {
     setPermessiReclamoUtente(data);
   };
-  usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
-  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState({
-    modifica: true,
-  });
+  const { mutate: mutatePermessi } = usePermessiReclamoUtente(
+    router.query.slug,
+    onPermessiCaricati
+  );
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
   const [list, setList] = useState(undefined);
 
   const [dialogCondivisioneOpended, setDialogCondivisioneOpened] =
@@ -99,7 +109,7 @@ export default function Page() {
     );
   };
 
-  if (!list || !permessiReclamoUtente) return;
+  if (!list || !permessiReclamoUtente) return <CircularProgress />;
   return (
     <Stack direction={"column"} spacing={1} p={1}>
       <Paper sx={{ p: 1 }}>

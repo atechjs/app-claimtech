@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReclamoNestedLayout from "../../../../components/reclamo/reclamoNestedLayout";
-import { Alert, AlertTitle, Button, Paper, Stack } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Button,
+  Paper,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import GetCurrentAxiosInstance from "../../../../utils/Axios";
 import getApiUrl from "../../../../utils/BeUrl";
@@ -20,14 +27,18 @@ export default function Page() {
       );
   };
 
+  useEffect(() => {
+    mutatePermessi();
+  }, []);
   const onPermessiCaricati = (data) => {
     setPermessiReclamoUtente(data);
   };
-  usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
-  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState({
-    modifica: true,
-  });
-  if (!permessiReclamoUtente) return;
+  const { mutate: mutatePermessi } = usePermessiReclamoUtente(
+    router.query.slug,
+    onPermessiCaricati
+  );
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
+  if (!permessiReclamoUtente) return <CircularProgress />;
   return (
     <Stack direction={"column"} spacing={1} p={1}>
       <Paper>

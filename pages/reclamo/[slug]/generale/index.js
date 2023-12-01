@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReclamoNestedLayout from "../../../../components/reclamo/reclamoNestedLayout";
 import Layout from "../../../../components/layout";
 import Grid from "@mui/material/Grid";
@@ -121,13 +121,17 @@ export default function Page() {
     }),
   };
 
+  useEffect(() => {
+    mutatePermessi();
+  }, []);
   const onPermessiCaricati = (data) => {
     setPermessiReclamoUtente(data);
   };
-  usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
-  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState({
-    modifica: true,
-  });
+  const { mutate: mutatePermessi } = usePermessiReclamoUtente(
+    router.query.slug,
+    onPermessiCaricati
+  );
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
 
   if (data === undefined || !permessiReclamoUtente) return <CircularProgress />;
   return (

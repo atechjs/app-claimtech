@@ -31,16 +31,19 @@ export default function Page() {
     trigger({ id: router.query.slug });
   }, [isReady]);
 
+  useEffect(() => {
+    mutatePermessi();
+  }, []);
   const onPermessiCaricati = (data) => {
-    console.log("permessi caricati");
     setPermessiReclamoUtente(data);
   };
-  usePermessiReclamoUtente(router.query.slug, onPermessiCaricati);
-  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState({
-    modifica: true,
-  });
+  const { mutate: mutatePermessi } = usePermessiReclamoUtente(
+    router.query.slug,
+    onPermessiCaricati
+  );
+  const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
 
-  if (data === undefined) return <CircularProgress />;
+  if (data === undefined || !permessiReclamoUtente) return <CircularProgress />;
 
   const onDatiFornituraInseriti = (dataAggiornata, responseData) => {
     if (responseData.richiedeCondivisione) {
