@@ -130,6 +130,7 @@ export default function Page() {
       idTipo: null,
       idUnitaMisura: null,
       includiNelReso: false,
+      idEtichettaCampo: null,
       idVisualizzazioneList: [],
       associazioneList: [],
     };
@@ -148,6 +149,7 @@ export default function Page() {
 
   const onSalvaCampo = (codice, values) => {
     let cl = getValues("campoList");
+    console.log("values", values);
     const idx = cl.findIndex((campo) => campo.codice === codice);
     if (idx !== -1) {
       cl[idx] = values;

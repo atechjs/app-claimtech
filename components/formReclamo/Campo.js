@@ -22,6 +22,7 @@ import MyReactSelect from "../my-react-select-impl/myReactSelect";
 import { mandaNotifica } from "../../utils/ToastUtils";
 import DialogDipendenza from "./DialogDipendenza";
 import useFormVisualizzazioniSelect from "../fetching/useFormVisualizzazioniSelect";
+import useEtichettaCampoSelect from "../fetching/useEtichettaCampoSelect";
 
 /*
 seconda sezione: lista di componenti campi in cui per ogni campo:
@@ -44,6 +45,8 @@ export default function Campo({
   nuovo = false,
 }) {
   const { visualizzazioniList } = useFormVisualizzazioniSelect();
+  const { etichettaCampoList } = useEtichettaCampoSelect();
+
   const form = useForm({
     defaultValues: {
       id: null,
@@ -54,6 +57,7 @@ export default function Campo({
       idTipo: null,
       idUnitaMisura: null,
       includiNelReso: false,
+      idEtichettaCampo: null,
       idVisualizzazioneList: [],
       associazioneList: [],
     },
@@ -122,6 +126,7 @@ export default function Campo({
       idTipo: data.idTipo,
       idUnitaMisura: data.idUnitaMisura,
       includiNelReso: data.includiNelReso,
+      idEtichettaCampo: data.idEtichettaCampo,
       idVisualizzazioneList: data.idVisualizzazioneList,
       associazioneList: data.associazioneList,
     });
@@ -383,6 +388,15 @@ export default function Campo({
                 />
               )}
             />
+            {etichettaCampoList ? (
+              <MyReactSelect
+                control={control}
+                name="idEtichettaCampo"
+                label="Etichetta campo"
+                options={etichettaCampoList}
+                styles={selectStyles}
+              />
+            ) : null}
             {visualizzazioniList ? (
               <MyReactSelect
                 control={control}
@@ -423,6 +437,21 @@ export default function Campo({
               "includiNelReso",
               "Includi nel reso?",
               data.includiNelReso ? "SI" : "NO"
+            )}
+            {etichettaCampoList ? (
+              textFieldReadOnly(
+                "idEtichettaCampo",
+                "Etichetta campo",
+                etichettaCampoList.find(
+                  (x) => x.value === data.idEtichettaCampo
+                ) !== undefined
+                  ? etichettaCampoList.find(
+                      (x) => x.value === data.idEtichettaCampo
+                    ).label
+                  : "-"
+              )
+            ) : (
+              <></>
             )}
             {visualizzazioniList ? (
               textFieldReadOnly(

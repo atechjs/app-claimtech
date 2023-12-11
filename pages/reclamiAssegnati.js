@@ -14,7 +14,6 @@ import {
   FormGroup,
 } from "@mui/material";
 import Layout from "../components/layout";
-import NestedLayout from "../components/nestedLayout";
 
 import MenuFiltri from "../components/reclamiAssegnati/menuFiltri";
 import { useEffect, useState } from "react";
@@ -28,21 +27,13 @@ import dayjs from "dayjs";
 import GetCurrentAxiosInstance from "../utils/Axios";
 import getApiUrl from "../utils/BeUrl";
 import { mandaNotifica } from "../utils/ToastUtils";
-import { getAxiosFetcher } from "../utils/AxiosFetcher";
-import useSWR from "swr";
 import useReclamiAssegnati from "../components/fetching/useReclamiAssegnati";
-import CircleIcon from "@mui/icons-material/Circle";
 import TagIcon from "@mui/icons-material/Tag";
 import Tag from "../components/tag";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import PersonIcon from "@mui/icons-material/Person";
 import ValueWithIcon from "../components/my-mui-data-table/valueWithIcon";
 import FactoryIcon from "@mui/icons-material/Factory";
 import ChipUtentiAssegnati from "../components/my-mui-data-table/chipUtentiAssegnati";
 import TagSet from "../components/my-mui-data-table/tagSet";
-import { Warning } from "@mui/icons-material";
-import MyReactSelect from "../components/my-react-select-impl/myReactSelect";
-import Select from "react-select";
 import autocompleteCustomFilterListOptions from "../components/my-mui-data-table/autocompleteCustomFilterListOptions";
 import autocompleteFilterOption from "../components/my-mui-data-table/autocompleteFilterOption";
 import useClienteSelect from "../components/fetching/useClienteSelect";
@@ -53,11 +44,8 @@ import ToolbarPulsanteAggiungi from "../components/my-mui-data-table/ToolbarPuls
 import StatoReclamo from "../components/statoReclamo";
 import EuroIcon from "@mui/icons-material/Euro";
 import ModificaDatiFornitura from "../components/reclamo/datiFornitura/modificaDatiFornitura";
-import { formattaOdl, getNumList, getPartiteUnivoche } from "../utils/OdlUtils";
-import {
-  formattaArticolo,
-  getCodiciArticoloUnivoci,
-} from "../utils/articoloUtils";
+import { getNumList, getPartiteUnivoche } from "../utils/OdlUtils";
+import { getCodiciArticoloUnivoci } from "../utils/articoloUtils";
 import { getCodiciCausaUnivoci } from "../utils/causaUtils";
 import useCausaSelect from "../components/fetching/useCausaSelect";
 import useStatoFornituraSelect from "../components/fetching/useStatoFornituraSelect";
