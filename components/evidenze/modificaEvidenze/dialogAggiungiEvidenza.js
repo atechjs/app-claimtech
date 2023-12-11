@@ -45,6 +45,7 @@ export default function DialogAggiungiEvidenza({
     if (selezionato === undefined) return false;
     return selezionato.idFornituraCausaReclamo === obj.idFornituraCausaReclamo;
   };
+  if (!dataList || !dataList.partitaList) return;
   return (
     <Dialog open={open} onClose={handleClose}>
       <Stack direction={"column"} p={2}>
