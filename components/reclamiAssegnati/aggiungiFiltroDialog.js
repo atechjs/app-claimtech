@@ -18,6 +18,7 @@ import useFaseSelect from "../fetching/useFaseSelect";
 import useTagSelect from "../fetching/useTagSelect";
 import useTipologiaReclamoSelect from "../fetching/useTipologiaReclamoSelect";
 import useStatoFornituraSelect from "../fetching/useStatoFornituraSelect";
+import useTipologiaStatoEvidenzaSelect from "../fetching/useTipologiaStatoEvidenzaSelect";
 export default function AggiungiFiltroDialog({
   aperto,
   ooo,
@@ -51,6 +52,9 @@ export default function AggiungiFiltroDialog({
     { label: "SOLO APERTI", value: true },
     { label: "SOLO CHIUSI", value: false },
   ];
+  const { data: tipologiaStatoEvidenzaList } =
+    useTipologiaStatoEvidenzaSelect();
+
   const form = useForm({
     defaultValues: {
       id: null,
@@ -62,6 +66,7 @@ export default function AggiungiFiltroDialog({
       idStatoFornitura: null,
       tagsContiene: null,
       tagsNonContiene: null,
+      idTipologiaStatoEvidenzaList: null,
       pinned: null,
     },
   });
@@ -178,6 +183,15 @@ export default function AggiungiFiltroDialog({
             ) : (
               <></>
             )}
+            <MyReactSelect
+              control={control}
+              name="idTipologiaStatoEvidenzaList"
+              label="Ha evidenze in stato(facoltativo)"
+              options={tipologiaStatoEvidenzaList}
+              menuPosition="fixed"
+              styles={selectStyles}
+              isMulti
+            />
             <MyReactSelect
               control={control}
               name={"idStatoFornitura"}

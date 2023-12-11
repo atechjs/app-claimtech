@@ -14,6 +14,7 @@ import { mandaNotifica } from "../../utils/ToastUtils";
 import { useRouter } from "next/router";
 import ValidazioneForm from "../../components/reclamo/validazioneForm";
 import dayjs from "dayjs";
+import InserimentoDatiEvidenze from "../../components/reclamo/inserimentoDatiEvidenze";
 
 export default function Page() {
   const [step, setStep] = useState(0);
@@ -60,20 +61,39 @@ export default function Page() {
   const onDatiFornituraInseriti = (data) => {
     const obj = { ...dataReclamo, ...data };
     setDataReclamo(obj);
+    setStep(6);
+  };
+
+  const onDatiEvidenzeInseriti = (data, files) => {
+    let obj = { ...dataReclamo, ...data };
+    obj = {
+      ...obj,
+      timestampCreazione: dayjs(obj.timestampCreazione).format("DD/MM/YYYY"),
+    };
+    const formData = new FormData();
+    formData.append(
+      "ddd",
+      new Blob([JSON.stringify(obj)], {
+        type: "application/json",
+      })
+    );
+
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
     instance
-      .post(getApiUrl() + "api/reclamo/nuovo", {
-        ...obj,
-        timestampCreazione: dayjs(obj.timestampCreazione).format("DD/MM/YYYY"),
+      .post(getApiUrl() + "api/reclamo/nuovo", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) => {
         router.push(response.data + "/generale");
       })
-      .catch(() =>
+      .catch((error) => {
         mandaNotifica(
           "Si sono verificati errori nel salvataggio del reclamo",
           "error"
-        )
-      );
+        );
+      });
   };
 
   const creaLayoutStep = () => {
@@ -115,7 +135,13 @@ export default function Page() {
             onDatiFornituraInseriti={onDatiFornituraInseriti}
           />
         );
-      case 5:
+      case 6:
+        return (
+          <InserimentoDatiEvidenze
+            dataReclamo={dataReclamo}
+            onDatiEvidenzeInseriti={onDatiEvidenzeInseriti}
+          />
+        );
     }
   };
 

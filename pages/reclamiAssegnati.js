@@ -63,6 +63,7 @@ import useCausaSelect from "../components/fetching/useCausaSelect";
 import useStatoFornituraSelect from "../components/fetching/useStatoFornituraSelect";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { getStatiFornituraList } from "../utils/partitaUtils";
+import useTipologiaStatoEvidenzaSelect from "../components/fetching/useTipologiaStatoEvidenzaSelect";
 
 export default function Page() {
   var isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
@@ -88,6 +89,8 @@ export default function Page() {
   const [righeSelezionate, setRigheSelezionate] = useState([]);
   const { clientiList: optionsClienti } = useClienteSelect();
   const { causaList } = useCausaSelect();
+  const { data: tipologiaStatoEvidenzaList } =
+    useTipologiaStatoEvidenzaSelect();
   const { statoFornituraList } = useStatoFornituraSelect();
   //idReclamoModificato è utilizzato per il dialog di condivisione a seguito salvataggio
   const [idReclamoModificato, setIdReclamoModificato] = useState(undefined);
@@ -428,12 +431,91 @@ export default function Page() {
       },
     },
     {
-      name: "codiceFase",
-      label: "Fase",
+      name: "partitaList",
+      label: "Evidenze",
       options: {
-        filter: false,
+        filter: true,
         sort: true,
         display: true,
+        filterType: "custom",
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          const map = getStatiFornituraList(
+            reclamiList[dataIndex].partitaList.flatMap((x) =>
+              x.causaReclamoList.flatMap((y) =>
+                y.evidenzaList.map((z) => z.codiceStato)
+              )
+            )
+          );
+          return (
+            <Stack direction={"column"} spacing={1}>
+              {Object.keys(map).map((codiceStato) => {
+                return (
+                  <Chip
+                    label={codiceStato + "(" + map[codiceStato].length + ")"}
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                  />
+                );
+              })}
+            </Stack>
+          );
+        },
+        customFilterListOptions: {
+          render: (v) =>
+            v
+              .filter((x) => x !== undefined && x !== null)
+              .map((l) => l.label.toUpperCase()),
+          update: (filterList, filterPos, index) => {
+            filterList[index].splice(filterPos, 1);
+            actionSalvataggio.resetFiltro(index);
+            return filterList;
+          },
+        },
+        filterOptions: {
+          logic: (val, filters) => {
+            const tipologiaStatoEvidenza = filters[0];
+            if (!tipologiaStatoEvidenza || tipologiaStatoEvidenza === null)
+              return false;
+            const idTipologiaStatoEvidenza = tipologiaStatoEvidenza.value;
+            const evidenzaList = val.flatMap((x) =>
+              x.causaReclamoList.flatMap((y) =>
+                y.evidenzaList.map((z) => z.idStato)
+              )
+            );
+            return (
+              evidenzaList.find((x) => x === idTipologiaStatoEvidenza) ===
+              undefined
+            );
+          },
+          display: (filterList, onChange, index, column) => {
+            return (
+              <Autocomplete
+                key={"evidenzaList"}
+                options={tipologiaStatoEvidenzaList}
+                sx={{ width: "50vh", maxWidth: "100%" }}
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value.value
+                }
+                onChange={(e, value) => {
+                  filterList[index] = [value];
+                  onChange(filterList[index], index, column);
+                }}
+                size="small"
+                fullWidth
+                renderInput={(params) => (
+                  <TextField
+                    label={"Stato evidenza"}
+                    fullWidth
+                    size="small"
+                    {...params}
+                  />
+                )}
+              />
+            );
+          },
+        },
       },
     },
     {
@@ -573,7 +655,6 @@ export default function Page() {
           logic: (val, filters) => {
             const causaSelezionata = filters[0];
             if (!causaSelezionata || causaSelezionata === null) return false;
-            console.log("causaSelezionata", causaSelezionata);
             const idCausaSelezionata = causaSelezionata.value;
             const causaList = val.flatMap((x) =>
               x.causaReclamoList.map((y) => y.idCausa)
@@ -942,7 +1023,7 @@ export default function Page() {
     },
     {
       name: "partitaList",
-      label: "Stati",
+      label: "Stati forniture",
       options: {
         filter: true,
         sort: true,

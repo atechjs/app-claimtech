@@ -202,7 +202,7 @@ export default function Page() {
           onSubmit={handleSubmit(submitForm)}
         >
           <Typography variant="button">Gestisci note</Typography>
-          <Stack direction={"row"} spacing={1}>
+          <Stack direction={"row"} spacing={1} p={1}>
             {aggiungiNotaVisibile ? (
               <>
                 <Button

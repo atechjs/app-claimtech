@@ -28,6 +28,7 @@ export default function HorizontalLinearStepper({
         "Inserimento dati",
         "Selezione fornitura",
         "Inserimento dati fornitura",
+        "Inserimento dati evidenze",
       ]
     : stepList;
 

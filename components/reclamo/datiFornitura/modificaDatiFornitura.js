@@ -546,7 +546,11 @@ export default function ModificaDatiFornitura({
 
   const onSubmitCopiaPartita = (index) => {
     let riga = data[index];
-    riga = { ...riga, partitaCausaReclamo_id: null };
+    riga = {
+      ...riga,
+      partitaCausaReclamo_id: null,
+      partitaCausaReclamo_evidenzaList: [],
+    };
     const tempList = [...data, riga];
     tempList.sort(function (a, b) {
       return ("" + a.codice).localeCompare(b.codice);

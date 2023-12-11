@@ -58,6 +58,12 @@ export default function SelezioneDatiFornitura({
                       secondary={
                         <>
                           <Typography>
+                            Cliente:{" "}
+                            <b>
+                              {partita.codiceCliente +
+                                " - " +
+                                partita.descrizioneCliente}
+                            </b>{" "}
                             Codice articolo: <b>{partita.codiceArticolo}</b>{" "}
                             Linea: <b>{partita.codiceLinea}</b>
                           </Typography>
