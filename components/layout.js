@@ -14,6 +14,8 @@ import FactoryIcon from "@mui/icons-material/Factory";
 import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import AllInboxIcon from "@mui/icons-material/AllInbox";
 import EuroIcon from "@mui/icons-material/Euro";
+import SchemaIcon from "@mui/icons-material/Schema";
+import BiotechIcon from "@mui/icons-material/Biotech";
 export default function Layout({ children }) {
   //Il data fetching deve essere fatto qua usare SWR
   //data fetching dell'utente con relativi permessi e creazione web sockets per notifiche
@@ -73,6 +75,23 @@ export default function Layout({ children }) {
     {
       label: "divider",
       key: "divider3",
+      ruoli: [],
+    },
+    {
+      label: "Workflows gestione reclami",
+      link: "/workflowsGestioneReclamo",
+      icon: <SchemaIcon />,
+      ruoli: ["ROLE_AMMINISTRATORE"],
+    },
+    {
+      label: "Tipologie analisi",
+      link: "/tipologieAnalisi",
+      icon: <BiotechIcon />,
+      ruoli: ["ROLE_AMMINISTRATORE"],
+    },
+    {
+      label: "divider",
+      key: "divider4",
       ruoli: [],
     },
     {

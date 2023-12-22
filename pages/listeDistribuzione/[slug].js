@@ -22,6 +22,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import AggiungiDestinatario from "../../components/listaDistribuzione/aggiungiDestinatario";
 import useListaDistribuzioneById from "../../components/fetching/useListaDistribuzioneById";
+import useUtentiSelect from "../../components/fetching/useUtentiSelect";
 
 export default function Page() {
   const router = useRouter();
@@ -60,7 +61,7 @@ export default function Page() {
       codice: data.codice,
       minValoreReclamo: data.minValoreReclamo,
       maxValoreReclamo: data.maxValoreReclamo,
-      idStabilimento: data.idStabilimento,
+      idStabilimentoList: data.idStabilimentoList,
       destinatarioList: data.destinatarioList,
     });
   }, [data]);
@@ -71,7 +72,7 @@ export default function Page() {
       codice: null,
       minValoreReclamo: 0,
       maxValoreReclamo: 0,
-      idStabilimento: null,
+      idStabilimentoList: [],
       destinatarioList: [],
     },
   });
@@ -127,7 +128,7 @@ export default function Page() {
     if (
       destinatarioList.find(
         (x) =>
-          x.indirizzo === destinatario.indirizzo &&
+          x.idUtente === destinatario.idUtente &&
           x.idStatoFornituraCausaReclamo ===
             destinatario.idStatoFornituraCausaReclamo
       ) === undefined
@@ -207,15 +208,16 @@ export default function Page() {
             {stabilimentiList ? (
               <MyReactSelect
                 control={control}
-                name="idStabilimento"
+                name="idStabilimentoList"
                 validation={{
-                  required: "Lo stabilimento è obbligatorio",
+                  required: "Gli stabilimenti sono obbligatori",
                 }}
-                label="Stabilimento"
+                label="Stabilimenti"
                 options={stabilimentiList}
                 autosize={true}
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
+                isMulti={true}
               />
             ) : (
               <></>
@@ -223,10 +225,10 @@ export default function Page() {
             <Typography variant="button">Destinatari</Typography>
             <AggiungiDestinatario onSubmit={onSubmitAggiungiDestinatari} />
             <TableContainer>
-              <Table aria-label="tabella dati aggiuntivi cliente">
+              <Table aria-label="tabella destinatari">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Indirizzo</TableCell>
+                    <TableCell>Utente</TableCell>
                     <TableCell>Quando mandare la mail</TableCell>
                     <TableCell>Tipologia</TableCell>
                     <TableCell>Azione</TableCell>
@@ -236,14 +238,14 @@ export default function Page() {
                   {watch("destinatarioList").map((dato, index) => (
                     <TableRow
                       key={
-                        dato.indirizzo +
+                        dato.idUtente +
                         " - " +
                         dato.idStatoFornituraCausaReclamo
                       }
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                        {dato.indirizzo}
+                        {dato.usernameUtente}
                       </TableCell>
                       <TableCell>
                         {dato.codiceStatoFornituraCausaReclamo}

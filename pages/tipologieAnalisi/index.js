@@ -4,24 +4,25 @@ import { getTraduzioneTabella } from "../../components/my-mui-data-table/traduzi
 import GenericSearchRender from "../../components/my-mui-data-table/genericSearchRender";
 import ToolbarPulsanteAggiungi from "../../components/my-mui-data-table/ToolbarPulsanteAggiungi";
 import { useTableStateSaver } from "../../components/my-mui-data-table/useTableStateSaver";
-import useTagAll from "../../components/fetching/useTagAll";
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import { useRouter } from "next/router";
-import useListaDistribuzioneAll from "../../components/fetching/useListaDIstribuzioneAll";
+import useAllWorkflowsGestioneReclamo from "../../components/fetching/useAllWorkflowsGestioneReclamo";
+import useAllTipologieAnalisi from "../../components/fetching/useAllTipologieAnalisi";
 
 export default function Page() {
   const [state, actionSalvataggio] = useTableStateSaver();
-  const { data: dataList, error, isLoading } = useListaDistribuzioneAll();
+  const { dataList } = useAllTipologieAnalisi();
   const router = useRouter();
+
   function openRecord(id) {
     actionSalvataggio.mantieni();
-    router.push("/listeDistribuzione/" + id);
+    router.push("/tipologieAnalisi/" + id);
   }
 
   function clickButtonNuovo() {
     actionSalvataggio.mantieni();
-    router.push("/listeDistribuzione/nuovo");
+    router.push("/tipologieAnalisi/nuovo");
   }
 
   const traduzione = getTraduzioneTabella();
@@ -29,7 +30,7 @@ export default function Page() {
     filter: true,
     filterType: "dropdown",
     downloadOptions: {
-      filename: "liste_di_distribuzione.csv",
+      filename: "tipologie_analisi.csv",
       separator: ",",
       filterOptions: {
         useDisplayedColumnsOnly: true,
@@ -77,6 +78,14 @@ export default function Page() {
     },
     {
       name: "codice",
+      label: "Codice",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "descrizione",
       label: "Descrizione",
       options: {
         filter: true,
@@ -84,26 +93,27 @@ export default function Page() {
       },
     },
     {
-      name: "minValore",
-      label: "Valore reclamo minimo",
+      name: "descrizioneInglese",
+      label: "Traduzione",
       options: {
         filter: true,
         sort: true,
       },
     },
     {
-      name: "maxValore",
-      label: "Valore reclamo massimo",
+      name: "um",
+      label: "Unità di misura",
       options: {
         filter: true,
         sort: true,
       },
     },
   ];
+
   return (
     <Box p={2}>
       <MUIDataTable
-        title={"Liste di distribuzione registrate"}
+        title={"Tipologie analisi registrate"}
         columns={columns}
         options={tableOptions}
         data={dataList}
@@ -111,6 +121,7 @@ export default function Page() {
     </Box>
   );
 }
+
 Page.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };

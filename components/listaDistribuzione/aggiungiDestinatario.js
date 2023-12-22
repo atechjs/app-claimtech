@@ -7,11 +7,12 @@ import useStabilimentiSelect from "../fetching/useStabilimentiSelect";
 import useFormSelect from "../fetching/useFormSelect";
 import useStatoFornituraSelect from "../fetching/useStatoFornituraSelect";
 import useTipologiaDestinatarioSelect from "../fetching/useTipologiaDestinatarioSelect";
+import useUtentiSelect from "../fetching/useUtentiSelect";
 
 export default function AggiungiDestinatario({ onSubmit }) {
   const form = useForm({
     defaultValues: {
-      indirizzo: null,
+      idUtente: null,
       idStatoFornituraCausaReclamo: null,
       idTipologiaDestinatario: null,
     },
@@ -28,16 +29,18 @@ export default function AggiungiDestinatario({ onSubmit }) {
   const { errors } = formState;
   const { statoFornituraList } = useStatoFornituraSelect();
   const { tipologiaDestinatarioList } = useTipologiaDestinatarioSelect();
-
+  const { utentiList } = useUtentiSelect();
   const onSubmitInternal = () => {
     let data = getValues();
     if (
+      data.idUtente === null ||
       data.idStatoFornituraCausaReclamo === null ||
       data.idTipologiaDestinatario === null
     )
       return;
     data = {
       ...data,
+      usernameUtente: utentiList.find((x) => x.value === data.idUtente).label,
       codiceStatoFornituraCausaReclamo: statoFornituraList.find(
         (x) => x.value === data.idStatoFornituraCausaReclamo
       ).label,
@@ -45,7 +48,7 @@ export default function AggiungiDestinatario({ onSubmit }) {
         (x) => x.value === data.idTipologiaDestinatario
       ).label,
     };
-    setValue("indirizzo", null);
+    setValue("idUtente", null);
     setValue("idStatoFornituraCausaReclamo", null);
     setValue("idTipologiaDestinatario", null);
     onSubmit(data);
@@ -59,19 +62,20 @@ export default function AggiungiDestinatario({ onSubmit }) {
       alignItems="flex-end"
       width={"100%"}
     >
-      <TextField
-        {...register("indirizzo", {
-          required: "L'indirizzo è obbligatorio",
-        })}
-        size="small"
-        margin="normal"
-        required
-        id="indirizzo"
-        label="Indirizzo"
-        name="indirizzo"
-        error={!!errors.indirizzo}
-        helperText={errors.indirizzo?.message}
-      />
+      {utentiList ? (
+        <MyReactSelect
+          control={control}
+          name="idUtente"
+          label="Utente"
+          options={utentiList}
+          autosize={true}
+          menuPortalTarget={document.body}
+          menuPosition={"fixed"}
+          isFullWidth={true}
+        />
+      ) : (
+        <></>
+      )}
       {statoFornituraList ? (
         <MyReactSelect
           control={control}

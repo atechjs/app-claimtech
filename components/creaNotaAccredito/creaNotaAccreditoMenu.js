@@ -31,7 +31,9 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
     let fArr = [];
     list.forEach((r) =>
       r.fornituraList.forEach((f) =>
-        f.fornituraCausaReclamoList.forEach((fcr) => (fArr = [...fArr, fcr]))
+        f.fornituraCausaReclamoList.forEach(
+          (fcr) => (fArr = [...fArr, { ...fcr, cambioValuta: f.cambioValuta }])
+        )
       )
     );
     return fArr;
@@ -73,6 +75,18 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
     return approssima(sum);
   };
 
+  const convertiInEuro = (valoreContestazione, cambioValuta) => {
+    return valoreContestazione / cambioValuta;
+  };
+
+  const getTotaleEuroSelezionato = (dataList) => {
+    let sum = 0;
+    dataList.forEach(
+      (f) => (sum = sum + convertiInEuro(f.valoreContestazione, f.cambioValuta))
+    );
+    return approssima(sum);
+  };
+
   const getTotaleReclamo = (reclamo) => {
     let sum = 0;
     reclamo.fornituraList.forEach((f) =>
@@ -111,8 +125,10 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
 
   const confermaSelezione = () => {
     const valore = getTotaleSelezionato(fornituraCausaReclamoSelezionata);
-    reset({ valoreValuta: valore });
-    convertiInEuro(valore);
+    reset({
+      valoreValuta: valore,
+      valoreEuro: getTotaleEuroSelezionato(fornituraCausaReclamoSelezionata),
+    });
     setStep(1);
   };
 
@@ -120,54 +136,12 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
     setStep(0);
   };
 
-  const calcolaValoriNotaAccreditoEuro = async () => {
-    let out = [];
-    for (const fornitura of fornituraCausaReclamoSelezionata) {
-      if (getCodiceValuta() === "EUR") {
-        out = [
-          ...out,
-          {
-            ...fornitura,
-            valoreContestazioneEuro: fornitura.valoreContestazione,
-          },
-        ];
-      } else {
-        const s = await getConvertito(fornitura.valoreContestazione);
-        out = [
-          ...out,
-          {
-            ...fornitura,
-            valoreContestazioneEuro: s,
-          },
-        ];
-      }
-    }
-    return out;
-  };
-
-  const getConvertito = (valoreContestazione) => {
-    return axios
-      .get(
-        "https://api.currencybeacon.com/v1/convert?from=" +
-          getCodiceValuta() +
-          "&to=EUR&amount=" +
-          valoreContestazione +
-          "&api_key=" +
-          getConverterApiKey()
-      )
-      .then((response) => {
-        return approssima(response.data.response.value);
-      });
-  };
-
   const onFormSubmit = (data) => {
-    calcolaValoriNotaAccreditoEuro().then((result) =>
-      onSubmit({
-        fornituraCausaReclamoList: result,
-        ...data,
-        data: dayjs(data.data).format("DD/MM/YYYY"),
-      })
-    );
+    onSubmit({
+      fornituraCausaReclamoList: fornituraCausaReclamoSelezionata,
+      ...data,
+      data: dayjs(data.data).format("DD/MM/YYYY"),
+    });
   };
 
   function isNumeric(str) {
@@ -191,43 +165,6 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
   const getCodiceValuta = () => {
     if (!dataList || dataList.length === 0) return "ND";
     return dataList[0].codiceValuta;
-  };
-
-  const convertiInEuro = (totale) => {
-    //TODO Conversione
-    if (getCodiceValuta() === "EUR") {
-      setValue("valoreEuro", totale);
-      return;
-    }
-    axios
-      .get(
-        "https://api.currencybeacon.com/v1/convert?from=" +
-          getCodiceValuta() +
-          "&to=EUR&amount=" +
-          totale +
-          "&api_key=" +
-          getConverterApiKey()
-      )
-      .then((response) => {
-        setValue("valoreEuro", approssima(response.data.response.value));
-      });
-  };
-
-  const convertiERitorna = (valore) => {
-    if (getCodiceValuta() === "EUR") return Promise.resolve(valore);
-    //C'è da capire come fare la conversione
-    return axios
-      .get(
-        "https://api.currencybeacon.com/v1/convert?from=" +
-          getCodiceValuta() +
-          "&to=EUR&amount=" +
-          valore +
-          "&api_key=" +
-          getConverterApiKey()
-      )
-      .then((response) => {
-        return approssima(response.data.response.value);
-      });
   };
 
   return (
@@ -310,7 +247,10 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
                               >
                                 <ListItemButton
                                   onClick={() =>
-                                    handleToggle(fornituraCausaReclamo)
+                                    handleToggle({
+                                      ...fornituraCausaReclamo,
+                                      cambioValuta: fornitura.cambioValuta,
+                                    })
                                   }
                                   dense
                                 >
@@ -491,13 +431,12 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
               label={"Valore nota accredito (" + getCodiceValuta() + ")"}
               name="valoreValuta"
               type="number"
-              onChange={(event) => {
-                const value = event.target.value;
-                convertiInEuro(value);
-              }}
               error={!!errors.valoreValuta}
               helperText={errors.valoreValuta?.message}
               required
+              InputProps={{
+                readOnly: true,
+              }}
               autoComplete="off"
             />
             <TextField
@@ -510,10 +449,12 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
               label={"Valore nota accredito EURO"}
               name="valoreEuro"
               type="number"
-              value={watch("valoreEuro") || ""}
               error={!!errors.valoreEuro}
               helperText={errors.valoreEuro?.message}
               required
+              InputProps={{
+                readOnly: true,
+              }}
               autoComplete="off"
             />
           </Stack>

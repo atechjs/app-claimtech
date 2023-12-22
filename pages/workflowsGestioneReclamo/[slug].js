@@ -7,7 +7,9 @@ import { useRouter } from "next/router";
 import GetCurrentAxiosInstance from "../../utils/Axios";
 import getApiUrl from "../../utils/BeUrl";
 import { mandaNotifica } from "../../utils/ToastUtils";
-import useCausaById from "../../components/fetching/useCausaById";
+import MyReactSelect from "../../components/my-react-select-impl/myReactSelect";
+import useWorkflowGestioneReclamoById from "../../components/fetching/useWorkflowGestioneReclamoById";
+import useStatoFornituraSelect from "../../components/fetching/useStatoFornituraSelect";
 
 export default function Page() {
   const router = useRouter();
@@ -24,14 +26,17 @@ export default function Page() {
     trigger({ id: id });
   }, [id]);
 
-  const { data, trigger, isMutating } = useCausaById(id);
+  const { data, trigger, isMutating } = useWorkflowGestioneReclamoById(id);
+  const { statoFornituraList: statoFornituraCausaReclamoList } =
+    useStatoFornituraSelect();
 
   useEffect(() => {
     if (data === undefined) return;
     reset({
       id: data.id,
       codice: data.codice,
-      codiceInglese: data.codiceInglese,
+      descrizione: data.descrizione,
+      idStatoFornituraCausaReclamoList: data.idStatoFornituraCausaReclamoList,
     });
   }, [data]);
 
@@ -39,16 +44,19 @@ export default function Page() {
     defaultValues: {
       id: null,
       codice: null,
-      codiceInglese: null,
+      descrizione: null,
+      idStatoFornituraCausaReclamoList: [],
     },
   });
-  const { register, handleSubmit, formState, reset, control } = form;
+
+  const { register, handleSubmit, formState, reset, control, watch, setValue } =
+    form;
   const { errors } = formState;
 
   const onSubmit = (data) => {
     if (data.id === undefined || data.id === "nuovo" || data.id === null) {
       instance
-        .post(getApiUrl() + "api/causaReclamo/nuovo", data)
+        .post(getApiUrl() + "api/workflowGestioneReclamo/nuovo", data)
         .then((response) => {
           setId(response.data);
           mandaNotifica("Creazione completata con successo", "success");
@@ -56,7 +64,7 @@ export default function Page() {
         .catch(() => mandaNotifica("Creazione fallita", "error"));
     } else {
       instance
-        .post(getApiUrl() + "api/causaReclamo/update", data)
+        .post(getApiUrl() + "api/workflowGestioneReclamo/update", data)
         .then(() => {
           mandaNotifica("Aggiornamento completato con successo", "success");
         })
@@ -66,7 +74,7 @@ export default function Page() {
 
   const elimina = () => {
     instance
-      .post(getApiUrl() + "api/causaReclamo/delete?id=" + id)
+      .post(getApiUrl() + "api/workflowGestioneReclamo/delete?id=" + id)
       .then(() => {
         mandaNotifica("Eliminazione completata con successo", "success");
         router.back();
@@ -88,39 +96,59 @@ export default function Page() {
         onSubmit={handleSubmit(onSubmit)}
         spacing={1}
       >
-        <Typography>Form modifica causa reclamo</Typography>
+        <Typography>Form modifica workflow gestione reclamo</Typography>
         {!isMutating ? (
-          <TextField
-            {...register("codice", {
-              required: "Il codice è obbligatorio",
-            })}
-            size="small"
-            margin="normal"
-            required
-            id="codice"
-            label="Codice"
-            name="codice"
-            error={!!errors.codice}
-            helperText={errors.codice?.message}
-            autoFocus
-          />
-        ) : (
-          <></>
-        )}
-        {!isMutating ? (
-          <TextField
-            {...register("codiceInglese", {
-              required: "La traduzione è obbligatoria",
-            })}
-            size="small"
-            margin="normal"
-            required
-            id="codiceInglese"
-            label="Traduzione"
-            name="codiceInglese"
-            error={!!errors.codiceInglese}
-            helperText={errors.codiceInglese?.message}
-          />
+          <Stack direction={"column"} spacing={1}>
+            {id !== undefined ? (
+              <TextField
+                {...register("codice", {
+                  required: "Il codice è obbligatorio",
+                })}
+                size="small"
+                margin="normal"
+                required
+                id="codice"
+                label="Codice"
+                defaultValue={" "}
+                name="codice"
+                error={!!errors.codice}
+                helperText={errors.codice?.message}
+                autoFocus
+              />
+            ) : (
+              <></>
+            )}
+            {id !== undefined ? (
+              <TextField
+                {...register("descrizione")}
+                size="small"
+                margin="normal"
+                required
+                id="descrizione"
+                label="Descrizione"
+                name="descrizione"
+                error={!!errors.descrizione}
+                helperText={errors.descrizione?.message}
+              />
+            ) : (
+              <></>
+            )}
+            {statoFornituraCausaReclamoList ? (
+              <MyReactSelect
+                control={control}
+                name="idStatoFornituraCausaReclamoList"
+                validation={{
+                  required: "Gli stati fornitura sono obbligatori",
+                }}
+                label="Stati forniture"
+                options={statoFornituraCausaReclamoList}
+                menuPosition="fixed"
+                isMulti={true}
+              />
+            ) : (
+              <></>
+            )}
+          </Stack>
         ) : (
           <></>
         )}
@@ -145,7 +173,7 @@ export default function Page() {
 Page.getLayout = function getLayout(page) {
   return (
     <Layout>
-      <NestedLayout title={"CAUSA RECLAMO"}>{page}</NestedLayout>
+      <NestedLayout title={"WORKFLOW GESTIONE RECLAMO"}>{page}</NestedLayout>
     </Layout>
   );
 };
