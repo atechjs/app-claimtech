@@ -30,6 +30,8 @@ import AssignmentReturnedIcon from "@mui/icons-material/AssignmentReturned";
 import DialogDownloadReportReclami from "../downloadReportReclami/dialogDownloadReportReclami";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import DialogModificaRateo from "../modificaRateo/dialogModificaRateo";
+import ChipValorizzazioneValuta from "../chipValorizzazioneValuta";
+import ChipValorizzazioneEuro from "../chipValorizzazioneEuro";
 
 export default function ReclamiCustomToolbar({
   selectedRows,
@@ -37,6 +39,17 @@ export default function ReclamiCustomToolbar({
   setSelectedRows,
   onUpdateReclami,
 }) {
+  //COSTANTI DI ACCESSO AI CAMPI
+  const INDEX_ID = 0;
+  const INDEX_FASE = 2;
+  const INDEX_CLIENTE = 11;
+  const INDEX_VALORIZZAZIONE_VALUTA = 16;
+  const INDEX_FORM = 18;
+  const INDEX_VALUTA = 19;
+  const INDEX_ID_FORNITURA_LIST = 23;
+  const INDEX_MODIFICA_ABILITATA = 27;
+  const INDEX_VALORIZZAZIONE_EURO = 29;
+
   const [reclamiSelezionati, setReclamiSelezionati] = useState([]);
   const [openedDialogCondivisione, setOpenedDialogCondivisione] =
     useState(false);
@@ -116,7 +129,7 @@ export default function ReclamiCustomToolbar({
   const tuttiStessaFase = () => {
     let map = {};
     for (let i = 0; i < reclamiSelezionati.length; i++) {
-      map = { ...map, [reclamiSelezionati[i][2]]: true };
+      map = { ...map, [reclamiSelezionati[i][INDEX_FASE]]: true };
     }
     return Object.keys(map).length == 1;
   };
@@ -124,7 +137,7 @@ export default function ReclamiCustomToolbar({
   const tuttiStessoCliente = () => {
     let map = {};
     for (let i = 0; i < reclamiSelezionati.length; i++) {
-      map = { ...map, [reclamiSelezionati[i][11]]: true };
+      map = { ...map, [reclamiSelezionati[i][INDEX_CLIENTE]]: true };
     }
     return Object.keys(map).length == 1;
   };
@@ -132,7 +145,7 @@ export default function ReclamiCustomToolbar({
   const tuttiStessaValuta = () => {
     let map = {};
     for (let i = 0; i < reclamiSelezionati.length; i++) {
-      map = { ...map, [reclamiSelezionati[i][19]]: true };
+      map = { ...map, [reclamiSelezionati[i][INDEX_VALUTA]]: true };
     }
     return Object.keys(map).length == 1;
   };
@@ -140,16 +153,21 @@ export default function ReclamiCustomToolbar({
   const tuttiStessoForm = () => {
     let map = {};
     for (let i = 0; i < reclamiSelezionati.length; i++) {
-      map = { ...map, [reclamiSelezionati[i][18]]: true };
+      map = { ...map, [reclamiSelezionati[i][INDEX_FORM]]: true };
     }
     return Object.keys(map).length == 1;
   };
 
   const tuttiModificaAbilitata = () => {
     for (let i = 0; i < reclamiSelezionati.length; i++) {
-      if (!reclamiSelezionati[i][27]) return false;
+      if (!reclamiSelezionati[i][INDEX_MODIFICA_ABILITATA]) return false;
     }
     return true;
+  };
+
+  const getCodiceValuta = () => {
+    if (!reclamiSelezionati || reclamiSelezionati.length === 0) return "";
+    return reclamiSelezionati[0][INDEX_VALUTA];
   };
 
   const { fasiList, isValidating, mutate } = useFaseSelettore(
@@ -161,7 +179,9 @@ export default function ReclamiCustomToolbar({
   }, [reclamiSelezionati]);
 
   const handleOnCondividiSubmit = (list) => {
-    const idReclamoList = reclamiSelezionati.map((reclamo) => reclamo[0]);
+    const idReclamoList = reclamiSelezionati.map(
+      (reclamo) => reclamo[INDEX_ID]
+    );
     const idUtenteList = list.map((utente) => utente.id);
     instance
       .post(getApiUrl() + "api/reclamo/condividi", {
@@ -179,7 +199,9 @@ export default function ReclamiCustomToolbar({
   };
 
   const handleOnTagsSubmit = (list) => {
-    const idReclamoList = reclamiSelezionati.map((reclamo) => reclamo[0]);
+    const idReclamoList = reclamiSelezionati.map(
+      (reclamo) => reclamo[INDEX_ID]
+    );
     instance
       .post(getApiUrl() + "api/reclamo/associaTag", {
         idReclamoList: idReclamoList,
@@ -207,7 +229,9 @@ export default function ReclamiCustomToolbar({
   };
 
   const handleOnModificaRateo = (data) => {
-    const idReclamoList = reclamiSelezionati.map((reclamo) => reclamo[0]);
+    const idReclamoList = reclamiSelezionati.map(
+      (reclamo) => reclamo[INDEX_ID]
+    );
     instance
       .post(getApiUrl() + "api/reclamo/modificaIncludiNelRateo", {
         idReclamoList: idReclamoList,
@@ -287,7 +311,7 @@ export default function ReclamiCustomToolbar({
   const displayForniturePerStatoFornitura = () => {
     if (reclamiSelezionati === undefined) return;
     const fornituraList = reclamiSelezionati
-      .flatMap((x) => x[23])
+      .flatMap((x) => x[INDEX_ID_FORNITURA_LIST])
       .flatMap((x) => x.causaReclamoList);
     const perStatiFornitura = fornituraList.reduce((group, fornitura) => {
       const { idStato } = fornitura;
@@ -297,29 +321,57 @@ export default function ReclamiCustomToolbar({
     }, {});
     const arr = Object.keys(perStatiFornitura).sort((a, b) => a - b);
     return (
-      <Stack spacing={0.5} direction={"column"}>
-        {arr.map((stato) => (
+      <Stack direction={"column"}>
+        <Typography variant="button">Somma stati</Typography>
+        <Stack spacing={0.5} direction={"column"}>
+          {arr.map((stato) => (
+            <Chip
+              label={
+                perStatiFornitura[stato][0].codiceStato +
+                " (" +
+                perStatiFornitura[stato].length +
+                ")"
+              }
+              variant="outlined"
+              size="small"
+            />
+          ))}
           <Chip
-            label={
-              perStatiFornitura[stato][0].codiceStato +
-              " (" +
-              perStatiFornitura[stato].length +
-              ")"
-            }
+            label={"TOTALE (" + fornituraList.length + ")"}
             variant="outlined"
             size="small"
+            color="primary"
           />
-        ))}
-        <Chip
-          label={"TOTALE (" + fornituraList.length + ")"}
-          variant="outlined"
-          size="small"
-          color="primary"
-        />
+        </Stack>
       </Stack>
     );
   };
-
+  const displaySommaValorizzazioni = () => {
+    if (reclamiSelezionati === undefined) return;
+    const sommaValorizzazioniEuro = reclamiSelezionati
+      .flatMap((x) => x[INDEX_VALORIZZAZIONE_EURO])
+      .reduce((partialSum, a) => partialSum + a, 0);
+    let sommaValorizzazioniValuta = 0;
+    if (tuttiStessaValuta()) {
+      sommaValorizzazioniValuta = reclamiSelezionati
+        .flatMap((x) => x[INDEX_VALORIZZAZIONE_VALUTA])
+        .reduce((partialSum, a) => partialSum + a, 0);
+    }
+    return (
+      <Stack direction={"column"}>
+        <Typography variant="button">Somma val.</Typography>
+        <Stack spacing={0.5} direction={"column"}>
+          {tuttiStessaValuta() && getCodiceValuta() !== "EUR" ? (
+            <ChipValorizzazioneValuta
+              valorizzazione={sommaValorizzazioniValuta}
+              codiceValuta={getCodiceValuta()}
+            />
+          ) : null}
+          <ChipValorizzazioneEuro valorizzazione={sommaValorizzazioniEuro} />
+        </Stack>
+      </Stack>
+    );
+  };
   return (
     <Stack
       direction={"row"}
@@ -329,6 +381,8 @@ export default function ReclamiCustomToolbar({
       pr={2}
     >
       {displayForniturePerStatoFornitura()}
+      <Divider orientation="vertical" flexItem />
+      {displaySommaValorizzazioni()}
       <Divider orientation="vertical" flexItem />
       {fasiList !== undefined &&
       fasiList.length > 0 &&

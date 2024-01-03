@@ -21,6 +21,7 @@ export default function ReclamoTabSelector({ id, value }) {
             <Tab label="Generale" value="generale" />
             <Tab label="Fornitura" value="fornitura" />
             <Tab label="Evidenze" value="evidenze" />
+            <Tab label="Proposte" value="proposte" />
             <Tab label="Resi" value="resi" />
             <Tab label="Note accredito" value="noteAccredito" />
             <Tab label="Note" value="note" />

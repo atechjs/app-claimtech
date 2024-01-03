@@ -27,11 +27,11 @@ import { Controller, useForm } from "react-hook-form";
 import GetCurrentAxiosInstance from "../../../../utils/Axios";
 import getApiUrl from "../../../../utils/BeUrl";
 import { mandaNotifica } from "../../../../utils/ToastUtils";
-import LabelInfo from "../../../../components/reclamo/LabelInfo";
 import useTipologiaReclamoSelect from "../../../../components/fetching/useTipologiaReclamoSelect";
 import MyReactSelect from "../../../../components/my-react-select-impl/myReactSelect";
 import { DatePicker } from "@mui/x-date-pickers";
 import usePermessiReclamoUtente from "../../../../components/fetching/usePermessiReclamoUtente";
+import LabelInformazione from "../../../../components/reclamo/labelInformazione";
 
 export default function Page() {
   const router = useRouter();
@@ -157,7 +157,7 @@ export default function Page() {
                       alignItems="flex-end"
                     >
                       {!modifica || data.statoChiusura ? (
-                        <LabelInfo
+                        <LabelInformazione
                           label="Tipologia reclamo"
                           value={data.codiceTipologiaReclamo}
                         />
@@ -172,9 +172,9 @@ export default function Page() {
                       ) : (
                         <></>
                       )}
-                      <LabelInfo label="Numero" value={data.numero} />
+                      <LabelInformazione label="Numero" value={data.numero} />
                       {!modifica ? (
-                        <LabelInfo
+                        <LabelInformazione
                           label="Aperto il"
                           value={dayjs(data.timestampCreazione).format(
                             "DD/MM/YYYY [alle] HH:mm:ss"
@@ -208,7 +208,7 @@ export default function Page() {
                         />
                       )}
                       {data.timestampChiusura ? (
-                        <LabelInfo
+                        <LabelInformazione
                           label="Chiuso il"
                           value={dayjs(data.timestampChiusura).format(
                             "DD/MM/YYYY [alle] HH:mm:ss"
@@ -218,11 +218,11 @@ export default function Page() {
                         <></>
                       )}
 
-                      <LabelInfo label="Fase" value={data.codiceFase} />
+                      <LabelInformazione label="Fase" value={data.codiceFase} />
                     </Stack>
                     <Stack direction={"row"} spacing={2}>
                       {!modifica ? (
-                        <LabelInfo
+                        <LabelInformazione
                           label="Codice cliente reclamo"
                           value={data.codiceClienteReclamo}
                         />
@@ -238,7 +238,7 @@ export default function Page() {
                       )}
                     </Stack>
                     <Stack direction={"row"} spacing={2}>
-                      <LabelInfo
+                      <LabelInformazione
                         label="Stabilimento"
                         value={
                           data.codiceStabilimento +
@@ -248,16 +248,19 @@ export default function Page() {
                       />
                     </Stack>
                     <Stack direction={"row"} spacing={2}>
-                      <LabelInfo label="Form" value={data.codiceForm} />
-                      <LabelInfo
+                      <LabelInformazione label="Form" value={data.codiceForm} />
+                      <LabelInformazione
                         label="Versione Form"
                         value={data.versioneForm}
                       />
                     </Stack>
-                    <LabelInfo label="Valuta" value={data.codiceValuta} />
+                    <LabelInformazione
+                      label="Valuta"
+                      value={data.codiceValuta}
+                    />
                     <Stack direction={"row"} spacing={2}>
                       {!modifica ? (
-                        <LabelInfo
+                        <LabelInformazione
                           label="Includi nel rateo"
                           value={data.includiRateo ? "SI" : "NO"}
                         />
@@ -277,7 +280,7 @@ export default function Page() {
                       )}
                       {!modifica ? (
                         data.esercizioRateo ? (
-                          <LabelInfo
+                          <LabelInformazione
                             label="Esercizio rateo"
                             value={data.esercizioRateo}
                           />
@@ -295,7 +298,7 @@ export default function Page() {
                       )}
                     </Stack>
                     {!modifica ? (
-                      <LabelInfo
+                      <LabelInformazione
                         label="Invia comunicazioni"
                         value={data.inviaComunicazioni ? "SI" : "NO"}
                       />
@@ -314,7 +317,7 @@ export default function Page() {
                       />
                     )}
                     {!modifica ? (
-                      <LabelInfo
+                      <LabelInformazione
                         label="Note generali"
                         value={data.noteGenerali}
                       />
@@ -364,8 +367,11 @@ export default function Page() {
                 </AccordionSummary>
                 <AccordionDetails>
                   <Stack direction={"column"} spacing={1}>
-                    <LabelInfo label="Codice" value={data.codiceCliente} />
-                    <LabelInfo
+                    <LabelInformazione
+                      label="Codice"
+                      value={data.codiceCliente}
+                    />
+                    <LabelInformazione
                       label="Descrizione"
                       value={data.descrizioneCliente}
                     />
@@ -382,11 +388,11 @@ export default function Page() {
                 </AccordionSummary>
                 <AccordionDetails>
                   <Stack direction={"column"} spacing={1}>
-                    <LabelInfo
+                    <LabelInformazione
                       label={"In valuta(" + data.codiceValuta + ")"}
                       value={data.valorizzazioneValuta}
                     />
-                    <LabelInfo
+                    <LabelInformazione
                       label={"In EURO"}
                       value={data.valorizzazioneEuro}
                     />

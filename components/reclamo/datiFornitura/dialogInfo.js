@@ -2,12 +2,13 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Divider, Stack, Typography } from "@mui/material";
-import LabelInfo from "../LabelInfo";
+
 import dayjs from "dayjs";
 import DownloadIcon from "@mui/icons-material/Download";
 import GetCurrentAxiosInstance from "../../../utils/Axios";
 import getApiUrl from "../../../utils/BeUrl";
 import { mandaNotifica } from "../../../utils/ToastUtils";
+import LabelInformazione from "../labelInformazione";
 
 export default function DialogInfo({
   opened,
@@ -59,39 +60,42 @@ export default function DialogInfo({
       <Stack direction={"column"} width={"100%"} p={1}>
         <DialogTitle>INFO PARTITA {infoData.codice}</DialogTitle>
         <Stack direction={"row"} spacing={1} width={"100%"}>
-          <LabelInfo
+          <LabelInformazione
             label={"Codice articolo"}
             value={infoData.codiceArticolo}
           />
-          <LabelInfo label={"Spessore"} value={infoData.spessore} />
-          <LabelInfo label={"Altezza"} value={infoData.altezza} />
-          <LabelInfo label={"Lunghezza"} value={infoData.lunghezza} />
+          <LabelInformazione label={"Spessore"} value={infoData.spessore} />
+          <LabelInformazione label={"Altezza"} value={infoData.altezza} />
+          <LabelInformazione label={"Lunghezza"} value={infoData.lunghezza} />
         </Stack>
         <Divider />
         <Stack direction={"row"} spacing={1} width={"100%"}>
-          <LabelInfo label={"Linea"} value={infoData.codiceLinea} />
-          <LabelInfo
+          <LabelInformazione label={"Linea"} value={infoData.codiceLinea} />
+          <LabelInformazione
             label={"Data di produzione"}
             value={dayjs(infoData.dataProduzione).format("DD/MM/YYYY")}
           />
         </Stack>
         <Divider />
         <Stack direction={"row"} spacing={1} width={"100%"}>
-          <LabelInfo label={"Fattura"} value={infoData.codiceFattura} />
-          <LabelInfo
+          <LabelInformazione label={"Fattura"} value={infoData.codiceFattura} />
+          <LabelInformazione
             label={"Data"}
             value={dayjs(infoData.dataFattura).format("DD/MM/YYYY")}
           />
-          <LabelInfo
+          <LabelInformazione
             label={"Qta " + infoData.unitaMisuraFattura}
             value={infoData.qtaFattura}
           />
-          <LabelInfo label={"Qta Kg"} value={infoData.qtaKgFattura} />
+          <LabelInformazione label={"Qta Kg"} value={infoData.qtaKgFattura} />
         </Stack>
         <Stack direction={"row"} spacing={1} width={"100%"}></Stack>
         <Stack direction={"row"} spacing={3} width={"100%"}>
-          <LabelInfo label={"Valore totale"} value={infoData.valoreFattura} />
-          <LabelInfo
+          <LabelInformazione
+            label={"Valore totale"}
+            value={infoData.valoreFattura}
+          />
+          <LabelInformazione
             label={
               "Coefficiente " + codiceValuta + "/" + infoData.unitaMisuraFattura
             }

@@ -26,11 +26,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import AggiungiDatiAggiuntiviCliente from "../../components/cliente/aggiungiDatiAggiuntiviCliente";
 import AggiungiClienteForm from "../../components/cliente/aggiungiClienteForm";
+import useUtentiSelect from "../../components/fetching/useUtentiSelect";
 
 export default function Page() {
   const router = useRouter();
   const [id, setId] = useState(undefined);
   const instance = GetCurrentAxiosInstance();
+  const { utentiList } = useUtentiSelect();
 
   useEffect(() => {
     if (router.query.slug === undefined) return;
@@ -61,6 +63,7 @@ export default function Page() {
       costoFermoMacchina: data.costoFermoMacchina,
       formClienteList: data.formClienteList,
       datiAggiuntiviList: data.datiAggiuntiviList,
+      idUtenteList: data.idUtenteList,
     });
   }, [data]);
 
@@ -75,6 +78,7 @@ export default function Page() {
       costoFermoMacchina: 0,
       formClienteList: [],
       datiAggiuntiviList: [],
+      idUtenteList: [],
     },
   });
   const {
@@ -270,6 +274,18 @@ export default function Page() {
                 error={!!errors.costoFermoMacchina}
                 helperText={errors.costoFermoMacchina?.message}
                 type="number"
+              />
+            ) : (
+              <></>
+            )}
+            {utentiList ? (
+              <MyReactSelect
+                control={control}
+                name="idUtenteList"
+                label="Commerciali associati"
+                options={utentiList}
+                styles={selectStyles}
+                isMulti={true}
               />
             ) : (
               <></>

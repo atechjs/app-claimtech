@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import NestedLayout from "../../components/nestedLayout";
 import Layout from "../../components/layout";
-import { Button, Paper, Stack, TextField, Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
+import {
+  Button,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import GetCurrentAxiosInstance from "../../utils/Axios";
 import getApiUrl from "../../utils/BeUrl";
@@ -18,23 +26,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import AggiungiDestinatario from "../../components/listaDistribuzione/aggiungiDestinatario";
 import useListaDistribuzioneById from "../../components/fetching/useListaDistribuzioneById";
+import useListaApprovazioneById from "../../components/fetching/useListaApprovazioneById";
+import AggiungiUtenteAListaApprovazione from "../../components/listaApprovazione/aggiungiUtenteAListaApprovazione";
 
 export default function Page() {
   const router = useRouter();
   const [id, setId] = useState(undefined);
   const instance = GetCurrentAxiosInstance();
-
-  const VisuallyHiddenInput = styled("input")({
-    clip: "rect(0 0 0 0)",
-    clipPath: "inset(50%)",
-    height: 1,
-    overflow: "hidden",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    whiteSpace: "nowrap",
-    width: 1,
-  });
 
   useEffect(() => {
     if (router.query.slug === undefined) return;
@@ -46,7 +44,7 @@ export default function Page() {
     trigger({ id: id });
   }, [id]);
 
-  const { data, trigger, isMutating } = useListaDistribuzioneById(id);
+  const { data, trigger, isMutating } = useListaApprovazioneById(id);
   const { stabilimentiList } = useStabilimentiSelect();
 
   useEffect(() => {
@@ -54,10 +52,11 @@ export default function Page() {
     reset({
       id: data.id,
       codice: data.codice,
-      minValoreReclamo: data.minValoreReclamo,
-      maxValoreReclamo: data.maxValoreReclamo,
-      idStabilimentoList: data.idStabilimentoList,
-      destinatarioList: data.destinatarioList,
+      minValue: data.minValue,
+      maxValue: data.maxValue,
+      idStabilimento: data.idStabilimento,
+      includiCommerciale: data.includiCommerciale,
+      utenteList: data.utenteList,
     });
   }, [data]);
 
@@ -65,10 +64,11 @@ export default function Page() {
     defaultValues: {
       id: null,
       codice: null,
-      minValoreReclamo: 0,
-      maxValoreReclamo: 0,
-      idStabilimentoList: [],
-      destinatarioList: [],
+      minValue: 0,
+      maxValue: 0,
+      idStabilimento: null,
+      includiCommerciale: false,
+      utenteList: [],
     },
   });
 
@@ -87,7 +87,7 @@ export default function Page() {
   const onSubmit = (data) => {
     if (data.id === undefined || data.id === "nuovo" || data.id === null) {
       instance
-        .post(getApiUrl() + "api/listaDistribuzione/nuovo", data)
+        .post(getApiUrl() + "api/listaApprovazione/nuovo", data)
         .then((response) => {
           setId(response.data);
           mandaNotifica("Creazione completata con successo", "success");
@@ -95,7 +95,7 @@ export default function Page() {
         .catch(() => mandaNotifica("Creazione fallita", "error"));
     } else {
       instance
-        .post(getApiUrl() + "api/listaDistribuzione/update", data)
+        .post(getApiUrl() + "api/listaApprovazione/update", data)
         .then(() => {
           mandaNotifica("Aggiornamento completato con successo", "success");
         })
@@ -105,7 +105,7 @@ export default function Page() {
 
   const elimina = () => {
     instance
-      .post(getApiUrl() + "api/listaDistribuzione/delete?id=" + id)
+      .post(getApiUrl() + "api/listaApprovazione/delete?id=" + id)
       .then(() => {
         mandaNotifica("Eliminazione completata con successo", "success");
         router.back();
@@ -118,24 +118,23 @@ export default function Page() {
       );
   };
 
-  const onSubmitAggiungiDestinatari = (destinatario) => {
-    const destinatarioList = getValues("destinatarioList");
+  const onSubmitAggiungiRiga = (datoIngresso) => {
+    const listaAttuale = getValues("utenteList");
     if (
-      destinatarioList.find(
+      listaAttuale.find(
         (x) =>
-          x.idUtente === destinatario.idUtente &&
-          x.idStatoFornituraCausaReclamo ===
-            destinatario.idStatoFornituraCausaReclamo
+          x.idUtente === datoIngresso.idUtente ||
+          x.numero === datoIngresso.numero
       ) === undefined
     )
-      setValue("destinatarioList", [...destinatarioList, destinatario]);
+      setValue("utenteList", [...listaAttuale, datoIngresso]);
   };
 
-  const rimuoviDestinatario = (index) => {
-    const destinatarioList = getValues("destinatarioList");
+  const rimuoviDaLista = (index) => {
+    const utenteList = getValues("utenteList");
     setValue(
-      "destinatarioList",
-      destinatarioList.filter((x, idx) => idx !== index)
+      "utenteList",
+      utenteList.filter((x, idx) => idx !== index)
     );
   };
 
@@ -148,7 +147,7 @@ export default function Page() {
         onSubmit={handleSubmit(onSubmit)}
         spacing={1}
       >
-        <Typography>Form modifica lista di distribuzione</Typography>
+        <Typography>Form modifica lista di approvazione</Typography>
         {!isMutating ? (
           <Stack direction={"column"} spacing={1}>
             {id !== undefined ? (
@@ -171,86 +170,93 @@ export default function Page() {
               <></>
             )}
             <TextField
-              {...register("minValoreReclamo", {
+              {...register("minValue", {
                 required: "Il valore minimo è obbligatorio",
               })}
               size="small"
               margin="normal"
               required
-              id="minValoreReclamo"
+              id="minValue"
               label="Valore reclamo minimo"
               defaultValue={0}
-              name="minValoreReclamo"
-              error={!!errors.minValoreReclamo}
-              helperText={errors.minValoreReclamo?.message}
+              name="minValue"
+              error={!!errors.minValue}
+              helperText={errors.minValue?.message}
               type="number"
             />
             <TextField
-              {...register("maxValoreReclamo", {
+              {...register("maxValue", {
                 required: "Il valore massimo è obbligatorio",
               })}
               size="small"
               margin="normal"
               required
-              id="maxValoreReclamo"
+              id="maxValue"
               label="Valore reclamo massimo"
               defaultValue={0}
-              name="maxValoreReclamo"
-              error={!!errors.maxValoreReclamo}
-              helperText={errors.maxValoreReclamo?.message}
+              name="maxValue"
+              error={!!errors.maxValue}
+              helperText={errors.maxValue?.message}
               type="number"
             />
             {stabilimentiList ? (
               <MyReactSelect
                 control={control}
-                name="idStabilimentoList"
+                name="idStabilimento"
                 validation={{
-                  required: "Gli stabilimenti sono obbligatori",
+                  required: "Lo stabilimento è obbligatorio",
                 }}
-                label="Stabilimenti"
+                label="Stabilimento"
                 options={stabilimentiList}
                 autosize={true}
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                isMulti={true}
               />
             ) : (
               <></>
             )}
-            <Typography variant="button">Destinatari</Typography>
-            <AggiungiDestinatario onSubmit={onSubmitAggiungiDestinatari} />
+            <Controller
+              control={control}
+              name={"includiCommerciale"}
+              render={({ field: { onChange, value } }) => (
+                <FormControlLabel
+                  control={<Checkbox checked={value} onChange={onChange} />}
+                  label="Richiedi approvazione del commerciale di riferimento del cliente"
+                />
+              )}
+            />
+            <Typography variant="button">
+              Utenti approvatori in ordine di sequenza di approvazione
+            </Typography>
+            <AggiungiUtenteAListaApprovazione onSubmit={onSubmitAggiungiRiga} />
             <TableContainer>
               <Table aria-label="tabella destinatari">
                 <TableHead>
                   <TableRow>
+                    <TableCell>Posto approvazione</TableCell>
                     <TableCell>Utente</TableCell>
-                    <TableCell>Quando mandare la mail</TableCell>
-                    <TableCell>Tipologia</TableCell>
-                    <TableCell>Azione</TableCell>
+                    <TableCell>-</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {watch("destinatarioList").map((dato, index) => (
+                  {watch("utenteList").map((dato, index) => (
                     <TableRow
                       key={
                         dato.idUtente +
                         " - " +
-                        dato.idStatoFornituraCausaReclamo
+                        dato.usernameUtente +
+                        " - " +
+                        dato.numero
                       }
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
-                      <TableCell component="th" scope="row">
-                        {dato.usernameUtente}
-                      </TableCell>
-                      <TableCell>
-                        {dato.codiceStatoFornituraCausaReclamo}
-                      </TableCell>
-                      <TableCell>{dato.codiceTipologiaDestinatario}</TableCell>
+                      <TableCell>{dato.numero}</TableCell>
+                      <TableCell>{dato.usernameUtente}</TableCell>
                       <TableCell>
                         <Button
                           variant="outlined"
                           color="error"
-                          onClick={() => rimuoviDestinatario(index)}
+                          onClick={() => rimuoviDaLista(index)}
                         >
                           Rimuovi
                         </Button>
@@ -286,7 +292,7 @@ export default function Page() {
 Page.getLayout = function getLayout(page) {
   return (
     <Layout>
-      <NestedLayout title={"LISTA DI DISTRIBUZIONE"}>{page}</NestedLayout>
+      <NestedLayout title={"LISTA DI APPROVAZIONE"}>{page}</NestedLayout>
     </Layout>
   );
 };

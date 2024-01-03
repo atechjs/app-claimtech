@@ -64,7 +64,7 @@ export default function ReclamoNestedLayout({ children }) {
 
   function getSelectedTab() {
     const arr = pathname.split("/");
-    return arr.at(arr.length - 1);
+    return arr.at(arr.indexOf("reclamo") + 2);
   }
 
   return (

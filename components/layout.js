@@ -16,6 +16,9 @@ import AllInboxIcon from "@mui/icons-material/AllInbox";
 import EuroIcon from "@mui/icons-material/Euro";
 import SchemaIcon from "@mui/icons-material/Schema";
 import BiotechIcon from "@mui/icons-material/Biotech";
+import CircleIcon from "@mui/icons-material/Circle";
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import FactCheckIcon from "@mui/icons-material/FactCheck";
 export default function Layout({ children }) {
   //Il data fetching deve essere fatto qua usare SWR
   //data fetching dell'utente con relativi permessi e creazione web sockets per notifiche
@@ -24,7 +27,13 @@ export default function Layout({ children }) {
       label: "Reclami",
       link: "/reclamiAssegnati",
       icon: <AssignmentIcon />,
-      ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE"],
+      ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE", "ROLE_STANDARD"],
+    },
+    {
+      label: "Proposte",
+      link: "/proposte",
+      icon: <FactCheckIcon />,
+      ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE", "ROLE_STANDARD"],
     },
     {
       label: "Tags",
@@ -37,6 +46,18 @@ export default function Layout({ children }) {
       link: "/cause",
       icon: <WarningIcon />,
       ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE"],
+    },
+    {
+      label: "Difetti",
+      link: "/difetti",
+      icon: <CircleIcon />,
+      ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE"],
+    },
+    {
+      label: "Tipologie analisi",
+      link: "/tipologieAnalisi",
+      icon: <BiotechIcon />,
+      ruoli: ["ROLE_AMMINISTRATORE"],
     },
     {
       label: "Stabilimenti",
@@ -84,9 +105,9 @@ export default function Layout({ children }) {
       ruoli: ["ROLE_AMMINISTRATORE"],
     },
     {
-      label: "Tipologie analisi",
-      link: "/tipologieAnalisi",
-      icon: <BiotechIcon />,
+      label: "Liste approvazione",
+      link: "/listeApprovazione",
+      icon: <ChecklistIcon />,
       ruoli: ["ROLE_AMMINISTRATORE"],
     },
     {

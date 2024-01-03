@@ -14,14 +14,19 @@ import InfoIcon from "@mui/icons-material/Info";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import dayjs from "dayjs";
 import RemoveIcon from "@mui/icons-material/Remove";
+import useCausaReclamoDifettoSelect from "../../fetching/useCausaReclamoDifettoSelect";
 export default function EvidenzaTableCell({ getValue, row, column, table }) {
   const initialValue = getValue();
   const columnMeta = column.columnDef.meta;
   const tableMeta = table.options.meta;
   const [value, setValue] = useState(initialValue);
-
+  const { data: difettoList, trigger } =
+    useCausaReclamoDifettoSelect(undefined);
   useEffect(() => {
     setValue(initialValue);
+    if (columnMeta?.type === "DIFETTO_LIST") {
+      trigger({ id: row.original.idCausaReclamo });
+    }
   }, [initialValue]);
 
   const onBlur = () => {
@@ -38,6 +43,7 @@ export default function EvidenzaTableCell({ getValue, row, column, table }) {
     if (selectedList === undefined) return;
     let newValue = selectedList.map((v) => v.value);
     setValue(newValue);
+    console.log("newValue", newValue);
     tableMeta?.updateData(row, column, newValue, columnMeta);
   };
 
@@ -73,6 +79,34 @@ export default function EvidenzaTableCell({ getValue, row, column, table }) {
       </Stack>
     );
   }
+
+  if (columnMeta?.type === "DIFETTO_LIST") {
+    return (
+      <Box minWidth={"220px"}>
+        {difettoList ? (
+          <Select
+            isMulti
+            options={difettoList}
+            onChange={(e) => onMultiSelectChange(e)}
+            menuPortalTarget={document.body}
+            menuPosition={"fixed"}
+            autosize={true}
+            value={value
+              .map((optionValue) =>
+                difettoList.find((option) => option.value === optionValue)
+              )
+              .reduce((valueItems, valueItem) => {
+                if (!valueItem) {
+                  return valueItems;
+                }
+                return [...valueItems, valueItem];
+              }, [])}
+          />
+        ) : null}
+      </Box>
+    );
+  }
+
   if (columnMeta?.type === "TEXT") {
     return (
       <TextField

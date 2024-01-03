@@ -6,6 +6,7 @@ import { Box, IconButton, Stack, TextField, Tooltip } from "@mui/material";
 import Select from "react-select";
 import Tag from "../../tag";
 import InfoIcon from "@mui/icons-material/Info";
+import useNextStatiFornituraCausaReclamo from "../../fetching/useNextStatiFornituraCausaReclamo";
 export default function MyTableCell({ getValue, row, column, table }) {
   const initialValue = getValue();
   const columnMeta = column.columnDef.meta;
@@ -14,8 +15,17 @@ export default function MyTableCell({ getValue, row, column, table }) {
 
   const bloccata = row.original.azzeraPartita === true;
 
+  const { data: nextStatiOptions, trigger } =
+    useNextStatiFornituraCausaReclamo(undefined);
+
   useEffect(() => {
     setValue(initialValue);
+    if (columnMeta?.type === "STATO_FORNITURA_CAUSA_RECLAMO") {
+      trigger({
+        idStato: row.original.partitaCausaReclamo_idStato,
+        idFornituraCausaReclamo: row.original.partitaCausaReclamo_id,
+      });
+    }
   }, [initialValue]);
 
   //Questo chiama metodo del parent
@@ -33,6 +43,10 @@ export default function MyTableCell({ getValue, row, column, table }) {
   const onSelectChange = (selected) => {
     const newValue = !selected || selected == null ? null : selected.value;
     setValue(newValue);
+    trigger({
+      idStato: newValue,
+      idFornituraCausaReclamo: row.original.partitaCausaReclamo_id,
+    });
     tableMeta?.updateData(row, column, selected, columnMeta);
   };
 
@@ -92,7 +106,13 @@ export default function MyTableCell({ getValue, row, column, table }) {
     return (
       <FormGroup>
         <FormControlLabel
-          control={<Checkbox checked={value} onChange={handleCheck} />}
+          control={
+            <Checkbox
+              checked={value}
+              onChange={handleCheck}
+              disabled={bloccata}
+            />
+          }
         />
       </FormGroup>
     );
@@ -124,6 +144,30 @@ export default function MyTableCell({ getValue, row, column, table }) {
       <Box minWidth={"220px"}>
         <Select
           options={columnMeta?.options}
+          onChange={(e) => onSelectChange(e)}
+          autosize={true}
+          menuPortalTarget={document.body}
+          menuPosition={"fixed"}
+          isDisabled={bloccata}
+          value={
+            columnMeta?.options.find((option) => option.value === value) || null
+          }
+        />
+      </Box>
+    );
+  }
+
+  if (
+    columnMeta?.type === "STATO_FORNITURA_CAUSA_RECLAMO" &&
+    nextStatiOptions !== undefined
+  ) {
+    return (
+      <Box minWidth={"220px"}>
+        <Select
+          options={[
+            columnMeta?.options.find((option) => option.value === value),
+            ...nextStatiOptions,
+          ]}
           onChange={(e) => onSelectChange(e)}
           autosize={true}
           menuPortalTarget={document.body}

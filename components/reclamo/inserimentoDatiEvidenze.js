@@ -8,18 +8,26 @@ import { getAxiosFetcher } from "../../utils/AxiosFetcher";
 import dayjs from "dayjs";
 import { GetCurrentUser } from "../../utils/Axios";
 import ModificaEvidenze from "../evidenze/modificaEvidenze/modificaEvidenze";
+import useTipologiaConfermaReclamoEvidenzaSelect from "../fetching/useTipologiaConfermaReclamoEvidenzaSelect";
 export default function InserimentoDatiEvidenze({
   dataReclamo,
   onDatiEvidenzeInseriti,
 }) {
   const { data: categoriaList, mutate: categoriaMutate } =
     useCategoriaEvidenzaSelect();
-
+  const {
+    data: tipologiaConfermaReclamoList,
+    mutate: tipologiaConfermaReclamoMutate,
+  } = useTipologiaConfermaReclamoEvidenzaSelect();
   useEffect(() => {
     categoriaMutate();
+    tipologiaConfermaReclamoMutate();
   }, []);
   const { data: tipologiaStatoEvidenzaList } = useSWR(
-    categoriaList && categoriaList.length > 0
+    categoriaList &&
+      categoriaList.length > 0 &&
+      tipologiaConfermaReclamoList &&
+      tipologiaConfermaReclamoList.length > 0
       ? getApiUrl() + "api/evidenza/tipologiaStatoEvidenzaSelect"
       : null,
     getAxiosFetcher,
@@ -31,6 +39,7 @@ export default function InserimentoDatiEvidenze({
               id: null,
               idFornituraCausaReclamo: null,
               codiceFornitura: p.codice,
+              idCausaReclamo: fornituraCausaReclamo.idCausa,
               codiceCausaReclamo: fornituraCausaReclamo.codiceCausa,
               idCategoria: categoria.value,
               codiceCategoria: categoria.label,
@@ -38,6 +47,9 @@ export default function InserimentoDatiEvidenze({
               codiceStato: values[0].label,
               timestampStato: dayjs(),
               usernameStato: GetCurrentUser().username,
+              idTipologiaConferma: tipologiaStatoEvidenzaList[0].value,
+              codiceTipologiaConferma: tipologiaStatoEvidenzaList[0].label,
+              idDifettoList: [],
               note: null,
               allegatoList: [],
               oldIndex: fornituraCausaReclamo.index,

@@ -26,19 +26,22 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DialogEliminaEvidenza from "./dialogEliminaEvidenza";
 import DialogAggiungiEvidenza from "./dialogAggiungiEvidenza";
 import DialogStatiEvidenza from "./dialogStatiEvidenza";
+import useTipologiaConfermaReclamoEvidenzaSelect from "../../fetching/useTipologiaConfermaReclamoEvidenzaSelect";
 export default function ModificaEvidenze({
   evidenzaList,
   fornituraList = [],
   onSalva,
   isSalva = false,
   abilitaModifica = false,
+  idReclamo,
 }) {
   const instance = GetCurrentAxiosInstance();
   const columnHelper = createColumnHelper();
   const { data: categoriaList } = useCategoriaEvidenzaSelect();
   const { data: tipologiaStatoEvidenzaList } =
     useTipologiaStatoEvidenzaSelect();
-
+  const { data: tipologiaConfermaReclamoList } =
+    useTipologiaConfermaReclamoEvidenzaSelect();
   const generaColonne = () => {
     let colonne = [];
     colonne = [
@@ -92,6 +95,28 @@ export default function ModificaEvidenze({
         cell: EvidenzaTableCell,
         meta: {
           type: "DATE",
+          options: [],
+        },
+      }),
+    ];
+    colonne = [
+      ...colonne,
+      columnHelper.accessor("idTipologiaConferma", {
+        header: "Conferma reclamo",
+        cell: EvidenzaTableCell,
+        meta: {
+          type: "SELECT",
+          options: tipologiaConfermaReclamoList,
+        },
+      }),
+    ];
+    colonne = [
+      ...colonne,
+      columnHelper.accessor("idDifettoList", {
+        header: "Difetti",
+        cell: EvidenzaTableCell,
+        meta: {
+          type: "DIFETTO_LIST",
           options: [],
         },
       }),
@@ -276,7 +301,9 @@ export default function ModificaEvidenze({
       {
         codiceFornitura: values.codiceFornitura,
         idFornituraCausaReclamo: values.idFornituraCausaReclamo,
+        idCausaReclamo: values.idCausaReclamo,
         codiceCausaReclamo: values.codiceCausaReclamo,
+        idDifettoList: [],
         allegatoList: [],
       },
     ]);
@@ -298,10 +325,12 @@ export default function ModificaEvidenze({
       onSalva(finalData);
       return;
     }
+
+    const updateData = { idReclamo: idReclamo, evidenzaRequestList: finalData };
     const formData = new FormData();
     formData.append(
       "ddd",
-      new Blob([JSON.stringify(finalData)], {
+      new Blob([JSON.stringify(updateData)], {
         type: "application/json",
       })
     );

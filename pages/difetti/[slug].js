@@ -7,15 +7,12 @@ import { useRouter } from "next/router";
 import GetCurrentAxiosInstance from "../../utils/Axios";
 import getApiUrl from "../../utils/BeUrl";
 import { mandaNotifica } from "../../utils/ToastUtils";
-import useCausaById from "../../components/fetching/useCausaById";
-import useDifettoSelect from "../../components/fetching/useDifettoSelect";
-import MyReactSelect from "../../components/my-react-select-impl/myReactSelect";
+import useDifettoById from "../../components/fetching/useDifettoById";
 
 export default function Page() {
   const router = useRouter();
   const [id, setId] = useState(undefined);
   const instance = GetCurrentAxiosInstance();
-  const { difettoList } = useDifettoSelect();
 
   useEffect(() => {
     if (router.query.slug === undefined) return;
@@ -27,20 +24,14 @@ export default function Page() {
     trigger({ id: id });
   }, [id]);
 
-  const { data, trigger, isMutating } = useCausaById(id);
-  const selectStyles = {
-    menu: (base) => ({
-      ...base,
-      zIndex: 100,
-    }),
-  };
+  const { data, trigger, isMutating } = useDifettoById(id);
+
   useEffect(() => {
     if (data === undefined) return;
     reset({
       id: data.id,
       codice: data.codice,
       codiceInglese: data.codiceInglese,
-      idDifettoList: data.idDifettoList,
     });
   }, [data]);
 
@@ -49,7 +40,6 @@ export default function Page() {
       id: null,
       codice: null,
       codiceInglese: null,
-      idDifettoList: [],
     },
   });
   const { register, handleSubmit, formState, reset, control } = form;
@@ -58,7 +48,7 @@ export default function Page() {
   const onSubmit = (data) => {
     if (data.id === undefined || data.id === "nuovo" || data.id === null) {
       instance
-        .post(getApiUrl() + "api/causaReclamo/nuovo", data)
+        .post(getApiUrl() + "api/difetto/nuovo", data)
         .then((response) => {
           setId(response.data);
           mandaNotifica("Creazione completata con successo", "success");
@@ -66,7 +56,7 @@ export default function Page() {
         .catch(() => mandaNotifica("Creazione fallita", "error"));
     } else {
       instance
-        .post(getApiUrl() + "api/causaReclamo/update", data)
+        .post(getApiUrl() + "api/difetto/update", data)
         .then(() => {
           mandaNotifica("Aggiornamento completato con successo", "success");
         })
@@ -76,7 +66,7 @@ export default function Page() {
 
   const elimina = () => {
     instance
-      .post(getApiUrl() + "api/causaReclamo/delete?id=" + id)
+      .post(getApiUrl() + "api/difetto/delete?id=" + id)
       .then(() => {
         mandaNotifica("Eliminazione completata con successo", "success");
         router.back();
@@ -98,7 +88,7 @@ export default function Page() {
         onSubmit={handleSubmit(onSubmit)}
         spacing={1}
       >
-        <Typography>Form modifica causa reclamo</Typography>
+        <Typography>Form modifica difetto</Typography>
         {!isMutating ? (
           <TextField
             {...register("codice", {
@@ -134,18 +124,6 @@ export default function Page() {
         ) : (
           <></>
         )}
-        {difettoList ? (
-          <MyReactSelect
-            control={control}
-            name="idDifettoList"
-            label="Difetti inclusi"
-            options={difettoList}
-            styles={selectStyles}
-            isMulti={true}
-          />
-        ) : (
-          <></>
-        )}
         <Stack direction={"row"} spacing={1} mt={2}>
           <Button
             variant="outlined"
@@ -167,7 +145,7 @@ export default function Page() {
 Page.getLayout = function getLayout(page) {
   return (
     <Layout>
-      <NestedLayout title={"CAUSA RECLAMO"}>{page}</NestedLayout>
+      <NestedLayout title={"DIFETTO"}>{page}</NestedLayout>
     </Layout>
   );
 };

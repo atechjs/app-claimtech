@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ReclamoNestedLayout from "../../../../components/reclamo/reclamoNestedLayout";
 import {
-  Box,
   Button,
   Card,
   CardContent,
@@ -13,12 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import UseReclamoNoteAccredito from "../../../../components/fetching/useReclamoNoteAccredito";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AddIcon from "@mui/icons-material/Add";
 import dayjs from "dayjs";
-import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
-import EuroIcon from "@mui/icons-material/Euro";
 import DialogCreaReso from "../../../../components/reso/dialogCreaReso";
 import getApiUrl from "../../../../utils/BeUrl";
 import GetCurrentAxiosInstance from "../../../../utils/Axios";

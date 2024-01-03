@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import LayoutMenuFiltri from "../menuFiltri/layoutMenuFiltri";
 export default function MenuFiltri({
   filtroSelezionato,
   filterList,
@@ -65,47 +66,6 @@ export default function MenuFiltri({
   const { register, handleSubmit, formState, reset } = form;
   const { errors } = formState;
 
-  const displayFiltro = (filtro) => {
-    if (filtro === undefined) return;
-    return (
-      <ListItem key={filtro.id} disablePadding>
-        <ListItemButton
-          sx={{ pr: 1, pl: 1 }}
-          onClick={() => onFilterSelected(filtro)}
-          selected={
-            filtroSelezionato !== undefined && filtro.id === filtroSelezionato
-          }
-        >
-          <Stack
-            direction="row"
-            width={"100%"}
-            justifyContent="flex-start"
-            alignItems="center"
-          >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              {filtro.pinned ? <PushPinTwoToneIcon fontSize="small" /> : <></>}
-              <ListItemText primary={filtro.label} />
-            </Box>
-            <Stack direction={"row-reverse"} spacing={0}>
-              {filtro.count !== undefined && filtro.count !== null ? (
-                <Tag label={filtro.count} colore="gray" />
-              ) : (
-                <Tag label={0} colore="gray" />
-              )}
-            </Stack>
-          </Stack>
-        </ListItemButton>
-      </ListItem>
-    );
-  };
-
   const onSyncButtonPressed = (data) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     current.set("esercizio", data.esercizio);
@@ -128,22 +88,21 @@ export default function MenuFiltri({
     return outputList;
   };
   return (
-    <Paper
-      elevation={4}
-      sx={{
-        minHeight: "100%",
-        backgroundColor: "white",
-      }}
-      square
-    >
-      <Stack direction={"column"} spacing={1}>
+    <LayoutMenuFiltri
+      barFiltri={
         <BarFiltri
           f={filtroSelezionato}
           onAddClick={onFilterAdd}
           onUpdateClick={onFilterUpdate}
           onDeleteClick={onFilterDelete}
         />
-
+      }
+      filterList={ordinaListaFiltri(filterList)}
+      filtroSelezionato={filtroSelezionato}
+      onFilterSelected={onFilterSelected}
+      isLoading={isLoading}
+    >
+      <Stack direction={"column"} spacing={1}>
         <Stack
           pr={1}
           pl={1}
@@ -171,21 +130,8 @@ export default function MenuFiltri({
             </Button>
           </Tooltip>
         </Stack>
-        <Stack direction={"column"}>
-          <Divider sx={{ marginBottom: 0 }} />
-          {isLoading !== undefined && !isLoading ? (
-            <List dense sx={{ pt: 0 }}>
-              {ordinaListaFiltri(filterList).map((filtro) =>
-                displayFiltro(filtro)
-              )}
-            </List>
-          ) : (
-            <Stack direction={"column"}>
-              <LinearProgress thickness={10} />
-            </Stack>
-          )}
-        </Stack>
+        <Divider sx={{ marginBottom: 0 }} />
       </Stack>
-    </Paper>
+    </LayoutMenuFiltri>
   );
 }

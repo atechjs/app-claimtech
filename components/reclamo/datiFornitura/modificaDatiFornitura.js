@@ -83,7 +83,7 @@ export default function ModificaDatiFornitura({
         id: "partitaCausaReclamo_idStato",
         codice: "partitaCausaReclamo_idStato",
         nome: "Stato",
-        codiceTipo: "SELECT",
+        codiceTipo: "STATO_FORNITURA_CAUSA_RECLAMO",
         associazioneList: [],
         options: statoFornituraList,
       },
@@ -285,6 +285,7 @@ export default function ModificaDatiFornitura({
               tempData = modificaTempData(value, tempData, rowIndex, columnId);
             break;
           case "SELECT":
+          case "STATO_FORNITURA_CAUSA_RECLAMO":
             if (columnId === "partitaCausaReclamo_idStato")
               tempData[rowIndex]["azzeraPartita"] = value.azzeraPartita;
             tempData = modificaTempData(
@@ -307,17 +308,16 @@ export default function ModificaDatiFornitura({
           //1 - Sostituisco a EXPR i valori che servono
           const code = dependency.codiceDipendente;
           let expr = dependency.expr;
-          console.log("rowData", rowData);
-          expr = expr.replace("[value]", value);
-          expr = expr.replace("[coefFattura]", rapportoValore);
-          expr = expr.replace("[kgFattura]", kgFatt);
-          expr = expr.replace("[qtaFattura]", qtaFatt); //prima sqmFattura
-          expr = expr.replace("[cCartaAdesivo]", costoCartaAdesivo);
-          expr = expr.replace("[cRibob]", costoRibobinatrice);
-          expr = expr.replace("[cFermoMacchina]", costoFermoMacchina);
-          expr = expr.replace("[spessoreArticolo]", rowData.spessore);
-          expr = expr.replace("[altezzaArticolo]", rowData.altezza);
-          expr = expr.replace("[lunghezzaArticolo]", rowData.lunghezza);
+          expr = expr.replaceAll("[value]", value);
+          expr = expr.replaceAll("[coefFattura]", rapportoValore);
+          expr = expr.replaceAll("[kgFattura]", kgFatt);
+          expr = expr.replaceAll("[qtaFattura]", qtaFatt); //prima sqmFattura
+          expr = expr.replaceAll("[cCartaAdesivo]", costoCartaAdesivo);
+          expr = expr.replaceAll("[cRibob]", costoRibobinatrice);
+          expr = expr.replaceAll("[cFermoMacchina]", costoFermoMacchina);
+          expr = expr.replaceAll("[spessoreArticolo]", rowData.spessore);
+          expr = expr.replaceAll("[altezzaArticolo]", rowData.altezza);
+          expr = expr.replaceAll("[lunghezzaArticolo]", rowData.lunghezza);
           //2 - Parso e calcolo il risultato
           const result = approssima(math.evaluate(expr));
           //3 - Salvo il risultato a code
@@ -336,36 +336,32 @@ export default function ModificaDatiFornitura({
           );
         });
         let valorizzazioneValuta = 0;
-        if (value.azzeraPartita) {
-          valorizzazioneValuta = 0;
-        } else {
-          //Calcolare valoreContestazione solo se non sto cambiando il campo
-          //Ottengo tutti i campi in expr tra parentesi quadre, per ottenere il valore basta andare in
-          switch (columnId) {
-            case "partitaCausaReclamo_valoreContestazione":
-              valorizzazioneValuta = approssima(value);
-              break;
-            case "partitaCausaReclamo_valoreContestazioneCliente":
-              valorizzazioneValuta =
-                tempData[rowIndex]["partitaCausaReclamo_valoreContestazione"];
-              break;
-            default:
-              let arr = [];
-              Object.keys(tempData[rowIndex]).map((k) => {
-                arr = [...arr, { key: k, value: tempData[rowIndex][k] }];
-              });
-              let exprValorizzazione = exprValuta;
-              arr.forEach((obj) => {
-                exprValorizzazione = exprValorizzazione.replace(
-                  "[" + obj.key + "]",
-                  obj.value
-                );
-              });
-              valorizzazioneValuta = approssima(
-                math.evaluate(exprValorizzazione)
+        //Calcolare valoreContestazione solo se non sto cambiando il campo
+        //Ottengo tutti i campi in expr tra parentesi quadre, per ottenere il valore basta andare in
+        switch (columnId) {
+          case "partitaCausaReclamo_valoreContestazione":
+            valorizzazioneValuta = approssima(value);
+            break;
+          case "partitaCausaReclamo_valoreContestazioneCliente":
+            valorizzazioneValuta =
+              tempData[rowIndex]["partitaCausaReclamo_valoreContestazione"];
+            break;
+          default:
+            let arr = [];
+            Object.keys(tempData[rowIndex]).map((k) => {
+              arr = [...arr, { key: k, value: tempData[rowIndex][k] }];
+            });
+            let exprValorizzazione = exprValuta;
+            arr.forEach((obj) => {
+              exprValorizzazione = exprValorizzazione.replaceAll(
+                "[" + obj.key + "]",
+                obj.value
               );
-              break;
-          }
+            });
+            valorizzazioneValuta = approssima(
+              math.evaluate(exprValorizzazione)
+            );
+            break;
         }
         tempData[rowIndex]["partitaCausaReclamo_valoreContestazione"] =
           valorizzazioneValuta;

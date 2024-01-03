@@ -58,6 +58,7 @@ export default function DialogAggiungiEvidenza({
                   idFornitura: p.id,
                   idFornituraCausaReclamo: fcr.id,
                   codiceFornitura: p.codice,
+                  idCausaReclamo: fcr.idCausa,
                   codiceCausaReclamo: fcr.codiceCausa,
                 };
                 return (

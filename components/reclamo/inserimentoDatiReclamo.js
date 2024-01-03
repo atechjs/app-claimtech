@@ -204,7 +204,9 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
             name={"inviaComunicazioni"}
             render={({ field: { onChange, value } }) => (
               <FormControlLabel
-                control={<Checkbox checked={value} onChange={onChange} />}
+                control={
+                  <Checkbox checked={value} onChange={onChange} disabled />
+                }
                 label="Invia comunicazioni"
               />
             )}

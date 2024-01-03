@@ -42,7 +42,6 @@ import ReclamiCustomToolbar from "../components/reclamiAssegnati/reclamiCustomTo
 import DialogCondivisioneUtenti from "../components/condivisioneUtente/DialogCondivisioneUtenti";
 import ToolbarPulsanteAggiungi from "../components/my-mui-data-table/ToolbarPulsanteAggiungi";
 import StatoReclamo from "../components/statoReclamo";
-import EuroIcon from "@mui/icons-material/Euro";
 import ModificaDatiFornitura from "../components/reclamo/datiFornitura/modificaDatiFornitura";
 import { getNumList, getPartiteUnivoche } from "../utils/OdlUtils";
 import { getCodiciArticoloUnivoci } from "../utils/articoloUtils";
@@ -52,6 +51,10 @@ import useStatoFornituraSelect from "../components/fetching/useStatoFornituraSel
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { getStatiFornituraList } from "../utils/partitaUtils";
 import useTipologiaStatoEvidenzaSelect from "../components/fetching/useTipologiaStatoEvidenzaSelect";
+import ChipValorizzazioneValuta from "../components/chipValorizzazioneValuta";
+import ChipValorizzazioneEuro from "../components/chipValorizzazioneEuro";
+import RenderDatiReclamo from "../components/my-mui-data-table/components/renderDatiReclamo";
+import RenderDatiArticoloValorizzazione from "../components/my-mui-data-table/components/renderDatiArticoloValorizzazione";
 
 export default function Page() {
   var isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
@@ -360,51 +363,13 @@ export default function Page() {
           const aperto = rowData[9];
           const codiceTipologiaReclamo = rowData[10];
           return (
-            <Stack direction={"column"}>
-              <Stack
-                direction={"row"}
-                spacing={1}
-                justifyContent="flex-start"
-                alignItems="center"
-              >
-                <StatoReclamo
-                  aperto={aperto}
-                  codiceTipologiaReclamo={codiceTipologiaReclamo}
-                />
-                <Stack
-                  direction={"row"}
-                  spacing={1}
-                  justifyContent="flex-start"
-                  alignItems="center"
-                >
-                  <Typography
-                    variant="body1"
-                    align="left"
-                    alignContent={"flex-start"}
-                  >
-                    <b>{value}</b>
-                  </Typography>
-                </Stack>
-              </Stack>
-              <Stack
-                direction={"row"}
-                spacing={1}
-                justifyContent="flex-start"
-                alignItems="center"
-              >
-                <TagIcon fontSize="small" />
-                <Typography
-                  variant="body1"
-                  align="left"
-                  alignContent={"flex-start"}
-                >
-                  {codiceReclamoCliente}
-                </Typography>
-              </Stack>
-              <Stack direction={"row"} spacing={0.5}>
-                {displayTagList(tagList)}
-              </Stack>
-            </Stack>
+            <RenderDatiReclamo
+              codiceReclamoCliente={codiceReclamoCliente}
+              tagList={tagList}
+              aperto={aperto}
+              codiceTipologiaReclamo={codiceTipologiaReclamo}
+              numero={value}
+            />
           );
         },
       },
@@ -427,6 +392,7 @@ export default function Page() {
         display: true,
         filterType: "custom",
         customBodyRenderLite: (dataIndex, rowIndex) => {
+          console.log("dataIndex", dataIndex);
           const map = getStatiFornituraList(
             reclamiList[dataIndex].partitaList.flatMap((x) =>
               x.causaReclamoList.flatMap((y) =>
@@ -812,21 +778,15 @@ export default function Page() {
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
           const valorizzazioneValuta = rowData[16];
+          const valorizzazioneEuro = rowData[29];
+          const codiceValuta = rowData[19];
           return (
-            <Stack direction={"column"}>
-              {getCodiciArticoloUnivoci(value).map((x) => (
-                <span>{x}</span>
-              ))}
-              <span>
-                <Chip
-                  label={valorizzazioneValuta}
-                  variant="outlined"
-                  color="success"
-                  size="small"
-                  icon={<EuroIcon />}
-                />
-              </span>
-            </Stack>
+            <RenderDatiArticoloValorizzazione
+              codiceArticoloList={value}
+              codiceValuta={codiceValuta}
+              valorizzazioneValuta={valorizzazioneValuta}
+              valorizzazioneEuro={valorizzazioneEuro}
+            />
           );
         },
       },
@@ -1023,13 +983,19 @@ export default function Page() {
               x.causaReclamoList.map((y) => y.codiceStato)
             )
           );
+
           return (
             <Stack direction={"column"} spacing={1}>
               {Object.keys(map).map((codiceStato) => {
                 return (
                   <Chip
                     label={codiceStato + "(" + map[codiceStato].length + ")"}
-                    color="primary"
+                    sx={{
+                      backgroundColor: reclamiList[dataIndex].partitaList
+                        .flatMap((x) => x.causaReclamoList)
+                        .find((x) => x.codiceStato === codiceStato).coloreStato,
+                      color: "white",
+                    }}
                     size="small"
                   />
                 );
@@ -1037,6 +1003,15 @@ export default function Page() {
             </Stack>
           );
         },
+      },
+    },
+    {
+      name: "valorizzazioneEuro",
+      label: "Valorizzazione EURO",
+      options: {
+        filter: false,
+        sort: false,
+        display: false,
       },
     },
   ];

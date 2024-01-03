@@ -73,6 +73,7 @@ export default function Page() {
         fornituraList={fornituraList}
         abilitaModifica={permessiReclamoUtente.modifica}
         onSalva={ricaricaEvidenze}
+        idReclamo={router.query.slug}
       />
     </Stack>
   );

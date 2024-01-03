@@ -5,6 +5,7 @@ import MyReactSelect from "../my-react-select-impl/myReactSelect";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import useUtentiSelect from "../fetching/useUtentiSelect";
 
 export default function ValidazioneCliente({ dataReclamo, onClienteValidato }) {
   const schema = yup.object({
@@ -35,6 +36,7 @@ export default function ValidazioneCliente({ dataReclamo, onClienteValidato }) {
       costoFermoMacchina: dataReclamo.costoFermoMacchina,
       idValuta: dataReclamo.idValuta,
       idForm: dataReclamo.idForm,
+      idUtenteList: dataReclamo.idUtenteList,
     },
     resolver: yupResolver(schema),
   });
@@ -51,7 +53,7 @@ export default function ValidazioneCliente({ dataReclamo, onClienteValidato }) {
   const { errors } = formState;
 
   const { valutaList } = useValutaSelect();
-
+  const { utentiList } = useUtentiSelect();
   if (dataReclamo.idCliente && dataReclamo.idCliente !== null)
     onClienteValidato(dataReclamo);
 
@@ -160,6 +162,18 @@ export default function ValidazioneCliente({ dataReclamo, onClienteValidato }) {
             error={!!errors.costoFermoMacchina}
             helperText={errors.costoFermoMacchina?.message}
           />
+          {utentiList ? (
+            <MyReactSelect
+              control={control}
+              name="idUtenteList"
+              label="Commerciali associati"
+              options={utentiList}
+              styles={selectStyles}
+              isMulti={true}
+            />
+          ) : (
+            <></>
+          )}
           <Stack direction={"row"} width={"100%"}>
             <Button type="submit" variant="contained">
               Aggiungi cliente
