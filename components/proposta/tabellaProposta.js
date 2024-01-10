@@ -19,6 +19,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -32,6 +33,7 @@ export default function TabellaProposta({
   onAccettaClick,
   onModificaClick,
   onWorkflowSelected,
+  onNotaChanged,
   codiceValuta,
   onButtonInfoStatoClick,
   soloVisualizzazione,
@@ -108,6 +110,9 @@ export default function TabellaProposta({
             <b>{propostaFornituraCausaReclamo.codiceWorkflowGestioneReclamo}</b>
           </TableCell>
           <TableCell>
+            <b>{propostaFornituraCausaReclamo.note}</b>
+          </TableCell>
+          <TableCell>
             {creaStatoTipologia(index, propostaFornituraCausaReclamo.statoList)}
           </TableCell>
           <TableCell>
@@ -147,24 +152,44 @@ export default function TabellaProposta({
                 </RadioGroup>
                 {propostaFornituraCausaReclamo.azione === "MODIFICA" ? (
                   workflowGestioneReclamoList ? (
-                    <Box minWidth={"220"}>
-                      <Typography>Alternativa</Typography>
-                      <Select
-                        options={workflowGestioneReclamoList}
+                    <Stack direction={"column"} spacing={1}>
+                      <Box minWidth={"220"}>
+                        <Typography>Alternativa</Typography>
+                        <Select
+                          options={workflowGestioneReclamoList.filter(
+                            (x) =>
+                              x.value !==
+                              propostaFornituraCausaReclamo.idWorkflowGestioneReclamo
+                          )}
+                          onChange={(e) => {
+                            const newValue = !e || e == null ? null : e.value;
+                            onWorkflowSelected(index, newValue);
+                          }}
+                          autosize={true}
+                          value={workflowGestioneReclamoList.find(
+                            (x) =>
+                              x.value ===
+                              propostaFornituraCausaReclamo.idWorkflowCausaReclamoAlternativo
+                          )}
+                          menuPortalTarget={document.body}
+                          styles={{
+                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                          }}
+                          menuPosition={"fixed"}
+                        />
+                      </Box>
+                      <TextField
+                        id="notePropostaFornituraCausaReclamo"
+                        sx={{ minWidth: 400 }}
+                        label="Note modifica"
+                        multiline
+                        maxRows={4}
                         onChange={(e) => {
-                          const newValue = !e || e == null ? null : e.value;
-                          onWorkflowSelected(index, newValue);
+                          const value = e.target.value;
+                          onNotaChanged(index, value);
                         }}
-                        autosize={true}
-                        value={workflowGestioneReclamoList.find(
-                          (x) =>
-                            x.value ===
-                            propostaFornituraCausaReclamo.idWorkflowCausaReclamoAlternativo
-                        )}
-                        menuPosition="fixed"
-                        styles={selectStyles}
                       />
-                    </Box>
+                    </Stack>
                   ) : null
                 ) : null}
               </Stack>
@@ -207,6 +232,7 @@ export default function TabellaProposta({
               Valore contestazione {" (" + codiceValuta + ")"}
             </TableCell>
             <TableCell>Gestione richiesta</TableCell>
+            <TableCell>Note</TableCell>
             <TableCell>Stato</TableCell>
             <TableCell>Data</TableCell>
             <TableCell>Utente</TableCell>

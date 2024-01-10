@@ -5,6 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
+  Box,
   Button,
   Checkbox,
   FormControlLabel,
@@ -19,6 +20,12 @@ import useTagSelect from "../fetching/useTagSelect";
 import useTipologiaReclamoSelect from "../fetching/useTipologiaReclamoSelect";
 import useStatoFornituraSelect from "../fetching/useStatoFornituraSelect";
 import useTipologiaStatoEvidenzaSelect from "../fetching/useTipologiaStatoEvidenzaSelect";
+import useStabilimentiSelect from "../fetching/useStabilimentiSelect";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import TabFiltroDialog from "./tabFiltroDialog";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 export default function AggiungiFiltroDialog({
   aperto,
   ooo,
@@ -52,8 +59,15 @@ export default function AggiungiFiltroDialog({
     { label: "SOLO APERTI", value: true },
     { label: "SOLO CHIUSI", value: false },
   ];
+
+  const rateoOptions = [
+    { label: "SI", value: true },
+    { label: "NO", value: false },
+  ];
   const { data: tipologiaStatoEvidenzaList } =
     useTipologiaStatoEvidenzaSelect();
+
+  const { stabilimentiList } = useStabilimentiSelect();
 
   const form = useForm({
     defaultValues: {
@@ -67,7 +81,17 @@ export default function AggiungiFiltroDialog({
       tagsContiene: null,
       tagsNonContiene: null,
       idTipologiaStatoEvidenzaList: null,
+      idStabilimento: null,
       pinned: null,
+      timestampCreazioneAttivo: false,
+      timestampCreazioneDa: null,
+      timestampCreazioneA: null,
+      timestampChiusuraAttivo: false,
+      timestampChiusuraDa: null,
+      timestampChiusuraA: null,
+      rateoAttivo: false,
+      rateo: false,
+      annoRateo: null,
     },
   });
 
@@ -79,12 +103,24 @@ export default function AggiungiFiltroDialog({
     control,
     getValues,
     watch,
+    setValue: setValueForm,
   } = form;
   const { errors } = formState;
 
   const onSubmit = (data) => {
-    if (isDialogUpdate()) onSubmitUpdateCallback(data, reset);
-    else onSubmitCreaCallback(data, reset);
+    const valOrNull = (val) => {
+      if (val && val !== null) return dayjs(val).format("DD/MM/YYYY");
+      return null;
+    };
+    const finalData = {
+      ...data,
+      timestampCreazioneDa: valOrNull(data.timestampCreazioneDa),
+      timestampCreazioneA: valOrNull(data.timestampCreazioneA),
+      timestampChiusuraDa: valOrNull(data.timestampChiusuraDa),
+      timestampChiusuraA: valOrNull(data.timestampChiusuraA),
+    };
+    if (isDialogUpdate()) onSubmitUpdateCallback(finalData, reset);
+    else onSubmitCreaCallback(finalData, reset);
   };
 
   function onCloseDialog() {
@@ -105,14 +141,40 @@ export default function AggiungiFiltroDialog({
     let obj = {};
     Object.keys(getValues()).map((x) => (obj = { ...obj, x: null }));
     reset(obj);
-    if (defaultValues !== undefined) reset(defaultValues);
+    if (defaultValues !== undefined)
+      reset({
+        ...defaultValues,
+        timestampCreazioneAttivo:
+          (defaultValues.timestampCreazioneDa &&
+            defaultValues.timestampCreazioneDa !== null) ||
+          (defaultValues.timestampCreazioneA &&
+            defaultValues.timestampCreazioneA !== null)
+            ? true
+            : false,
+        timestampChiusuraAttivo:
+          (defaultValues.timestampChiusuraDa &&
+            defaultValues.timestampChiusuraDa !== null) ||
+          (defaultValues.timestampChiusuraA &&
+            defaultValues.timestampChiusuraA !== null)
+            ? true
+            : false,
+        rateoAttivo:
+          (defaultValues.rateo !== undefined && defaultValues.rateo !== null) ||
+          (defaultValues.annoRateo !== undefined &&
+            defaultValues.annoRateo !== null)
+            ? true
+            : false,
+      });
   }, [defaultValues]);
 
   useEffect(() => {
     if (getValues("idTipologiaReclamo") === undefined) return;
     triggerFase({ id: getValues("idTipologiaReclamo") });
   }, [watch("idTipologiaReclamo")]);
-
+  const [value, setValue] = React.useState(0);
+  const handleTabChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <Dialog open={aperto} onClose={() => onCloseDialog()} disableEscapeKeyDown>
       <DialogTitle>
@@ -134,27 +196,36 @@ export default function AggiungiFiltroDialog({
           spacing={1}
           direction={"column"}
         >
-          <Stack spacing={1} direction={"column"}>
-            <TextField
-              {...register("label", {
-                required: "La descrizione è obbligatoria",
-              })}
-              size="small"
-              margin="normal"
-              required
-              fullWidth
-              id="label"
-              label="Descrizione"
-              name="label"
-              error={!!errors.label}
-              helperText={errors.label?.message}
-              autoFocus
-            />
+          <TextField
+            {...register("label", {
+              required: "La descrizione è obbligatoria",
+            })}
+            size="small"
+            margin="normal"
+            required
+            fullWidth
+            id="label"
+            label="Descrizione"
+            name="label"
+            error={!!errors.label}
+            helperText={errors.label?.message}
+            autoFocus
+          />
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs value={value} onChange={handleTabChange}>
+              <Tab label="Generale" />
+              <Tab label="Stati" />
+              <Tab label="Tags" />
+              <Tab label="Periodo" />
+              <Tab label="Rateo" />
+            </Tabs>
+          </Box>
+          <TabFiltroDialog value={value} index={0}>
             <MyReactSelect
               control={control}
-              name="aperto"
-              label="Stato reclamo(facoltativo)"
-              options={statiList}
+              name="idStabilimento"
+              label="Stabilimento"
+              options={stabilimentiList}
               menuPosition="fixed"
               styles={selectStyles}
             />
@@ -170,6 +241,34 @@ export default function AggiungiFiltroDialog({
             ) : (
               <></>
             )}
+            <MyReactSelect
+              control={control}
+              name="cliente"
+              label="Cliente(facoltativo)"
+              options={clientiList}
+              menuPosition="fixed"
+              styles={selectStyles}
+            />
+            <Controller
+              control={control}
+              name={"pinned"}
+              render={({ field: { onChange, value } }) => (
+                <FormControlLabel
+                  control={<Checkbox checked={value} onChange={onChange} />}
+                  label="Fissa in alto"
+                />
+              )}
+            />
+          </TabFiltroDialog>
+          <TabFiltroDialog value={value} index={1}>
+            <MyReactSelect
+              control={control}
+              name="aperto"
+              label="Stato reclamo(facoltativo)"
+              options={statiList}
+              menuPosition="fixed"
+              styles={selectStyles}
+            />
             {watch("idTipologiaReclamo") != null ? (
               <MyReactSelect
                 control={control}
@@ -202,14 +301,8 @@ export default function AggiungiFiltroDialog({
               menuPosition="fixed"
               styles={selectStyles}
             />
-            <MyReactSelect
-              control={control}
-              name="cliente"
-              label="Cliente(facoltativo)"
-              options={clientiList}
-              menuPosition="fixed"
-              styles={selectStyles}
-            />
+          </TabFiltroDialog>
+          <TabFiltroDialog value={value} index={2}>
             <MyReactSelect
               control={control}
               name="tagsContiene"
@@ -228,17 +321,211 @@ export default function AggiungiFiltroDialog({
               styles={selectStyles}
               isMulti
             />
+          </TabFiltroDialog>
+          <TabFiltroDialog value={value} index={3}>
             <Controller
               control={control}
-              name={"pinned"}
+              name={"timestampCreazioneAttivo"}
               render={({ field: { onChange, value } }) => (
                 <FormControlLabel
-                  control={<Checkbox checked={value} onChange={onChange} />}
-                  label="Fissa in alto"
+                  control={
+                    <Checkbox
+                      checked={value}
+                      onChange={(e) => {
+                        setValueForm(
+                          "timestampCreazioneAttivo",
+                          e.target.checked
+                        );
+                        if (!e.target.checked) {
+                          setValueForm("timestampCreazioneDa", null);
+                          setValueForm("timestampCreazioneA", null);
+                        }
+                      }}
+                    />
+                  }
+                  label="Filtro per data apertura"
                 />
               )}
             />
-          </Stack>
+            {watch("timestampCreazioneAttivo") ? (
+              <Stack direction={"row"} spacing={1}>
+                <Controller
+                  name="timestampCreazioneDa"
+                  control={control}
+                  defaultValue={null}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <DatePicker
+                      label="Da"
+                      format="DD/MM/YYYY"
+                      value={dayjs(value)}
+                      control={control}
+                      onChange={(event) => onChange(event)}
+                      slotProps={{
+                        textField: {
+                          error: !!error,
+                          helperText: error?.message,
+                          size: "small",
+                        },
+                      }}
+                    />
+                  )}
+                />
+                <Controller
+                  name="timestampCreazioneA"
+                  control={control}
+                  defaultValue={null}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <DatePicker
+                      label="A"
+                      format="DD/MM/YYYY"
+                      value={dayjs(value)}
+                      control={control}
+                      onChange={(event) => onChange(event)}
+                      slotProps={{
+                        textField: {
+                          error: !!error,
+                          helperText: error?.message,
+                          size: "small",
+                        },
+                      }}
+                    />
+                  )}
+                />
+              </Stack>
+            ) : null}
+            <Controller
+              control={control}
+              name={"timestampChiusuraAttivo"}
+              render={({ field: { onChange, value } }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={value}
+                      onChange={(e) => {
+                        setValueForm(
+                          "timestampChiusuraAttivo",
+                          e.target.checked
+                        );
+                        if (!e.target.checked) {
+                          setValueForm("timestampChiusuraDa", null);
+                          setValueForm("timestampChiusuraA", null);
+                        }
+                      }}
+                    />
+                  }
+                  label="Filtro per data chiusura"
+                />
+              )}
+            />
+            {watch("timestampChiusuraAttivo") ? (
+              <Stack direction={"row"} spacing={1}>
+                <Controller
+                  name="timestampChiusuraDa"
+                  control={control}
+                  defaultValue={null}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <DatePicker
+                      label="Da"
+                      format="DD/MM/YYYY"
+                      value={dayjs(value)}
+                      control={control}
+                      onChange={(event) => onChange(event)}
+                      slotProps={{
+                        textField: {
+                          error: !!error,
+                          helperText: error?.message,
+                          size: "small",
+                        },
+                      }}
+                    />
+                  )}
+                />
+                <Controller
+                  name="timestampChiusuraA"
+                  control={control}
+                  defaultValue={null}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <DatePicker
+                      label="A"
+                      format="DD/MM/YYYY"
+                      value={dayjs(value)}
+                      control={control}
+                      onChange={(event) => onChange(event)}
+                      slotProps={{
+                        textField: {
+                          error: !!error,
+                          helperText: error?.message,
+                          size: "small",
+                        },
+                      }}
+                    />
+                  )}
+                />
+              </Stack>
+            ) : null}
+          </TabFiltroDialog>
+          <TabFiltroDialog value={value} index={4}>
+            <Controller
+              control={control}
+              name={"rateoAttivo"}
+              render={({ field: { onChange, value } }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={value}
+                      onChange={(e) => {
+                        setValueForm("rateoAttivo", e.target.checked);
+                        if (!e.target.checked) {
+                          setValueForm("rateo", null);
+                          setValueForm("annoRateo", null);
+                        }
+                      }}
+                    />
+                  }
+                  label="Filtro per rateo"
+                />
+              )}
+            />
+            {watch("rateoAttivo") ? (
+              <Stack direction={"column"} spacing={1} width={"100%"}>
+                <MyReactSelect
+                  control={control}
+                  name="rateo"
+                  label="Includi nel rateo"
+                  options={rateoOptions}
+                  menuPortalTarget={document.body}
+                  styles={{
+                    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                  }}
+                  menuPosition={"fixed"}
+                />
+                <TextField
+                  {...register("annoRateo")}
+                  size="small"
+                  margin="normal"
+                  fullWidth
+                  id="annoRateo"
+                  label="Esercizio rateo"
+                  name="annoRateo"
+                  error={!!errors.annoRateo}
+                  helperText={errors.annoRateo?.message}
+                  type="number"
+                />
+              </Stack>
+            ) : null}
+          </TabFiltroDialog>
           <Stack direction={"row-reverse"} spacing={2}>
             <Button type="submit" variant="contained">
               {isDialogUpdate() ? "Aggiorna" : "Crea"}

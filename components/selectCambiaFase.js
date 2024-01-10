@@ -14,7 +14,6 @@ export default function SelectCambiaFase({
   idFase,
   disabled,
 }) {
-  console.log("disabled", disabled);
   const form = useForm({
     defaultValues: {
       reclamiList: reclamiList,

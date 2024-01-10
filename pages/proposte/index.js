@@ -107,6 +107,10 @@ export default function Page() {
     setParamList(paramList);
   }
 
+  const onSyncMenu = () => {
+    mutate(getApiUrl() + "api/proposta/proposteAssegnate");
+  };
+
   const apriPropostaTable = (id) => {
     setParam("idPropostaAperta", id);
     setIdPropostaAperta(id);
@@ -468,6 +472,7 @@ export default function Page() {
         filterList={filtriList}
         isLoading={isLoading}
         onFilterSelected={onFilterSelected}
+        onSync={onSyncMenu}
       />
       <Box width={"100%"}>
         {isLoading !== undefined && !isLoading && isReady ? (

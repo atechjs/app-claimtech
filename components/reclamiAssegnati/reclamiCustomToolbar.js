@@ -32,6 +32,8 @@ import SummarizeIcon from "@mui/icons-material/Summarize";
 import DialogModificaRateo from "../modificaRateo/dialogModificaRateo";
 import ChipValorizzazioneValuta from "../chipValorizzazioneValuta";
 import ChipValorizzazioneEuro from "../chipValorizzazioneEuro";
+import FactCheckIcon from "@mui/icons-material/FactCheck";
+import DialogCreaProposta from "../proposta/dialogCreaProposta";
 
 export default function ReclamiCustomToolbar({
   selectedRows,
@@ -56,6 +58,7 @@ export default function ReclamiCustomToolbar({
 
   const [openedDialogTags, setOpenedDialogTags] = useState(false);
   const [openedDialogRateo, setOpenedDialogRateo] = useState(false);
+  const [openedDialogProposta, setOpenedDialogProposta] = useState(false);
   const [openedDialogCreaReso, setOpenedDialogCreaReso] = useState(false);
   const [openedDialogCreaNotaAccredito, setOpenedDialogCreaNotaAccredito] =
     useState(false);
@@ -87,6 +90,14 @@ export default function ReclamiCustomToolbar({
 
   const handleClickCloseDialogRateo = () => {
     setOpenedDialogRateo(false);
+  };
+
+  const handleClickOpenNuovaPropostaTcs = () => {
+    setOpenedDialogProposta(true);
+  };
+
+  const handleClickCloseNuovaPropostaTcs = () => {
+    setOpenedDialogProposta(false);
   };
 
   const handleClickOpenDialogCreaReso = () => {
@@ -283,6 +294,11 @@ export default function ReclamiCustomToolbar({
       );
   };
 
+  const onSubmitProposta = () => {
+    onUpdateReclami();
+    handleClickCloseNuovaPropostaTcs();
+  };
+
   const onUpdateReclamiHere = (result) => {
     if (result.data === true) handleClickOpen();
     //Chiamo padre che aggiorna i reclami
@@ -445,6 +461,25 @@ export default function ReclamiCustomToolbar({
       <Divider orientation="vertical" flexItem />
       <Tooltip
         title={
+          tuttiModificaAbilitata()
+            ? "Crea proposta TCS"
+            : "Non hai i permessi per creare la proposta TCS"
+        }
+      >
+        <span>
+          <IconButton
+            aria-label="crea proposta TCS"
+            size="small"
+            onClick={() => handleClickOpenNuovaPropostaTcs()}
+            color="warning"
+            disabled={!tuttiModificaAbilitata()}
+          >
+            <FactCheckIcon />
+          </IconButton>
+        </span>
+      </Tooltip>
+      <Tooltip
+        title={
           isResoDisabilitato()
             ? "I reclami selezionati devono avere tutti lo stesso form e lo stesso cliente"
             : "Crea reso"
@@ -496,6 +531,12 @@ export default function ReclamiCustomToolbar({
         opened={openedDialogRateo}
         handleClose={handleClickCloseDialogRateo}
         handleOnSubmit={handleOnModificaRateo}
+      />
+      <DialogCreaProposta
+        opened={openedDialogProposta}
+        handleClose={handleClickCloseNuovaPropostaTcs}
+        handleOnSubmit={onSubmitProposta}
+        idReclamoList={getIdReclamoList(reclamiSelezionati)}
       />
       <DialogCreaReso
         opened={openedDialogCreaReso}

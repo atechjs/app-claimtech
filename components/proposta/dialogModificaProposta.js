@@ -49,11 +49,16 @@ export default function DialogModificaProposta({
       values.propostaFornituraCausaReclamoList
     );
   };
-  const { data, isLoading } = usePropostaById({ id: idProposta }, inizializza);
+  const { data, isLoading, trigger } = usePropostaById(
+    { id: idProposta },
+    inizializza
+  );
   const { workflowGestioneReclamoList } = useWorkflowGestioneReclamoSelect();
   const router = useRouter();
+
   React.useEffect(() => {
     setOpen(opened);
+    if (opened) trigger({ id: idProposta }, inizializza);
   }, [opened]);
 
   const onSubmit = () => {
@@ -126,6 +131,18 @@ export default function DialogModificaProposta({
           return {
             ...row,
             idWorkflowCausaReclamoAlternativo: id,
+          };
+        else return row;
+      })
+    );
+  };
+  const onNotaChanged = (index, value) => {
+    setPropostaFornituraCausaReclamoList((old) =>
+      old.map((row, rowIndex) => {
+        if (rowIndex === index)
+          return {
+            ...row,
+            notaAlternativa: value,
           };
         else return row;
       })
@@ -255,6 +272,7 @@ export default function DialogModificaProposta({
                 onAccettaClick={onAccettaClick}
                 onModificaClick={onModificaClick}
                 onWorkflowSelected={onWorkflowSelected}
+                onNotaChanged={onNotaChanged}
                 codiceValuta={data.codiceValuta}
                 onButtonInfoStatoClick={onButtonInfoStatoClick}
                 soloVisualizzazione={soloVisualizzazione}

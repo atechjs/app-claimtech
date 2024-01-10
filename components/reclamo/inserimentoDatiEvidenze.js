@@ -9,25 +9,48 @@ import dayjs from "dayjs";
 import { GetCurrentUser } from "../../utils/Axios";
 import ModificaEvidenze from "../evidenze/modificaEvidenze/modificaEvidenze";
 import useTipologiaConfermaReclamoEvidenzaSelect from "../fetching/useTipologiaConfermaReclamoEvidenzaSelect";
+import useCategoriaEvidenzaSelectTrigger from "../fetching/useCategoriaEvidenzaSelectTrigger";
+import useSWRMutation from "swr/mutation";
+import useTipologiaConfermaReclamoEvidenzaSelectTrigger from "../fetching/useTipologiaConfermaReclamoEvidenzaSelectTrigger";
 export default function InserimentoDatiEvidenze({
   dataReclamo,
   onDatiEvidenzeInseriti,
 }) {
-  const { data: categoriaList, mutate: categoriaMutate } =
-    useCategoriaEvidenzaSelect();
+  const onSuccessCategoriaEvidenza = (values) => {
+    triggerTipologiaConfermaReclamo();
+  };
+
   const {
-    data: tipologiaConfermaReclamoList,
-    mutate: tipologiaConfermaReclamoMutate,
-  } = useTipologiaConfermaReclamoEvidenzaSelect();
+    data: categoriaList,
+    mutate: categoriaMutate,
+    trigger: triggerCategoriaEvidenza,
+  } = useCategoriaEvidenzaSelectTrigger(onSuccessCategoriaEvidenza);
+
+  const [tipologiaConfermaReclamoList, setTipologiaConfermaReclamoList] =
+    useState([]);
+
   useEffect(() => {
-    categoriaMutate();
-    tipologiaConfermaReclamoMutate();
+    if (tipologiaConfermaReclamoList.length > 0)
+      tipologiaStatoEvidenzaTrigger();
+  }, [tipologiaConfermaReclamoList]);
+
+  const onSuccessTipologiaConfermaReclamo = (values) => {
+    setTipologiaConfermaReclamoList(values);
+  };
+
+  const { trigger: triggerTipologiaConfermaReclamo } =
+    useTipologiaConfermaReclamoEvidenzaSelectTrigger(
+      onSuccessTipologiaConfermaReclamo
+    );
+
+  useEffect(() => {
+    triggerCategoriaEvidenza();
   }, []);
-  const { data: tipologiaStatoEvidenzaList } = useSWR(
-    categoriaList &&
-      categoriaList.length > 0 &&
-      tipologiaConfermaReclamoList &&
-      tipologiaConfermaReclamoList.length > 0
+  const {
+    data: tipologiaStatoEvidenzaList,
+    trigger: tipologiaStatoEvidenzaTrigger,
+  } = useSWRMutation(
+    tipologiaConfermaReclamoList
       ? getApiUrl() + "api/evidenza/tipologiaStatoEvidenzaSelect"
       : null,
     getAxiosFetcher,
@@ -47,8 +70,8 @@ export default function InserimentoDatiEvidenze({
               codiceStato: values[0].label,
               timestampStato: dayjs(),
               usernameStato: GetCurrentUser().username,
-              idTipologiaConferma: tipologiaStatoEvidenzaList[0].value,
-              codiceTipologiaConferma: tipologiaStatoEvidenzaList[0].label,
+              idTipologiaConferma: tipologiaConfermaReclamoList[0].value,
+              codiceTipologiaConferma: tipologiaConfermaReclamoList[0].label,
               idDifettoList: [],
               note: null,
               allegatoList: [],

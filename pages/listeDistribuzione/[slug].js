@@ -225,6 +225,7 @@ export default function Page() {
                   <TableRow>
                     <TableCell>Utente</TableCell>
                     <TableCell>Quando mandare la mail</TableCell>
+                    <TableCell>Solo per le cause</TableCell>
                     <TableCell>Tipologia</TableCell>
                     <TableCell>Azione</TableCell>
                   </TableRow>
@@ -244,6 +245,11 @@ export default function Page() {
                       </TableCell>
                       <TableCell>
                         {dato.codiceStatoFornituraCausaReclamo}
+                      </TableCell>
+                      <TableCell>
+                        {dato.codiceCausaReclamoList.map((codice) => (
+                          <span>{codice};</span>
+                        ))}
                       </TableCell>
                       <TableCell>{dato.codiceTipologiaDestinatario}</TableCell>
                       <TableCell>

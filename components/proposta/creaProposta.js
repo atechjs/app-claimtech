@@ -30,10 +30,7 @@ import { mandaNotifica } from "../../utils/ToastUtils";
 export default function CreaProposta({ dataList, onSubmit }) {
   const { workflowGestioneReclamoList } = useWorkflowGestioneReclamoSelect();
   const [indexReclamo, setIndexReclamo] = useState(0);
-  const [dataReclami, setDataReclami] = useState([]);
-  const [dataFornituraCorrente, setDataFornituraCorrente] = useState(
-    dataList[0].fornituraCausaReclamoList
-  );
+  const [dataReclami, setDataReclami] = useState(dataList);
   const instance = GetCurrentAxiosInstance();
   const form = useForm({
     defaultValues: {
@@ -41,15 +38,7 @@ export default function CreaProposta({ dataList, onSubmit }) {
       idWorkflowApplicaTutti: null,
     },
   });
-  const {
-    register,
-    handleSubmit,
-    formState,
-    reset,
-    control,
-    getValues,
-    watch,
-  } = form;
+  const { register, control, getValues } = form;
 
   const selectStyles = {
     menu: (base) => ({
@@ -59,47 +48,35 @@ export default function CreaProposta({ dataList, onSubmit }) {
   };
 
   const datiFornituraCausaReclamoNonCompleti = () => {
-    const rigaVuota = dataFornituraCorrente.find(
-      (x) => !x.idWorkflowCausaReclamo || x.idWorkflowCausaReclamo === null
+    return (
+      dataReclami.find(
+        (reclamo) =>
+          reclamo.fornituraCausaReclamoList.find(
+            (x) =>
+              !x.idWorkflowCausaReclamo || x.idWorkflowCausaReclamo === null
+          ) !== undefined
+      ) !== undefined
     );
-    return rigaVuota !== undefined;
   };
 
   const applicaAtutti = () => {
-    setDataFornituraCorrente((old) =>
-      old.map((row, rowIndex) => {
-        return {
-          ...old[rowIndex],
-          idWorkflowCausaReclamo: getValues("idWorkflowApplicaTutti"),
-        };
-      })
+    setDataReclami((oldList) =>
+      oldList.map((riga) => ({
+        ...riga,
+        fornituraCausaReclamoList: riga.fornituraCausaReclamoList.map((row) => {
+          return {
+            ...row,
+            idWorkflowCausaReclamo: getValues("idWorkflowApplicaTutti"),
+          };
+        }),
+      }))
     );
   };
 
-  const displayReclamo = (reclamo) => {
+  const displayReclamo = () => {
     return (
       <Paper>
         <Stack direction={"column"} spacing={2} p={1}>
-          <Typography variant="h6">Dati reclamo</Typography>
-          <Stack direction={"row"} spacing={2} pl={2} pr={2}>
-            <LabelInformazione
-              label={"Numero reclamo"}
-              value={reclamo.numero}
-            />
-            <LabelInformazione
-              label={"Rif. cliente"}
-              value={reclamo.codiceReclamoCliente}
-            />
-            <LabelInformazione
-              label={"Codice cliente"}
-              value={reclamo.codiceCliente}
-            />
-            <LabelInformazione
-              label={"Descrizione cliente"}
-              value={reclamo.descrizioneCliente}
-            />
-          </Stack>
-          <Divider />
           <Typography variant="h6">Dati proposta</Typography>
           <TextField
             {...register("note")}
@@ -133,62 +110,115 @@ export default function CreaProposta({ dataList, onSubmit }) {
               <Table>
                 <TableHead>
                   <TableRow>
+                    <TableCell>Numero reclamo</TableCell>
+                    <TableCell>Cliente</TableCell>
                     <TableCell>Codice fornitura</TableCell>
                     <TableCell>Codice causa</TableCell>
                     <TableCell>Articolo</TableCell>
                     <TableCell>Linea</TableCell>
                     <TableCell>Proposta</TableCell>
+                    <TableCell>Note</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataFornituraCorrente.map((fornituraCausaReclamo, index) => {
-                    return (
-                      <TableRow>
-                        <TableCell>
-                          {fornituraCausaReclamo.codiceFornitura}
-                        </TableCell>
-                        <TableCell>
-                          {fornituraCausaReclamo.codiceCausa}
-                        </TableCell>
-                        <TableCell>
-                          {fornituraCausaReclamo.codiceArticolo}
-                        </TableCell>
-                        <TableCell>
-                          {fornituraCausaReclamo.codiceLinea}
-                        </TableCell>
-                        <TableCell>
-                          {workflowGestioneReclamoList ? (
-                            <Select
-                              options={workflowGestioneReclamoList}
-                              onChange={(e) => {
-                                const newValue =
-                                  !e || e == null ? null : e.value;
-                                setDataFornituraCorrente((old) =>
-                                  old.map((row, rowIndex) => {
-                                    if (rowIndex === index) {
-                                      return {
-                                        ...old[rowIndex],
-                                        idWorkflowCausaReclamo: newValue,
-                                      };
-                                    }
-                                    return row;
-                                  })
-                                );
-                              }}
-                              autosize={true}
-                              value={workflowGestioneReclamoList.find(
-                                (x) =>
-                                  x.value ===
-                                  fornituraCausaReclamo.idWorkflowCausaReclamo
-                              )}
-                              menuPosition="fixed"
-                              styles={selectStyles}
-                            />
-                          ) : null}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                  {dataReclami
+                    .sort((a, b) => a.numero - b.numero)
+                    .reverse()
+                    .flatMap((x) =>
+                      x.fornituraCausaReclamoList.map(
+                        (fornituraCausaReclamo, index) => {
+                          return (
+                            <TableRow>
+                              <TableCell>{x.numero}</TableCell>
+                              <TableCell>{x.descrizioneCliente}</TableCell>
+                              <TableCell>
+                                {fornituraCausaReclamo.codiceFornitura}
+                              </TableCell>
+                              <TableCell>
+                                {fornituraCausaReclamo.codiceCausa}
+                              </TableCell>
+                              <TableCell>
+                                {fornituraCausaReclamo.codiceArticolo}
+                              </TableCell>
+                              <TableCell>
+                                {fornituraCausaReclamo.codiceLinea}
+                              </TableCell>
+                              <TableCell>
+                                {workflowGestioneReclamoList ? (
+                                  <Select
+                                    options={workflowGestioneReclamoList}
+                                    onChange={(e) => {
+                                      const newValue =
+                                        !e || e == null ? null : e.value;
+                                      setDataReclami((old) =>
+                                        old.map((x) => ({
+                                          ...x,
+                                          fornituraCausaReclamoList:
+                                            x.fornituraCausaReclamoList.map(
+                                              (y) => {
+                                                if (
+                                                  y.id ===
+                                                  fornituraCausaReclamo.id
+                                                )
+                                                  return {
+                                                    ...y,
+                                                    idWorkflowCausaReclamo:
+                                                      newValue,
+                                                  };
+                                                else return y;
+                                              }
+                                            ),
+                                        }))
+                                      );
+                                    }}
+                                    autosize={true}
+                                    value={workflowGestioneReclamoList.find(
+                                      (x) =>
+                                        x.value ===
+                                        fornituraCausaReclamo.idWorkflowCausaReclamo
+                                    )}
+                                    menuPosition="fixed"
+                                    styles={selectStyles}
+                                  />
+                                ) : null}
+                              </TableCell>
+                              <TableCell>
+                                <TextField
+                                  id="notePropostaFornituraCausaReclamo"
+                                  sx={{ minWidth: 200 }}
+                                  label=""
+                                  multiline
+                                  maxRows={4}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    setDataReclami((old) =>
+                                      old.map((x) => ({
+                                        ...x,
+                                        fornituraCausaReclamoList:
+                                          x.fornituraCausaReclamoList.map(
+                                            (y) => {
+                                              if (
+                                                y.id ===
+                                                fornituraCausaReclamo.id
+                                              )
+                                                return {
+                                                  ...y,
+                                                  note: value,
+                                                };
+                                              else return y;
+                                            }
+                                          ),
+                                      }))
+                                    );
+                                  }}
+                                  value={fornituraCausaReclamo.note}
+                                />
+                              </TableCell>
+                            </TableRow>
+                          );
+                        }
+                      )
+                    )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -198,84 +228,30 @@ export default function CreaProposta({ dataList, onSubmit }) {
     );
   };
 
-  const formattaDatiCorrenti = () => {
-    //Ottengo i valori
-    const values = getValues();
-    const obj = {
-      ...dataList[indexReclamo],
-      ...values,
-      fornituraCausaReclamoList: dataFornituraCorrente,
-    };
-    //Se esiste la posizione corrente la aggiorno, altrimenti la creo
-    let out = dataReclami;
-    if (dataReclami[indexReclamo] !== null) out[indexReclamo] = obj;
-    else out = [...out, obj];
-    setDataReclami(out);
-    return out;
-  };
-
-  const avantiOSalva = () => {
-    const currentList = formattaDatiCorrenti();
-    //Vado al prossimo reclamo oppure salvo
-    const idx = indexReclamo + 1;
-    if (idx === dataList.length) salva(currentList);
-    else prossimo(idx);
-  };
-
-  const salva = (currentList) => {
+  const salva = () => {
     instance
-      .post(getApiUrl() + "api/reclamo/nuovaProposta", currentList)
+      .post(getApiUrl() + "api/reclamo/nuovaProposta", dataReclami)
       .then((response) => {
         mandaNotifica("Proposta creata con successo", "success");
         onSubmit();
       })
       .catch((error) => {
+        console.error(error);
         mandaNotifica("Impossibile creare la proposta", "error");
       });
   };
 
-  const prossimo = (idx) => {
-    let dataFornitura;
-    let note;
-    const idWorkflowApplicaTutti = null;
-    if (dataReclami[idx]) {
-      dataFornitura = dataReclami[idx].fornituraCausaReclamoList;
-      note = dataReclami[idx].note;
-    } else {
-      dataFornitura = dataList[idx].fornituraCausaReclamoList;
-      note = null;
-    }
-    setDataFornituraCorrente(dataFornitura);
-    reset({ note, idWorkflowApplicaTutti });
-  };
-
   return (
     <Stack direction={"column"} spacing={1}>
-      {displayReclamo(dataList[indexReclamo])}
-      <Stack
-        direction={"row-reverse"}
-        spacing={1}
-        pl={2}
-        pr={2}
-        onClick={() => avantiOSalva()}
-      >
+      {displayReclamo()}
+      <Stack direction={"row-reverse"} spacing={1} pl={2} pr={2}>
         <Button
           variant="contained"
           color="primary"
           disabled={datiFornituraCausaReclamoNonCompleti()}
+          onClick={() => salva()}
         >
-          {indexReclamo === dataList.length - 1
-            ? "Salva" + " (" + (indexReclamo + 1) + "/" + dataList.length + ")"
-            : "Prossimo" +
-              " (" +
-              indexReclamo +
-              1 +
-              "/" +
-              dataList.length +
-              ")"}
-        </Button>
-        <Button color="primary" disabled={indexReclamo === 0}>
-          Indietro
+          Salva
         </Button>
       </Stack>
     </Stack>

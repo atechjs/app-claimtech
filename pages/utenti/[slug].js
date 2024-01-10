@@ -47,6 +47,7 @@ export default function Page() {
       mail: data.mail,
       idRuolo: data.idRuolo,
       idStabilimento: data.idStabilimento,
+      codiceCommercialeSistemaEsterno: data.codiceCommercialeSistemaEsterno,
     });
   }, [data]);
 
@@ -60,6 +61,7 @@ export default function Page() {
       mail: null,
       idRuolo: null,
       idStabilimento: null,
+      codiceCommercialeSistemaEsterno: null,
     },
     resolver: yupResolver(schema),
   });
@@ -220,6 +222,21 @@ export default function Page() {
                 label="Stabilimento"
                 options={stabilimentiList}
                 menuPosition="fixed"
+              />
+            ) : (
+              <></>
+            )}
+            {id !== undefined ? (
+              <TextField
+                {...register("codiceCommercialeSistemaEsterno")}
+                size="small"
+                margin="normal"
+                required
+                id="codiceCommercialeSistemaEsterno"
+                label="Codice commerciale da sistema esterno"
+                name="codiceCommercialeSistemaEsterno"
+                error={!!errors.codiceCommercialeSistemaEsterno}
+                helperText={errors.codiceCommercialeSistemaEsterno?.message}
               />
             ) : (
               <></>

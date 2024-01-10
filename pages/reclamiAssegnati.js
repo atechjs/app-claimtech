@@ -392,7 +392,6 @@ export default function Page() {
         display: true,
         filterType: "custom",
         customBodyRenderLite: (dataIndex, rowIndex) => {
-          console.log("dataIndex", dataIndex);
           const map = getStatiFornituraList(
             reclamiList[dataIndex].partitaList.flatMap((x) =>
               x.causaReclamoList.flatMap((y) =>

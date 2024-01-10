@@ -8,28 +8,24 @@ import useFormSelect from "../fetching/useFormSelect";
 import useStatoFornituraSelect from "../fetching/useStatoFornituraSelect";
 import useTipologiaDestinatarioSelect from "../fetching/useTipologiaDestinatarioSelect";
 import useUtentiSelect from "../fetching/useUtentiSelect";
+import useCausaSelect from "../fetching/useCausaSelect";
 
 export default function AggiungiDestinatario({ onSubmit }) {
   const form = useForm({
     defaultValues: {
       idUtente: null,
       idStatoFornituraCausaReclamo: null,
+      idCausaReclamoList: [],
       idTipologiaDestinatario: null,
     },
   });
-  const {
-    register,
-    handleSubmit,
-    formState,
-    reset,
-    control,
-    getValues,
-    setValue,
-  } = form;
+  const { formState, control, getValues, setValue } = form;
   const { errors } = formState;
   const { statoFornituraList } = useStatoFornituraSelect();
   const { tipologiaDestinatarioList } = useTipologiaDestinatarioSelect();
   const { utentiList } = useUtentiSelect();
+  const { causaList } = useCausaSelect();
+
   const onSubmitInternal = () => {
     let data = getValues();
     if (
@@ -38,6 +34,7 @@ export default function AggiungiDestinatario({ onSubmit }) {
       data.idTipologiaDestinatario === null
     )
       return;
+
     data = {
       ...data,
       usernameUtente: utentiList.find((x) => x.value === data.idUtente).label,
@@ -47,10 +44,14 @@ export default function AggiungiDestinatario({ onSubmit }) {
       codiceTipologiaDestinatario: tipologiaDestinatarioList.find(
         (x) => x.value === data.idTipologiaDestinatario
       ).label,
+      codiceCausaReclamoList: data.idCausaReclamoList.map(
+        (x) => causaList.find((y) => y.value === x).label
+      ),
     };
     setValue("idUtente", null);
     setValue("idStatoFornituraCausaReclamo", null);
     setValue("idTipologiaDestinatario", null);
+    setValue("idCausaReclamoList", []);
     onSubmit(data);
   };
 
@@ -86,6 +87,21 @@ export default function AggiungiDestinatario({ onSubmit }) {
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
           isFullWidth={true}
+        />
+      ) : (
+        <></>
+      )}
+      {causaList ? (
+        <MyReactSelect
+          control={control}
+          name="idCausaReclamoList"
+          label="Solo per le cause"
+          options={causaList}
+          autosize={true}
+          menuPortalTarget={document.body}
+          menuPosition={"fixed"}
+          isFullWidth={true}
+          isMulti={true}
         />
       ) : (
         <></>

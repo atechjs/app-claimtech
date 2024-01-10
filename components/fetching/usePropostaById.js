@@ -15,7 +15,7 @@ export default function usePropostaById(id, onSuccess) {
       })
       .catch((error) => console.log("error", error));
   }
-  const { data, isLoading } = useSWR(
+  const { data, isLoading, trigger } = useSWRMutation(
     id && id.id ? [getApiUrl() + "api/proposta/proposta", id] : undefined,
     ([url, id]) => getById(url, id),
     {
@@ -26,5 +26,6 @@ export default function usePropostaById(id, onSuccess) {
   return {
     data,
     isLoading,
+    trigger,
   };
 }
