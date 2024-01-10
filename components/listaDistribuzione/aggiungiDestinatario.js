@@ -81,7 +81,7 @@ export default function AggiungiDestinatario({ onSubmit }) {
         <MyReactSelect
           control={control}
           name="idStatoFornituraCausaReclamo"
-          label="Quando mandare mail"
+          label="Quando associare"
           options={statoFornituraList}
           autosize={true}
           menuPortalTarget={document.body}

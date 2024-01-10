@@ -19,6 +19,7 @@ import BiotechIcon from "@mui/icons-material/Biotech";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
+import { usePathname } from "next/navigation";
 export default function Layout({ children }) {
   //Il data fetching deve essere fatto qua usare SWR
   //data fetching dell'utente con relativi permessi e creazione web sockets per notifiche
@@ -147,8 +148,9 @@ export default function Layout({ children }) {
         x.label === "divider"
     );
   };
+  const pathname = usePathname();
   return (
-    <ProtectedRoute>
+    <ProtectedRoute pathname={pathname}>
       <Box sx={{ display: "flex", height: "100vh" }}>
         {menuItems !== undefined && utente !== undefined && utente !== null ? (
           <>

@@ -15,6 +15,10 @@ import axios from "axios";
 import getApiUrl from "../utils/BeUrl";
 
 export default function PageLogin() {
+  React.useEffect(() => {
+    if (!authServ.utenteNonLoggato()) router.push("/reclamiAssegnati");
+  }, []);
+
   const form = useForm({
     defaultValues: {
       username: "",
@@ -24,6 +28,7 @@ export default function PageLogin() {
   const { register, handleSubmit, formState, setError } = form;
   const { errors } = formState;
   const router = useRouter();
+  const dataQuery = router.query;
   const instance = axios.create();
   const [loading, setLoading] = React.useState(false);
   const onSubmit = (data) => {
@@ -32,7 +37,8 @@ export default function PageLogin() {
       .post(getApiUrl() + "auth/login", data)
       .then((response) => {
         authServ.saveInfo(response.data);
-        router.push("/reclamiAssegnati");
+        if (router.query && router.query.pName) router.push(router.query.pName);
+        else router.push("/reclamiAssegnati");
       })
       .catch(() => {
         setError("password", {

@@ -224,7 +224,7 @@ export default function Page() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Utente</TableCell>
-                    <TableCell>Quando mandare la mail</TableCell>
+                    <TableCell>Quando associare</TableCell>
                     <TableCell>Solo per le cause</TableCell>
                     <TableCell>Tipologia</TableCell>
                     <TableCell>Azione</TableCell>
