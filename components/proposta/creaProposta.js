@@ -230,7 +230,10 @@ export default function CreaProposta({ dataList, onSubmit }) {
 
   const salva = () => {
     instance
-      .post(getApiUrl() + "api/reclamo/nuovaProposta", dataReclami)
+      .post(
+        getApiUrl() + "api/reclamo/nuovaProposta",
+        dataReclami.map((data) => ({ ...data, note: getValues("note") }))
+      )
       .then((response) => {
         mandaNotifica("Proposta creata con successo", "success");
         onSubmit();

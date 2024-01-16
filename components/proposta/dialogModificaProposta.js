@@ -33,7 +33,6 @@ export default function DialogModificaProposta({
   handleClose,
   handleOnSubmit,
   idProposta,
-  soloVisualizzazione = true,
   includiDatiReclamo = false,
   titolo = "Modifica proposta",
 }) {
@@ -258,7 +257,7 @@ export default function DialogModificaProposta({
                   }}
                 />
               ) : null}
-              {!soloVisualizzazione ? (
+              {!data.soloVisualizzazione ? (
                 <ApplicaATuttiProposta onSubmit={applicaATutti} />
               ) : null}
               <TabellaProposta
@@ -275,10 +274,10 @@ export default function DialogModificaProposta({
                 onNotaChanged={onNotaChanged}
                 codiceValuta={data.codiceValuta}
                 onButtonInfoStatoClick={onButtonInfoStatoClick}
-                soloVisualizzazione={soloVisualizzazione}
+                soloVisualizzazione={data.soloVisualizzazione}
               />
               <Stack direction={"row-reverse"} spacing={1}>
-                {!soloVisualizzazione ? (
+                {!data.soloVisualizzazione ? (
                   <Button
                     variant="contained"
                     disabled={
