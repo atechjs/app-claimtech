@@ -90,14 +90,6 @@ export default function Page() {
       },
     },
     {
-      name: "valuta",
-      label: "Valuta",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
       name: "costoCartaAdesivo",
       label: "Costo carta e adesivo",
       options: {
@@ -106,16 +98,16 @@ export default function Page() {
       },
     },
     {
-      name: "costoFermoMacchina",
-      label: "Costo fermo macchina",
+      name: "costoRibobinatrice",
+      label: "Costo ribobinatrice",
       options: {
         filter: true,
         sort: true,
       },
     },
     {
-      name: "costoRibobinatrice",
-      label: "Costo ribobinatrice",
+      name: "costoFermoMacchina",
+      label: "Costo fermo macchina",
       options: {
         filter: true,
         sort: true,

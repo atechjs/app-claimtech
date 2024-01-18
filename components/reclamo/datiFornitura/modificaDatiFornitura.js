@@ -681,6 +681,7 @@ export default function ModificaDatiFornitura({
         handleOnSubmit={onSubmitAggiungiPartita}
         partitaList={data}
         columnsData={columnsData}
+        codiceValuta={codiceValuta}
       />
       <DialogCopiaPartita
         opened={dialogCopiaOpen}

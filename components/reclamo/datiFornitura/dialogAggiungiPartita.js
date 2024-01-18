@@ -7,6 +7,7 @@ import HorizontalLinearStepper from "../../reclamiAssegnati/horizontalLinearStep
 import SelezioneDatiFornitura from "../selezioneDatiFornitura";
 import InserimentoCausaReclamo from "../inserimentoCausaReclamo";
 import { getPartitaList } from "../../../utils/partitaUtils";
+import { mandaNotifica } from "../../../utils/ToastUtils";
 
 export default function DialogAggiungiPartita({
   opened,
@@ -14,6 +15,7 @@ export default function DialogAggiungiPartita({
   handleOnSubmit,
   columnsData,
   partitaList,
+  codiceValuta,
 }) {
   const [step, setStep] = React.useState(0);
   const [open, setOpen] = React.useState(opened);
@@ -31,6 +33,13 @@ export default function DialogAggiungiPartita({
   };
 
   const onDatiFornituraSelezionati = (data) => {
+    if (data.find((x) => x.codiceValuta !== codiceValuta) !== undefined) {
+      mandaNotifica(
+        "Non è possibile aggiungere forniture che non hanno la stessa valuta del reclamo",
+        "error"
+      );
+      return;
+    }
     const dataReclamoNew = { ...dataReclamo, partitaList: [...data] };
     setDataReclamo(dataReclamoNew);
     setStep(2);

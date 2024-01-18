@@ -48,6 +48,11 @@ export default function DialogInfoStato({ opened, handleClose, statoList }) {
                         <Typography variant="h5" component="div">
                           {stato.codiceTipologiaStato}
                         </Typography>
+                        {stato.note ? (
+                          <>
+                            Note:<Typography>{stato.note}</Typography>
+                          </>
+                        ) : null}
                       </CardContent>
                     </Card>
                   </TimelineContent>

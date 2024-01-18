@@ -38,6 +38,12 @@ export default function TabellaProposta({
   onButtonInfoStatoClick,
   soloVisualizzazione,
 }) {
+  const creaStatoNote = (noteOrig, statoList) => {
+    if (!statoList || statoList.length === 0) return noteOrig;
+    const ultimoStato = statoList[0];
+    if (ultimoStato.note === null || ultimoStato.note === "") return noteOrig;
+    return ultimoStato.note;
+  };
   const creaStatoTipologia = (index, statoList) => {
     if (!statoList || statoList.length === 0) return "-";
     const ultimoStato = statoList[0];
@@ -110,7 +116,12 @@ export default function TabellaProposta({
             <b>{propostaFornituraCausaReclamo.codiceWorkflowGestioneReclamo}</b>
           </TableCell>
           <TableCell>
-            <b>{propostaFornituraCausaReclamo.note}</b>
+            <b>
+              {creaStatoNote(
+                propostaFornituraCausaReclamo.note,
+                propostaFornituraCausaReclamo.statoList
+              )}
+            </b>
           </TableCell>
           <TableCell>
             {creaStatoTipologia(index, propostaFornituraCausaReclamo.statoList)}
@@ -150,9 +161,9 @@ export default function TabellaProposta({
                     />
                   </Stack>
                 </RadioGroup>
-                {propostaFornituraCausaReclamo.azione === "MODIFICA" ? (
-                  workflowGestioneReclamoList ? (
-                    <Stack direction={"column"} spacing={1}>
+                <Stack direction={"column"} spacing={1}>
+                  {propostaFornituraCausaReclamo.azione === "MODIFICA" ? (
+                    workflowGestioneReclamoList ? (
                       <Box minWidth={"220"}>
                         <Typography>Alternativa</Typography>
                         <Select
@@ -178,20 +189,23 @@ export default function TabellaProposta({
                           menuPosition={"fixed"}
                         />
                       </Box>
-                      <TextField
-                        id="notePropostaFornituraCausaReclamo"
-                        sx={{ minWidth: 400 }}
-                        label="Note modifica"
-                        multiline
-                        maxRows={4}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          onNotaChanged(index, value);
-                        }}
-                      />
-                    </Stack>
-                  ) : null
-                ) : null}
+                    ) : null
+                  ) : null}
+                  {propostaFornituraCausaReclamo.azione &&
+                  propostaFornituraCausaReclamo.azione !== null ? (
+                    <TextField
+                      id="notePropostaFornituraCausaReclamo"
+                      sx={{ minWidth: 400 }}
+                      label="Note aggiuntive"
+                      multiline
+                      maxRows={4}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        onNotaChanged(index, value);
+                      }}
+                    />
+                  ) : null}
+                </Stack>
               </Stack>
             </TableCell>
           ) : null}

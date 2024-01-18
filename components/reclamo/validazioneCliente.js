@@ -1,6 +1,5 @@
 import { Button, Paper, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import useValutaSelect from "../fetching/useValutaSelect";
 import MyReactSelect from "../my-react-select-impl/myReactSelect";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -24,7 +23,6 @@ export default function ValidazioneCliente({ dataReclamo, onClienteValidato }) {
       .min(0, "Non valido")
       .required("Non valido")
       .typeError("Non valido"),
-    idValuta: yup.number("Obbligatorio").required("Obbligatorio"),
   });
 
   const form = useForm({
@@ -34,7 +32,6 @@ export default function ValidazioneCliente({ dataReclamo, onClienteValidato }) {
       costoCartaAdesivo: dataReclamo.costoCartaAdesivo,
       costoRibobinatrice: dataReclamo.costoRibobinatrice,
       costoFermoMacchina: dataReclamo.costoFermoMacchina,
-      idValuta: dataReclamo.idValuta,
       idForm: dataReclamo.idForm,
       idUtenteList: dataReclamo.idUtenteList,
     },
@@ -51,20 +48,12 @@ export default function ValidazioneCliente({ dataReclamo, onClienteValidato }) {
     watch,
   } = form;
   const { errors } = formState;
-
-  const { valutaList } = useValutaSelect();
   const { utentiList } = useUtentiSelect();
   if (dataReclamo.idCliente && dataReclamo.idCliente !== null)
     onClienteValidato(dataReclamo);
 
   const onSubmit = (data) => {
-    const codiceValuta = valutaList.find(
-      (x) => x.value === data.idValuta
-    ).label;
-    onClienteValidato({
-      ...data,
-      codiceValuta: codiceValuta,
-    });
+    onClienteValidato(data);
   };
 
   const selectStyles = {
@@ -114,18 +103,6 @@ export default function ValidazioneCliente({ dataReclamo, onClienteValidato }) {
               readOnly: true,
             }}
           />
-          {valutaList ? (
-            <MyReactSelect
-              control={control}
-              name="idValuta"
-              label="Valuta*"
-              options={valutaList}
-              styles={selectStyles}
-              autoFocus={true}
-            />
-          ) : (
-            <></>
-          )}
           <TextField
             {...register("costoCartaAdesivo")}
             type="number"

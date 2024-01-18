@@ -15,8 +15,6 @@ import GetCurrentAxiosInstance from "../../utils/Axios";
 import getApiUrl from "../../utils/BeUrl";
 import { mandaNotifica } from "../../utils/ToastUtils";
 import useClienteById from "../../components/fetching/useClienteById";
-import useValutaSelect from "../../components/fetching/useValutaSelect";
-import useFormSelect from "../../components/fetching/useFormSelect";
 import MyReactSelect from "../../components/my-react-select-impl/myReactSelect";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -45,11 +43,6 @@ export default function Page() {
   }, [id]);
 
   const { data, trigger, isMutating } = useClienteById(id);
-  const {
-    valutaList,
-    isLoading: valutaLoading,
-    error: valutaError,
-  } = useValutaSelect();
 
   useEffect(() => {
     if (data === undefined) return;
@@ -57,7 +50,6 @@ export default function Page() {
       id: data.id,
       codice: data.codice,
       descrizione: data.descrizione,
-      idValuta: data.idValuta,
       costoCartaAdesivo: data.costoCartaAdesivo,
       costoRibobinatrice: data.costoRibobinatrice,
       costoFermoMacchina: data.costoFermoMacchina,
@@ -72,7 +64,6 @@ export default function Page() {
       id: null,
       codice: null,
       descrizione: null,
-      idValuta: null,
       costoCartaAdesivo: 0.35,
       costoRibobinatrice: 0,
       costoFermoMacchina: 0,
@@ -215,17 +206,6 @@ export default function Page() {
                 name="descrizione"
                 error={!!errors.descrizione}
                 helperText={errors.descrizione?.message}
-              />
-            ) : (
-              <></>
-            )}
-            {valutaList ? (
-              <MyReactSelect
-                control={control}
-                name="idValuta"
-                label="Valuta*"
-                options={valutaList}
-                styles={selectStyles}
               />
             ) : (
               <></>
