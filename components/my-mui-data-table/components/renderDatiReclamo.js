@@ -2,6 +2,7 @@ import { Stack, Typography } from "@mui/material";
 import StatoReclamo from "../../statoReclamo";
 import TagIcon from "@mui/icons-material/Tag";
 import Tag from "../../tag";
+import TagSet from "../tagSet";
 
 export default function RenderDatiReclamo({
   aperto,
