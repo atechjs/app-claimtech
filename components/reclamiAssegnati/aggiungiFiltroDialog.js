@@ -78,6 +78,8 @@ export default function AggiungiFiltroDialog({
       cliente: null,
       idTipologiaReclamo: null,
       idStatoFornitura: null,
+      descrizioneArticoloContiene: null,
+      descrizioneArticoloNonContiene: null,
       tagsContiene: null,
       tagsNonContiene: null,
       idTipologiaStatoEvidenzaList: null,
@@ -165,6 +167,7 @@ export default function AggiungiFiltroDialog({
             ? true
             : false,
       });
+    setValue(0);
   }, [defaultValues]);
 
   useEffect(() => {
@@ -176,7 +179,13 @@ export default function AggiungiFiltroDialog({
     setValue(newValue);
   };
   return (
-    <Dialog open={aperto} onClose={() => onCloseDialog()} disableEscapeKeyDown>
+    <Dialog
+      open={aperto}
+      onClose={() => onCloseDialog()}
+      disableEscapeKeyDown
+      fullWidth
+      maxWidth="md"
+    >
       <DialogTitle>
         {isDialogUpdate()
           ? "Modifica la categoria"
@@ -215,6 +224,7 @@ export default function AggiungiFiltroDialog({
             <Tabs value={value} onChange={handleTabChange}>
               <Tab label="Generale" />
               <Tab label="Stati" />
+              <Tab label="Articolo" />
               <Tab label="Tags" />
               <Tab label="Periodo" />
               <Tab label="Rateo" />
@@ -303,6 +313,32 @@ export default function AggiungiFiltroDialog({
             />
           </TabFiltroDialog>
           <TabFiltroDialog value={value} index={2}>
+            <TextField
+              {...register("descrizioneArticoloContiene")}
+              size="small"
+              margin="normal"
+              fullWidth
+              id="descrizioneArticoloContiene"
+              label="La descrizione contiene"
+              name="descrizioneArticoloContiene"
+              error={!!errors.descrizioneArticoloContiene}
+              helperText={errors.descrizioneArticoloContiene?.message}
+              type="text"
+            />
+            <TextField
+              {...register("descrizioneArticoloNonContiene")}
+              size="small"
+              margin="normal"
+              fullWidth
+              id="descrizioneArticoloNonContiene"
+              label="La descrizione non contiene"
+              name="descrizioneArticoloNonContiene"
+              error={!!errors.descrizioneArticoloNonContiene}
+              helperText={errors.descrizioneArticoloNonContiene?.message}
+              type="text"
+            />
+          </TabFiltroDialog>
+          <TabFiltroDialog value={value} index={3}>
             <MyReactSelect
               control={control}
               name="tagsContiene"
@@ -322,7 +358,7 @@ export default function AggiungiFiltroDialog({
               isMulti
             />
           </TabFiltroDialog>
-          <TabFiltroDialog value={value} index={3}>
+          <TabFiltroDialog value={value} index={4}>
             <Controller
               control={control}
               name={"timestampCreazioneAttivo"}
@@ -476,7 +512,7 @@ export default function AggiungiFiltroDialog({
               </Stack>
             ) : null}
           </TabFiltroDialog>
-          <TabFiltroDialog value={value} index={4}>
+          <TabFiltroDialog value={value} index={5}>
             <Controller
               control={control}
               name={"rateoAttivo"}
