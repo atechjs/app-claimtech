@@ -19,6 +19,7 @@ import BiotechIcon from "@mui/icons-material/Biotech";
 import CircleIcon from "@mui/icons-material/Circle";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
+import NetworkPingIcon from "@mui/icons-material/NetworkPing";
 import { usePathname } from "next/navigation";
 export default function Layout({ children }) {
   //Il data fetching deve essere fatto qua usare SWR
@@ -76,6 +77,12 @@ export default function Layout({ children }) {
       link: "/statNoteAccredito",
       icon: <EuroIcon />,
       ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE"],
+    },
+    {
+      label: "KPI",
+      link: "/kpiT",
+      icon: <NetworkPingIcon />,
+      ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE", "ROLE_STANDARD"],
     },
     {
       label: "divider",

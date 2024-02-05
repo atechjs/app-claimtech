@@ -38,9 +38,7 @@ export default function ItemFiltro({
           <Stack direction={"row-reverse"} spacing={0}>
             {filtro.count !== undefined && filtro.count !== null ? (
               <Tag label={filtro.count} colore="gray" />
-            ) : (
-              <Tag label={0} colore="gray" />
-            )}
+            ) : null}
           </Stack>
         </Stack>
       </ListItemButton>
