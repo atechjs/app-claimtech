@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import KpiLayout from "../../components/kpiT/kpiLayout";
-import useFaseAnalisi from "../../components/fetching/useFaseAnalisi";
-import SezioneTempiGenerica from "../../components/kpiT/sezioneTempiGenerica";
+import KpiLayout from "./kpiLayout";
+import useFaseAnalisi from "../fetching/useFaseAnalisi";
+import SezioneTempiGenerica from "./sezioneTempiGenerica";
 import { Box, CircularProgress } from "@mui/material";
 
 export default function KpiFaseAnalisi({ isActive, filterValues }) {

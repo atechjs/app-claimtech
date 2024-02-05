@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import KpiLayout from "../../components/kpiT/kpiLayout";
-import SezioneTempiGenerica from "../../components/kpiT/sezioneTempiGenerica";
+import KpiLayout from "./kpiLayout";
+import SezioneTempiGenerica from "./sezioneTempiGenerica";
 import { Box, CircularProgress } from "@mui/material";
-import useEmissioneNotaAccredito from "../../components/fetching/useEmissioneNotaAccredito";
+import useEmissioneNotaAccredito from "../fetching/useEmissioneNotaAccredito";
 
 export default function KpiEmissioneNotaAccredito({ isActive, filterValues }) {
   useEffect(() => {

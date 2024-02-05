@@ -1,5 +1,5 @@
 import { Box, Divider, Paper, Stack } from "@mui/material";
-import Sezione from "../../pages/kpiT/sezione";
+import Sezione from "./sezione";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 export default function KpiLayout({ titolo, children }) {
   return (

@@ -1,4 +1,4 @@
-import Sezione from "../../pages/kpiT/sezione";
+import Sezione from "./sezione";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import CardsTempo from "../../components/kpiT/cardsTempo";
 import { Typography } from "@mui/material";

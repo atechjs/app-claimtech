@@ -12,13 +12,12 @@ import {
 import Layout from "../../components/layout";
 import { useEffect, useState } from "react";
 import MenuFiltri from "../../components/kpiT/menuFiltri";
-import KpiGestioneReclami from "./kpiGestioneReclami";
 import dayjs from "dayjs";
-import KpiVuoto from "./kpiVuoto";
+import KpiGestioneReclami from "../../components/kpiT/kpiGestioneReclami";
+import KpiFaseAnalisi from "../../components/kpiT/kpiFaseAnalisi";
+import KpiApprovazioneGestione from "../../components/kpiT/kpiApprovazioneGestione";
+import KpiEmissioneNotaAccredito from "../../components/kpiT/kpiEmissioneNotaAccredito";
 import KpiFragment from "../../components/kpiT/kpiFragment";
-import KpiFaseAnalisi from "./kpiFaseAnalisi";
-import KpiApprovazioneGestione from "./kpiApprovazioneGestione";
-import KpiEmissioneNotaAccredito from "./kpiEmissioneNotaAccredito";
 
 export default function Page() {
   function vhToPixels(vh) {

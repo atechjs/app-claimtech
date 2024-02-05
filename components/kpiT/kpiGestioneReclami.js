@@ -3,10 +3,10 @@ import { useEffect } from "react";
 
 import DatasetIcon from "@mui/icons-material/Dataset";
 import Sezione from "./sezione";
-import CardsNumerositaReclami from "../../components/kpiT/cardsNumerositaReclami";
-import useGestioneReclami from "../../components/fetching/useGestioneReclami";
-import KpiLayout from "../../components/kpiT/kpiLayout";
-import SezioneTempiGenerica from "../../components/kpiT/sezioneTempiGenerica";
+import CardsNumerositaReclami from "./cardsNumerositaReclami";
+import useGestioneReclami from "../fetching/useGestioneReclami";
+import KpiLayout from "./kpiLayout";
+import SezioneTempiGenerica from "./sezioneTempiGenerica";
 export default function KpiGestioneReclami({ isActive, filterValues }) {
   useEffect(() => {
     chiamataABe();
