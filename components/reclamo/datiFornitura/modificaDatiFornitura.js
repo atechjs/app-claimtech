@@ -216,6 +216,10 @@ export default function ModificaDatiFornitura({
     return +(Math.round(num + "e+2") + "e-2");
   }
 
+  function roundToThree(num) {
+    return +(Math.round(num + "e+3") + "e-3");
+  }
+
   const calcolaValorizzazioneTotale = (tempData, campo) => {
     let valorizzazioneTotale = 0;
     tempData.forEach(
@@ -318,6 +322,7 @@ export default function ModificaDatiFornitura({
           expr = expr.replaceAll("[spessoreArticolo]", rowData.spessore);
           expr = expr.replaceAll("[altezzaArticolo]", rowData.altezza);
           expr = expr.replaceAll("[lunghezzaArticolo]", rowData.lunghezza);
+          console.log("coefFattura", roundToThree(rapportoValore));
           //2 - Parso e calcolo il risultato
           const result = approssima(math.evaluate(expr));
           //3 - Salvo il risultato a code
