@@ -303,7 +303,7 @@ export default function ModificaDatiFornitura({
           const kgFatt = rowData.qtaKgFattura;
           const qtaFatt = rowData.qtaFattura;
           const valoreFatt = rowData.valoreFattura;
-          const rapportoValore = valoreFatt / qtaFatt;
+          const rapportoValore = (valoreFatt / qtaFatt) * rowData.cambioValuta;
 
           //1 - Sostituisco a EXPR i valori che servono
           const code = dependency.codiceDipendente;
