@@ -22,7 +22,6 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import PersonIcon from "@mui/icons-material/Person";
 import ShareIcon from "@mui/icons-material/Share";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import DialogCondivisioneUtenti from "../condivisioneUtente/DialogCondivisioneUtenti";
 import DialogAssegnaTag from "../assegnaTag/dialogAssegnaTag";
 import AddIcon from "@mui/icons-material/Add";
 import GetCurrentAxiosInstance from "../../utils/Axios";
@@ -37,6 +36,7 @@ import { formattaOdl } from "../../utils/OdlUtils";
 import { getCodiciArticoloUnivoci } from "../../utils/articoloUtils";
 import { getCodiciLineaUnivoci } from "../../utils/lineaUtils";
 import DialogDownloadReportReclami from "../downloadReportReclami/dialogDownloadReportReclami";
+import DialogCondivisioneUtenti from "../condivisioneUtente/dialogCondivisioneUtenti";
 
 export default function ReclamoAppBar({ data, onSync, permessiReclamoUtente }) {
   if (data === undefined) return;
@@ -129,12 +129,15 @@ export default function ReclamoAppBar({ data, onSync, permessiReclamoUtente }) {
       );
   };
 
-  const handleOnCondividiSubmit = (list) => {
+  const handleOnCondividiSubmit = (obj) => {
+    const inviaMail = obj.inviaMail;
+    const list = obj.list;
     const idUtenteList = list.map((utente) => utente.id);
     instance
       .post(getApiUrl() + "api/reclamo/condividi", {
         idReclamoList: [data.id],
         idUtenteList: idUtenteList,
+        inviaMail: inviaMail,
       })
       .then(() => {
         mandaNotifica("Reclamo condiviso correttamente", "success");

@@ -1,25 +1,19 @@
 import {
   Button,
   Stack,
-  Divider,
   Box,
   TextField,
   Paper,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
+import React, { useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Checkbox from "@mui/material/Checkbox";
-import { Controller, useForm } from "react-hook-form";
-import LabelInformazione from "../reclamo/labelInformazione";
+import { useForm } from "react-hook-form";
 import Select from "react-select";
 import useWorkflowGestioneReclamoSelect from "../fetching/useWorkflowGestioneReclamoSelect";
 import MyReactSelect from "../my-react-select-impl/myReactSelect";

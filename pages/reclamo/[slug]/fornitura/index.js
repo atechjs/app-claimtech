@@ -14,8 +14,8 @@ import ModificaDatiFornitura from "../../../../components/reclamo/datiFornitura/
 import GetCurrentAxiosInstance from "../../../../utils/Axios";
 import getApiUrl from "../../../../utils/BeUrl";
 import { mandaNotifica } from "../../../../utils/ToastUtils";
-import DialogCondivisioneUtenti from "../../../../components/condivisioneUtente/DialogCondivisioneUtenti";
 import usePermessiReclamoUtente from "../../../../components/fetching/usePermessiReclamoUtente";
+import DialogCondivisioneUtenti from "../../../../components/condivisioneUtente/dialogCondivisioneUtenti";
 
 export default function Page() {
   const router = useRouter();
@@ -59,12 +59,15 @@ export default function Page() {
     setOpenedDialogCondivisione(false);
   };
 
-  const handleOnCondividiSubmit = (list) => {
+  const handleOnCondividiSubmit = (obj) => {
+    const inviaMail = obj.inviaMail;
+    const list = obj.list;
     const idUtenteList = list.map((utente) => utente.id);
     instance
       .post(getApiUrl() + "api/reclamo/condividi", {
         idReclamoList: [data.id],
         idUtenteList: idUtenteList,
+        inviaMail: inviaMail,
       })
       .then(() => {
         mandaNotifica("Reclamo condiviso correttamente", "success");

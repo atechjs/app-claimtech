@@ -42,14 +42,23 @@ export default function CreaReso({ dataList, onSubmit }) {
             codiceCausa: fornituraCausaReclamo.codiceCausa,
             selezionato: true,
           };
+          console.log("colonnaData", colonnaData);
           colonnaData.forEach(
             (campo) =>
               (mappedObj = {
                 ...mappedObj,
                 [campo.codice]: fornituraCausaReclamo.campoList.find(
                   (y) => y.codice === campo.codice
-                ).value,
-                [campo.codice + TAG_RESO]: campo.rendi,
+                )
+                  ? fornituraCausaReclamo.campoList.find(
+                      (y) => y.codice === campo.codice
+                    ).value
+                  : 0,
+                [campo.codice + TAG_RESO]: fornituraCausaReclamo.campoList.find(
+                  (y) => y.codice === campo.codice
+                )
+                  ? campo.rendi
+                  : false,
               })
           );
           outList = [...outList, mappedObj];

@@ -39,7 +39,6 @@ import autocompleteFilterOption from "../components/my-mui-data-table/autocomple
 import useClienteSelect from "../components/fetching/useClienteSelect";
 import { useTableStateSaverV2 } from "../components/my-mui-data-table/useTableStateSaverV2";
 import ReclamiCustomToolbar from "../components/reclamiAssegnati/reclamiCustomToolbar";
-import DialogCondivisioneUtenti from "../components/condivisioneUtente/DialogCondivisioneUtenti";
 import ToolbarPulsanteAggiungi from "../components/my-mui-data-table/ToolbarPulsanteAggiungi";
 import StatoReclamo from "../components/statoReclamo";
 import ModificaDatiFornitura from "../components/reclamo/datiFornitura/modificaDatiFornitura";
@@ -55,6 +54,7 @@ import ChipValorizzazioneValuta from "../components/chipValorizzazioneValuta";
 import ChipValorizzazioneEuro from "../components/chipValorizzazioneEuro";
 import RenderDatiReclamo from "../components/my-mui-data-table/components/renderDatiReclamo";
 import RenderDatiArticoloValorizzazione from "../components/my-mui-data-table/components/renderDatiArticoloValorizzazione";
+import DialogCondivisioneUtenti from "../components/condivisioneUtente/dialogCondivisioneUtenti";
 
 export default function Page() {
   var isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
@@ -1028,13 +1028,16 @@ export default function Page() {
     setOpenedDialogCondivisione(false);
   };
 
-  const handleOnCondividiSubmit = (list) => {
+  const handleOnCondividiSubmit = (obj) => {
     if (idReclamoModificato === undefined) return;
+    const list = obj.list;
+    const inviaMail = obj.inviaMail;
     const idUtenteList = list.map((utente) => utente.id);
     instance
       .post(getApiUrl() + "api/reclamo/condividi", {
         idReclamoList: [idReclamoModificato],
         idUtenteList: idUtenteList,
+        inviaMail: inviaMail,
       })
       .then(() => {
         mandaNotifica("Reclamo condiviso correttamente", "success");

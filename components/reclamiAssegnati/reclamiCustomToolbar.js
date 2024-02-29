@@ -16,7 +16,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import useFaseSelettore from "../fetching/useFaseSelettore";
 import getApiUrl from "../../utils/BeUrl";
-import DialogCondivisioneUtenti from "../condivisioneUtente/DialogCondivisioneUtenti";
 import GetCurrentAxiosInstance from "../../utils/Axios";
 import { mandaNotifica } from "../../utils/ToastUtils";
 import TagIcon from "@mui/icons-material/Tag";
@@ -34,6 +33,7 @@ import ChipValorizzazioneValuta from "../chipValorizzazioneValuta";
 import ChipValorizzazioneEuro from "../chipValorizzazioneEuro";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import DialogCreaProposta from "../proposta/dialogCreaProposta";
+import DialogCondivisioneUtenti from "../condivisioneUtente/dialogCondivisioneUtenti";
 
 export default function ReclamiCustomToolbar({
   selectedRows,
@@ -189,15 +189,18 @@ export default function ReclamiCustomToolbar({
     mutate();
   }, [reclamiSelezionati]);
 
-  const handleOnCondividiSubmit = (list) => {
+  const handleOnCondividiSubmit = (obj) => {
     const idReclamoList = reclamiSelezionati.map(
       (reclamo) => reclamo[INDEX_ID]
     );
+    const inviaMail = obj.inviaMail;
+    const list = obj.list;
     const idUtenteList = list.map((utente) => utente.id);
     instance
       .post(getApiUrl() + "api/reclamo/condividi", {
         idReclamoList: idReclamoList,
         idUtenteList: idUtenteList,
+        inviaMail: inviaMail,
       })
       .then(() => {
         mandaNotifica("Reclamo condiviso correttamente", "success");

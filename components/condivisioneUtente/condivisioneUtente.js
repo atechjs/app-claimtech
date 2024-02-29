@@ -13,7 +13,9 @@ import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import useAllGruppiUtenteConUtenti from "../fetching/useAllGruppiUtenteConUtenti";
 import ShareIcon from "@mui/icons-material/Share";
-import { Stack } from "@mui/material";
+import { FormControlLabel, Stack } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
+
 export default function CondivisioneUtente({ onSubmit, onBack }) {
   const [tab, setTab] = React.useState(0);
   const {
@@ -29,6 +31,23 @@ export default function CondivisioneUtente({ onSubmit, onBack }) {
 
   const [utentiSelezionati, setUtentiSelezionati] = React.useState([]);
   const [gruppiSelezionati, setGruppiSelezionati] = React.useState([]);
+
+  const form = useForm({
+    defaultValues: {
+      inviaMail: true,
+    },
+  });
+  const {
+    register,
+    handleSubmit,
+    formState,
+    reset,
+    control,
+    getValues,
+    setValue,
+    watch,
+  } = form;
+  const { errors } = formState;
 
   const handleChange = (event, newValue) => {
     setTab(newValue);
@@ -79,6 +98,11 @@ export default function CondivisioneUtente({ onSubmit, onBack }) {
     } else {
       setUtentiSelezionati([...utentiSelezionati, utente]);
     }
+  };
+
+  const onFormSubmit = (data) => {
+    console.log("data", data);
+    onSubmit({ list: utentiSelezionati, ...data });
   };
 
   return (
@@ -158,18 +182,33 @@ export default function CondivisioneUtente({ onSubmit, onBack }) {
         alignItems="center"
         spacing={2}
         p={2}
+        onSubmit={handleSubmit(onFormSubmit)}
+        component="form"
+        noValidate
       >
         <Button
           variant="contained"
-          onClick={() => onSubmit(utentiSelezionati)}
           endIcon={<ShareIcon />}
           disabled={utentiSelezionati.length === 0}
+          type="submit"
         >
           Condividi
         </Button>
         <Button variant="text" onClick={() => onBack()}>
           Annulla
         </Button>
+        <Stack direction={"row"}>
+          <Controller
+            control={control}
+            name={"inviaMail"}
+            render={({ field: { onChange, value } }) => (
+              <FormControlLabel
+                control={<Checkbox checked={value} onChange={onChange} />}
+                label="Invia mail"
+              />
+            )}
+          />
+        </Stack>
       </Stack>
     </Box>
   );

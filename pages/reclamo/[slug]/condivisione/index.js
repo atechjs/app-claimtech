@@ -22,9 +22,9 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import GetCurrentAxiosInstance from "../../../../utils/Axios";
 import getApiUrl from "../../../../utils/BeUrl";
 import { mandaNotifica } from "../../../../utils/ToastUtils";
-import DialogCondivisioneUtenti from "../../../../components/condivisioneUtente/DialogCondivisioneUtenti";
 import Select from "react-select";
 import usePermessiReclamoUtente from "../../../../components/fetching/usePermessiReclamoUtente";
+import DialogCondivisioneUtenti from "../../../../components/condivisioneUtente/dialogCondivisioneUtenti";
 
 export default function Page() {
   const router = useRouter();
@@ -63,11 +63,14 @@ export default function Page() {
   const handleCloseDialogCondivisione = () =>
     setDialogCondivisioneOpened(false);
 
-  const handleSubmitDialogCondivisione = (values) => {
+  const handleSubmitDialogCondivisione = (obj) => {
+    const values = obj.list;
+    const inviaMail = obj.inviaMail;
     instance
       .post(getApiUrl() + "api/reclamo/condividi", {
         idReclamoList: [router.query.slug],
         idUtenteList: values.map((utente) => utente.id),
+        inviaMail: inviaMail,
       })
       .then(() => {
         mutate();
