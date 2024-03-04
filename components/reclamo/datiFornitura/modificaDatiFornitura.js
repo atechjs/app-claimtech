@@ -308,7 +308,12 @@ export default function ModificaDatiFornitura({
           const qtaFatt = rowData.qtaFattura;
           const valoreFatt = rowData.valoreFattura;
           const rapportoValore = (valoreFatt / qtaFatt) * rowData.cambioValuta;
-
+          const finalCostoCartaAdesivo =
+            costoCartaAdesivo * rowData.cambioValuta;
+          const finalCostoRibobinatrice =
+            costoRibobinatrice * rowData.cambioValuta;
+          const finalCostoFermoMacchina =
+            costoFermoMacchina * rowData.cambioValuta;
           //1 - Sostituisco a EXPR i valori che servono
           const code = dependency.codiceDipendente;
           let expr = dependency.expr;
@@ -316,13 +321,12 @@ export default function ModificaDatiFornitura({
           expr = expr.replaceAll("[coefFattura]", rapportoValore);
           expr = expr.replaceAll("[kgFattura]", kgFatt);
           expr = expr.replaceAll("[qtaFattura]", qtaFatt); //prima sqmFattura
-          expr = expr.replaceAll("[cCartaAdesivo]", costoCartaAdesivo);
-          expr = expr.replaceAll("[cRibob]", costoRibobinatrice);
-          expr = expr.replaceAll("[cFermoMacchina]", costoFermoMacchina);
+          expr = expr.replaceAll("[cCartaAdesivo]", finalCostoCartaAdesivo);
+          expr = expr.replaceAll("[cRibob]", finalCostoRibobinatrice);
+          expr = expr.replaceAll("[cFermoMacchina]", finalCostoFermoMacchina);
           expr = expr.replaceAll("[spessoreArticolo]", rowData.spessore);
           expr = expr.replaceAll("[altezzaArticolo]", rowData.altezza);
           expr = expr.replaceAll("[lunghezzaArticolo]", rowData.lunghezza);
-          console.log("coefFattura", roundToThree(rapportoValore));
           //2 - Parso e calcolo il risultato
           const result = approssima(math.evaluate(expr));
           //3 - Salvo il risultato a code

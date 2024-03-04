@@ -262,8 +262,19 @@ export default function ReclamiCustomToolbar({
   };
 
   const handleCreaResoSubmit = (data) => {
+    const formData = new FormData();
+    formData.append("fileReso", data.fileReso);
+    formData.append("fileCmr", data.fileCmr);
+    formData.append(
+      "data",
+      new Blob([JSON.stringify(data)], {
+        type: "application/json",
+      })
+    );
     instance
-      .post(getApiUrl() + "api/reclamo/nuovoReso", data)
+      .post(getApiUrl() + "api/reclamo/nuovoReso", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
       .then(() => {
         mandaNotifica("Reso salvato con successo", "success");
         onUpdateReclami();

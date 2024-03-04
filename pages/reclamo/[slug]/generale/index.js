@@ -32,14 +32,25 @@ import MyReactSelect from "../../../../components/my-react-select-impl/myReactSe
 import { DatePicker } from "@mui/x-date-pickers";
 import usePermessiReclamoUtente from "../../../../components/fetching/usePermessiReclamoUtente";
 import LabelInformazione from "../../../../components/reclamo/labelInformazione";
+import DynamicFormIcon from "@mui/icons-material/DynamicForm";
+import DialogCambiaForm from "../../../../components/cambiaForm/dialogCambiaForm";
 
 export default function Page() {
   const router = useRouter();
   const [modifica, setModifica] = useState(false);
   const instance = GetCurrentAxiosInstance();
   const { tipologiaReclamoList } = useTipologiaReclamoSelect();
-
   const { data, mutate } = useReclamoGenerale(router.query.slug);
+  const [dialogCambiaForm, setDialogCambiaForm] = useState(false);
+
+  const handleOpenDialogCambiaForm = () => {
+    setDialogCambiaForm(true);
+  };
+
+  const handleCloseDialogCambiaForm = () => {
+    setDialogCambiaForm(false);
+  };
+
   const form = useForm({
     defaultValues: {
       codiceClienteReclamo: "",
@@ -132,6 +143,18 @@ export default function Page() {
     onPermessiCaricati
   );
   const [permessiReclamoUtente, setPermessiReclamoUtente] = useState(undefined);
+
+  const handleDialogCambiaFormSubmit = (values) => {
+    instance
+      .post(getApiUrl() + "api/reclamo/cambiaForm", {
+        ...values,
+        idReclamo: Number(router.query.slug),
+      })
+      .then((response) => {
+        mandaNotifica("Form aggiornato correttamente", "success");
+        mutate();
+      });
+  };
 
   if (data === undefined || !permessiReclamoUtente) return <CircularProgress />;
   return (
@@ -253,6 +276,18 @@ export default function Page() {
                         label="Versione Form"
                         value={data.versioneForm}
                       />
+                      {modifica ? (
+                        <Button
+                          variant="outlined"
+                          color="warning"
+                          disabled={!permessiReclamoUtente.modifica}
+                          size="small"
+                          startIcon={<DynamicFormIcon />}
+                          onClick={() => handleOpenDialogCambiaForm()}
+                        >
+                          Aggiorna form
+                        </Button>
+                      ) : null}
                     </Stack>
                     <LabelInformazione
                       label="Valuta"
@@ -412,6 +447,11 @@ export default function Page() {
           </Paper>
         </Grid>
       </Grid>
+      <DialogCambiaForm
+        opened={dialogCambiaForm}
+        handleClose={handleCloseDialogCambiaForm}
+        onSubmit={handleDialogCambiaFormSubmit}
+      />
     </Box>
   );
 }

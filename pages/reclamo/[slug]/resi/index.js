@@ -20,6 +20,8 @@ import getApiUrl from "../../../../utils/BeUrl";
 import GetCurrentAxiosInstance from "../../../../utils/Axios";
 import { mandaNotifica } from "../../../../utils/ToastUtils";
 import useReclamoReso from "../../../../components/fetching/useReclamoReso";
+import DownloadIcon from "@mui/icons-material/Download";
+import axios from "axios";
 export default function Page() {
   const router = useRouter();
   const instance = GetCurrentAxiosInstance();
@@ -35,8 +37,20 @@ export default function Page() {
   };
 
   const handleOnSubmitCreaReso = (values) => {
+    const formData = new FormData();
+    formData.append("fileReso", values.fileReso);
+    formData.append("fileCmr", values.fileCmr);
+    formData.append(
+      "data",
+      new Blob([JSON.stringify(values)], {
+        type: "application/json",
+      })
+    );
+
     instance
-      .post(getApiUrl() + "api/reclamo/nuovoReso", values)
+      .post(getApiUrl() + "api/reclamo/nuovoReso", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
       .then(() => {
         mandaNotifica("Reso salvato con successo", "success");
         mutate();
@@ -45,6 +59,25 @@ export default function Page() {
       .catch(() =>
         mandaNotifica("Non è stato possibile salvare il reso", "error")
       );
+  };
+
+  const handleDownloadFileReso = (idFile, filename) => {
+    axios({
+      url: getApiUrl() + "api/reclamo/downloadFileReso?id=" + idFile,
+      method: "GET",
+      responseType: "blob",
+    }).then((response) => {
+      // create file link in browser's memory
+      const href = URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = href;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      // clean up "a" element & remove ObjectURL
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+    });
   };
 
   const displayReso = (reso) => {
@@ -68,8 +101,31 @@ export default function Page() {
               </Typography>
             </Stack>
             <Typography variant="h5" component="div">
-              {reso.codice}
+              Codice: {reso.codice}
             </Typography>
+            <Typography variant="h6" component="div">
+              CMR: {reso.codiceCmr}
+            </Typography>
+            {reso.idFileReso && reso.idFileReso !== null ? (
+              <Button
+                onClick={() =>
+                  handleDownloadFileReso(reso.idFileReso, reso.filenameFileReso)
+                }
+                startIcon={<DownloadIcon />}
+              >
+                Documento reso
+              </Button>
+            ) : null}
+            {reso.idFileCmr && reso.idFileCmr !== null ? (
+              <Button
+                onClick={() =>
+                  handleDownloadFileReso(reso.idFileCmr, reso.filenameFileCmr)
+                }
+                startIcon={<DownloadIcon />}
+              >
+                CMR
+              </Button>
+            ) : null}
             <Divider />
             <Typography variant="header" sx={{ pt: 1 }}>
               Fornitura associata:
