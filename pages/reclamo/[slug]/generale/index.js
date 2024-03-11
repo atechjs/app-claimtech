@@ -357,16 +357,27 @@ export default function Page() {
                         value={data.noteGenerali}
                       />
                     ) : (
-                      <TextField
-                        {...register("noteGenerali")}
-                        size="small"
-                        margin="normal"
-                        id="noteGenerali"
-                        label="Note generali"
-                        name="noteGenerali"
-                        multiline
-                        minRows={4}
-                      />
+                      <Stack direction={"column"}>
+                        <TextField
+                          {...register("noteGenerali")}
+                          size="small"
+                          margin="normal"
+                          id="noteGenerali"
+                          label="Note generali"
+                          name="noteGenerali"
+                          multiline
+                          minRows={4}
+                          inputProps={{ maxLength: 2000 }}
+                        />
+                        <Typography variant="caption">
+                          {watch("noteGenerali") &&
+                          watch("noteGenerali") !== null
+                            ? "Caratteri utilizzati: " +
+                              watch("noteGenerali").length +
+                              "/2000"
+                            : null}
+                        </Typography>
+                      </Stack>
                     )}
                     <Stack direction={"row"}>
                       {!modifica ? (

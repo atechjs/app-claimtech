@@ -223,7 +223,13 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
           helperText={errors.noteGenerali?.message}
           multiline
           minRows={4}
+          inputProps={{ maxLength: 2000 }}
         />
+        <Typography variant="caption">
+          {watch("noteGenerali") && watch("noteGenerali") !== null
+            ? "Caratteri utilizzati: " + watch("noteGenerali").length + "/2000"
+            : null}
+        </Typography>
         <Stack direction={"row"}>
           <Button type="submit" variant="contained">
             Salva
