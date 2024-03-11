@@ -89,8 +89,6 @@ export default function CreaReso({ dataList, onSubmit }) {
     fileReso: yup
       .mixed()
       .required("Il file del documento di reso è obbligatorio"),
-    codiceCmr: yup.string().trim().required("Il codice CMR è obbligatorio"),
-    fileCmr: yup.mixed().required("Il file CMR è obbligatorio"),
   });
 
   const form = useForm({
@@ -393,19 +391,17 @@ export default function CreaReso({ dataList, onSubmit }) {
           <Paper>
             <Stack direction={"column"} p={1}>
               <TextField
-                {...register("codiceCmr", {
-                  required: "Il codice CMR è obbligatorio",
-                })}
+                {...register("codiceCmr")}
                 size="small"
                 margin="normal"
                 id="codiceCmr"
-                label="Codice CMR*"
+                label="Codice CMR"
                 name="codiceCmr"
                 error={!!errors.codiceCmr}
                 helperText={errors.codiceCmr?.message}
                 autoComplete="off"
               />
-              <Typography>File documento CMR*</Typography>
+              <Typography>File documento CMR</Typography>
               <Stack direction={"row"} width={"100%"}>
                 {watch("fileCmr") && watch("fileCmr") !== null ? (
                   <Chip label={watch("fileCmr").name} sx={{ mt: 1, mb: 1 }} />
