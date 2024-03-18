@@ -327,6 +327,10 @@ export default function ModificaDatiFornitura({
           expr = expr.replaceAll("[spessoreArticolo]", rowData.spessore);
           expr = expr.replaceAll("[altezzaArticolo]", rowData.altezza);
           expr = expr.replaceAll("[lunghezzaArticolo]", rowData.lunghezza);
+          console.log("rowData", rowData);
+          Object.keys(rowData).forEach(
+            (campo) => (expr = expr.replace("[" + campo + "]", rowData[campo]))
+          );
           //2 - Parso e calcolo il risultato
           const result = approssima(math.evaluate(expr));
           //3 - Salvo il risultato a code
