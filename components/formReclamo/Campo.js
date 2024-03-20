@@ -60,6 +60,7 @@ export default function Campo({
       idEtichettaCampo: null,
       idVisualizzazioneList: [],
       associazioneList: [],
+      valoreDefault: 0,
     },
   });
   const { register, formState, reset, control, getValues, setValue, watch } =
@@ -93,7 +94,9 @@ export default function Campo({
       values.numSequenza === null ||
       values.idTipo === null ||
       values.idUnitaMisura === null ||
-      values.includiNelReso === null
+      values.includiNelReso === null ||
+      values.valoreDefault === "" ||
+      values.valoreDefault === null
     );
   };
 
@@ -129,6 +132,7 @@ export default function Campo({
       idEtichettaCampo: data.idEtichettaCampo,
       idVisualizzazioneList: data.idVisualizzazioneList,
       associazioneList: data.associazioneList,
+      valoreDefault: data.valoreDefault,
     });
     setModifica(true);
     callbackTrueModificaInAtto();
@@ -353,6 +357,21 @@ export default function Campo({
               helperText={errors.nomeInglese?.message}
               required
             />
+            <TextField
+              {...register("valoreDefault", {
+                required: "Il valore di default è obbligatorio",
+              })}
+              size="small"
+              margin="normal"
+              id="valoreDefault"
+              label="Valore di default"
+              defaultValue={0}
+              name="valoreDefault"
+              error={!!errors.valoreDefault}
+              helperText={errors.valoreDefault?.message}
+              required
+              type="number"
+            />
             {tipoCampoList ? (
               <MyReactSelect
                 control={control}
@@ -414,6 +433,11 @@ export default function Campo({
             {textFieldReadOnly("codice", "Codice", data.codice)}
             {textFieldReadOnly("nome", "Nome", data.nome)}
             {textFieldReadOnly("nomeInglese", "Traduzione", data.nomeInglese)}
+            {textFieldReadOnly(
+              "valoreDefault",
+              "Valore di default",
+              data.valoreDefault
+            )}
             {tipoCampoList ? (
               textFieldReadOnly(
                 "tipoCampo",

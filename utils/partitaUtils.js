@@ -2,7 +2,6 @@ export const getPartitaList = (columnsData, list) => {
   let finalPartitaList = [];
   //Devo prendere iCausaReclamoList del primo elemento
   const idCausaReclamoList = list[0].idCausaReclamoList;
-
   list.forEach((partita) => {
     partita = { ...partita, id: null, codicePartitaCliente: "" };
     let causaReclamoList = [];
@@ -12,7 +11,11 @@ export const getPartitaList = (columnsData, list) => {
         (colonna) =>
           (campi = [
             ...campi,
-            { codice: colonna.codice, value: 0, rendi: false },
+            {
+              codice: colonna.codice,
+              value: colonna.valoreDefault,
+              rendi: false,
+            },
           ])
       );
 

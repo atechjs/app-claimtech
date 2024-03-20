@@ -133,6 +133,7 @@ export default function Page() {
       idEtichettaCampo: null,
       idVisualizzazioneList: [],
       associazioneList: [],
+      valoreDefault: 0,
     };
     setNuovoCampo(nuovoCampo);
   };
@@ -149,7 +150,6 @@ export default function Page() {
 
   const onSalvaCampo = (codice, values) => {
     let cl = getValues("campoList");
-    console.log("values", values);
     const idx = cl.findIndex((campo) => campo.codice === codice);
     if (idx !== -1) {
       cl[idx] = values;
