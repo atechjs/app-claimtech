@@ -196,6 +196,12 @@ export default function Page() {
                         <></>
                       )}
                       <LabelInformazione label="Numero" value={data.numero} />
+                      <LabelInformazione
+                        label="Inserito nel sistema il "
+                        value={dayjs(data.timestampInserimento).format(
+                          "DD/MM/YYYY [alle] HH:mm:ss"
+                        )}
+                      />
                       {!modifica ? (
                         <LabelInformazione
                           label="Aperto il"
