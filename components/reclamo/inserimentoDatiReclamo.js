@@ -23,6 +23,10 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
   const { causaList } = useCausaSelect();
 
   const schema = yup.object({
+    timestampCreazione: yup
+      .date("Obbligatorio")
+      .required("La data di apertura reclamo è obbligatoria")
+      .max(dayjs(), "La data deve essere minore o uguale della data corrente"),
     idTipologiaReclamo: yup.number("Obbligatorio").required("Obbligatorio"),
     idCausaReclamo: yup.number("Obbligatorio").required("Obbligatorio"),
   });
@@ -31,7 +35,7 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
     defaultValues: {
       codiceCliente: dataReclamo.codiceCliente,
       descrizioneCliente: dataReclamo.descrizioneCliente,
-      timestampCreazione: dayjs(),
+      timestampCreazione: null,
       idTipologiaReclamo: 1,
       codiceReclamoCliente: null,
       idCausaReclamo: null,
@@ -110,6 +114,15 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
           />
         </Stack>
         <Divider />
+        <TextField
+          label="Data inserimento nel sistema"
+          value={dayjs().format("DD/MM/YYYY")}
+          size="small"
+          inputProps={{
+            readOnly: true,
+          }}
+          required
+        />
         <Controller
           name="timestampCreazione"
           control={control}
@@ -117,16 +130,19 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
           defaultValue={null}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <DatePicker
-              label="Aperto il"
+              label="Data apertura cliente"
               format="DD/MM/YYYY"
               value={dayjs(value)}
               control={control}
               onChange={(event) => onChange(event)}
+              maxDate={dayjs()}
               slotProps={{
                 textField: {
                   error: !!error,
                   helperText: error?.message,
                   size: "small",
+                  required: true,
+                  autoFocus: true,
                 },
               }}
             />
@@ -141,7 +157,6 @@ export default function DatiReclamo({ dataReclamo, onDatiInseriti }) {
           name="codiceReclamoCliente"
           error={!!errors.codiceReclamoCliente}
           helperText={errors.codiceReclamoCliente?.message}
-          autoFocus
         />
         <Stack direction={"row"} spacing={1}>
           {tipologiaReclamoList ? (
