@@ -14,7 +14,7 @@ export default function useReclamoFornitura(id) {
       })
       .catch((error) => console.log("error", error));
   }
-  const { trigger, data, isMutating } = useSWRMutation(
+  const { trigger, data, isMutating, isLoading } = useSWRMutation(
     getApiUrl() + "api/reclamo/fornitura",
     getById,
     id

@@ -49,9 +49,9 @@ export default function ReclamiCustomToolbar({
   const INDEX_VALORIZZAZIONE_VALUTA = 17;
   const INDEX_FORM = 19;
   const INDEX_VALUTA = 20;
-  const INDEX_ID_FORNITURA_LIST = 24;
-  const INDEX_MODIFICA_ABILITATA = 28;
-  const INDEX_VALORIZZAZIONE_EURO = 30;
+  const INDEX_ID_FORNITURA_LIST = 21;
+  const INDEX_MODIFICA_ABILITATA = 23;
+  const INDEX_VALORIZZAZIONE_EURO = 25;
 
   const [reclamiSelezionati, setReclamiSelezionati] = useState([]);
   const [openedDialogCondivisione, setOpenedDialogCondivisione] =

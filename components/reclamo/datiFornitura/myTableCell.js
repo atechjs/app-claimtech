@@ -135,7 +135,7 @@ export default function MyTableCell({ getValue, row, column, table }) {
   const selectStyles = {
     menu: (base) => ({
       ...base,
-      zIndex: 500,
+      zIndex: 2000,
     }),
   };
 
@@ -146,12 +146,15 @@ export default function MyTableCell({ getValue, row, column, table }) {
           options={columnMeta?.options}
           onChange={(e) => onSelectChange(e)}
           autosize={true}
-          menuPortalTarget={document.body}
           menuPosition={"fixed"}
           isDisabled={bloccata}
           value={
             columnMeta?.options.find((option) => option.value === value) || null
           }
+          menuPortalTarget={document.body}
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          }}
         />
       </Box>
     );
@@ -170,11 +173,14 @@ export default function MyTableCell({ getValue, row, column, table }) {
           ]}
           onChange={(e) => onSelectChange(e)}
           autosize={true}
-          menuPortalTarget={document.body}
           menuPosition={"fixed"}
           value={
             columnMeta?.options.find((option) => option.value === value) || null
           }
+          menuPortalTarget={document.body}
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          }}
         />
       </Box>
     );
@@ -187,7 +193,6 @@ export default function MyTableCell({ getValue, row, column, table }) {
           isMulti
           options={columnMeta?.options}
           onChange={(e) => onMultiSelectChange(e)}
-          menuPortalTarget={document.body}
           menuPosition={"fixed"}
           autosize={true}
           value={value
@@ -201,6 +206,10 @@ export default function MyTableCell({ getValue, row, column, table }) {
 
               return [...valueItems, valueItem];
             }, [])}
+          menuPortalTarget={document.body}
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          }}
         />
       </Box>
     );

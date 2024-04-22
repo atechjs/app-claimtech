@@ -54,6 +54,7 @@ import ChipValorizzazioneEuro from "../components/chipValorizzazioneEuro";
 import RenderDatiReclamo from "../components/my-mui-data-table/components/renderDatiReclamo";
 import RenderDatiArticoloValorizzazione from "../components/my-mui-data-table/components/renderDatiArticoloValorizzazione";
 import DialogCondivisioneUtenti from "../components/condivisioneUtente/dialogCondivisioneUtenti";
+import DrawerFornituraRapida from "../components/reclamo/drawerFornituraRapida";
 
 export default function Page() {
   var isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
@@ -84,6 +85,9 @@ export default function Page() {
   const { statoFornituraList } = useStatoFornituraSelect();
   //idReclamoModificato è utilizzato per il dialog di condivisione a seguito salvataggio
   const [idReclamoModificato, setIdReclamoModificato] = useState(undefined);
+  const [reclamoFornituraRapida, setReclamoFornituraRapida] =
+    useState(undefined);
+
   useEffect(() => {
     if (!isReady) return;
     setFetch(true);
@@ -337,6 +341,10 @@ export default function Page() {
     }
   };
 
+  const apriFornituraRapida = (values) => {
+    setReclamoFornituraRapida(values);
+  };
+
   const columns = [
     {
       name: "id",
@@ -363,10 +371,12 @@ export default function Page() {
         sort: true,
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
+          const idReclamo = rowData[0];
           const codiceReclamoCliente = rowData[4];
           const tagList = rowData[9];
           const aperto = rowData[10];
           const codiceTipologiaReclamo = rowData[11];
+          const puoModificare = rowData[23];
           return (
             <RenderDatiReclamo
               codiceReclamoCliente={codiceReclamoCliente}
@@ -374,6 +384,10 @@ export default function Page() {
               aperto={aperto}
               codiceTipologiaReclamo={codiceTipologiaReclamo}
               numero={value}
+              onInfoClick={apriFornituraRapida}
+              onInfoDescription="Apri fornitura rapida"
+              idReclamo={idReclamo}
+              puoModificare={puoModificare}
             />
           );
         },
@@ -811,7 +825,7 @@ export default function Page() {
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
           const valorizzazioneValuta = rowData[17];
-          const valorizzazioneEuro = rowData[30];
+          const valorizzazioneEuro = rowData[25];
           const codiceValuta = rowData[20];
           return (
             <RenderDatiArticoloValorizzazione
@@ -866,33 +880,6 @@ export default function Page() {
     {
       name: "codiceValuta",
       label: "codiceValuta",
-      options: {
-        filter: false,
-        sort: false,
-        display: false,
-      },
-    },
-    {
-      name: "costoCartaAdesivo",
-      label: "costoCartaAdesivo",
-      options: {
-        filter: false,
-        sort: false,
-        display: false,
-      },
-    },
-    {
-      name: "costoRibobinatrice",
-      label: "costoRibobinatrice",
-      options: {
-        filter: false,
-        sort: false,
-        display: false,
-      },
-    },
-    {
-      name: "costoFermoMacchina",
-      label: "costoFermoMacchina",
       options: {
         filter: false,
         sort: false,
@@ -964,24 +951,6 @@ export default function Page() {
             );
           },
         },
-      },
-    },
-    {
-      name: "columnData",
-      label: "columnData",
-      options: {
-        filter: false,
-        sort: false,
-        display: false,
-      },
-    },
-    {
-      name: "exprValuta",
-      label: "exprValuta",
-      options: {
-        filter: false,
-        sort: false,
-        display: false,
       },
     },
     {
@@ -1141,46 +1110,8 @@ export default function Page() {
         apriReclamo(row[0]);
       },
     }),
-    expandableRows: true,
+    expandableRows: false,
     responsive: "standard",
-    renderExpandableRow: (rowData, rowMeta) => {
-      const idReclamo = rowData[0];
-      const idForm = rowData[19];
-      const codiceValuta = rowData[20];
-      const costoCartaAdesivo = rowData[21];
-      const costoRibobinatrice = rowData[22];
-      const costoFermoMacchina = rowData[23];
-      const partitaList = rowData[24];
-      const columnData = rowData[25];
-      const exprValuta = rowData[26];
-      const modificaLista = false;
-      const permessiModifica = rowData[28];
-      return (
-        <>
-          <tr>
-            <td colSpan={20}>
-              <Box>
-                <ModificaDatiFornitura
-                  idReclamo={idReclamo}
-                  idForm={idForm}
-                  codiceValuta={codiceValuta}
-                  costoCartaAdesivo={costoCartaAdesivo}
-                  costoRibobinatrice={costoRibobinatrice}
-                  costoFermoMacchina={costoFermoMacchina}
-                  partitaList={partitaList}
-                  columnsData={columnData}
-                  exprValuta={exprValuta}
-                  onSubmit={onModificaFornituraSubmit}
-                  modificaLista={modificaLista}
-                  widthOffset={450}
-                  abilitaModifica={permessiModifica}
-                />
-              </Box>
-            </td>
-          </tr>
-        </>
-      );
-    },
   };
 
   function apriReclamo(value) {
@@ -1209,7 +1140,7 @@ export default function Page() {
         onFilterDelete={onFilterDelete}
         isLoading={isLoading}
       />
-      <Box width={"100%"}>
+      <Box width={"100%"} id="drawer-container" position="relative">
         {isLoading !== undefined && !isLoading && isReady ? (
           <ThemeProvider theme={getMuiTheme}>
             <MUIDataTable
@@ -1232,6 +1163,10 @@ export default function Page() {
             </Stack>
           </Container>
         )}
+        <DrawerFornituraRapida
+          reclamo={reclamoFornituraRapida}
+          onClose={() => setReclamoFornituraRapida(undefined)}
+        />
       </Box>
       <AggiungiFiltroDialog
         aperto={dialogAggiungiFiltroAperto}
