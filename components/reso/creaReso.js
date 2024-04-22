@@ -23,6 +23,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import MyDropzone from "../dropzone/myDropzone";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import DatiReso from "./datiReso";
 
 export default function CreaReso({ dataList, onSubmit }) {
   const getColonnaDataFromDataList = (dataList) => {
@@ -81,38 +82,6 @@ export default function CreaReso({ dataList, onSubmit }) {
   const [step, setStep] = useState(0);
   const steps = ["Selezione forniture", "Inserimento dati reso"];
 
-  const schema = yup.object({
-    codice: yup
-      .string()
-      .trim()
-      .required("Il codice del documento di reso è obbligatorio"),
-    fileReso: yup
-      .mixed()
-      .required("Il file del documento di reso è obbligatorio"),
-  });
-
-  const form = useForm({
-    defaultValues: {
-      codice: "",
-      codiceCmr: "",
-      data: dayjs(),
-      fileReso: null,
-      fileCmr: null,
-    },
-    resolver: yupResolver(schema),
-  });
-  const {
-    register,
-    handleSubmit,
-    formState,
-    reset,
-    control,
-    getValues,
-    setValue,
-    watch,
-  } = form;
-  const { errors } = formState;
-
   const getDataSelezionata = () => {
     return data.filter((x) => x.selezionato);
   };
@@ -125,7 +94,6 @@ export default function CreaReso({ dataList, onSubmit }) {
     );
   };
   const confermaSelezione = () => {
-    reset({ codice: "", data: dayjs() });
     setStep(1);
   };
 
@@ -179,20 +147,6 @@ export default function CreaReso({ dataList, onSubmit }) {
       data: dayjs(values.data).format("DD/MM/YYYY"),
       fornituraCausaReclamoList: mapToResult(data.filter((x) => x.selezionato)),
     });
-  };
-
-  const onDocumentoResoLoaded = (acceptedFiles) => {
-    caricaFile(acceptedFiles, "fileReso");
-  };
-
-  const onDocumentoCmrLoaded = (acceptedFiles) => {
-    caricaFile(acceptedFiles, "fileCmr");
-  };
-
-  const caricaFile = (acceptedFiles, codCampo) => {
-    if (acceptedFiles.size == 0) return;
-    const file = acceptedFiles[0];
-    setValue(codCampo, file);
   };
 
   return (
@@ -320,98 +274,14 @@ export default function CreaReso({ dataList, onSubmit }) {
           </TableContainer>
         </>
       ) : (
-        <Stack
-          direction={"column"}
-          component="form"
-          noValidate
-          onSubmit={handleSubmit(onFormSubmit)}
-          spacing={2}
-        >
-          <Stack direction={"row"} spacing={1}>
+        <DatiReso
+          onDatiResoSubmit={onFormSubmit}
+          additionalControls={
             <Button variant="outlined" onClick={() => tornaIndietro()}>
               Torna indietro
             </Button>
-            <Button variant="contained" type="submit">
-              Crea reso
-            </Button>
-          </Stack>
-          <Paper>
-            <Stack direction={"column"} p={1}>
-              <Controller
-                name="data"
-                control={control}
-                defaultValue={dayjs()}
-                rules={{ required: "La data è obbligatoria" }}
-                render={({
-                  field: { onChange, value },
-                  fieldState: { error },
-                }) => (
-                  <DatePicker
-                    label="Data creazione*"
-                    format="DD/MM/YYYY"
-                    value={value}
-                    control={control}
-                    onChange={(event) => onChange(event)}
-                    slotProps={{
-                      textField: { error: !!error, helperText: error?.message },
-                    }}
-                  />
-                )}
-              />
-            </Stack>
-          </Paper>
-          <Paper>
-            <Stack direction={"column"} p={1}>
-              <TextField
-                {...register("codice", {
-                  required: "Il codice è obbligatorio",
-                })}
-                size="small"
-                margin="normal"
-                id="codice"
-                label="Codice documento reso*"
-                name="codice"
-                error={!!errors.codice}
-                helperText={errors.codice?.message}
-                autoComplete="off"
-                autoFocus
-              />
-              <Typography>File documento di reso*</Typography>
-              <Stack direction={"row"} width={"100%"}>
-                {watch("fileReso") && watch("fileReso") !== null ? (
-                  <Chip label={watch("fileReso").name} sx={{ mt: 1, mb: 1 }} />
-                ) : null}
-              </Stack>
-              <MyDropzone callback={onDocumentoResoLoaded} />
-              <Typography color={"error"}>
-                {errors.fileReso?.message}
-              </Typography>
-            </Stack>
-          </Paper>
-          <Paper>
-            <Stack direction={"column"} p={1}>
-              <TextField
-                {...register("codiceCmr")}
-                size="small"
-                margin="normal"
-                id="codiceCmr"
-                label="Codice CMR"
-                name="codiceCmr"
-                error={!!errors.codiceCmr}
-                helperText={errors.codiceCmr?.message}
-                autoComplete="off"
-              />
-              <Typography>File documento CMR</Typography>
-              <Stack direction={"row"} width={"100%"}>
-                {watch("fileCmr") && watch("fileCmr") !== null ? (
-                  <Chip label={watch("fileCmr").name} sx={{ mt: 1, mb: 1 }} />
-                ) : null}
-              </Stack>
-              <MyDropzone callback={onDocumentoCmrLoaded} />
-              <Typography color={"error"}>{errors.fileCmr?.message}</Typography>
-            </Stack>
-          </Paper>
-        </Stack>
+          }
+        />
       )}
     </Stack>
   );

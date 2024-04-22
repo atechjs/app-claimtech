@@ -3,6 +3,9 @@ import {
   Box,
   Button,
   CssBaseline,
+  Divider,
+  IconButton,
+  Link,
   Stack,
   Toolbar,
   Typography,
@@ -27,8 +30,8 @@ import MenuItem from "@mui/material/MenuItem";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import authServ from "../services/auth.service";
 import { useRouter } from "next/router";
-
-export default function MyAppBar({ utente }) {
+import MenuIcon from "@mui/icons-material/Menu";
+export default function MyAppBar({ utente, menuItems, onToggle }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const router = useRouter();
@@ -55,11 +58,35 @@ export default function MyAppBar({ utente }) {
           <Box
             sx={{
               display: "flex",
+              alignItems: "center",
+              gap: 2,
             }}
           >
+            <ThemeProvider theme={theme}>
+              <IconButton color="primary" onClick={() => onToggle()}>
+                <MenuIcon />
+              </IconButton>
+            </ThemeProvider>
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ bgcolor: "white" }}
+            />
             <Typography variant="h6" noWrap component="div">
               CLAIMOT - Gestionale Reclami
             </Typography>
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ bgcolor: "white" }}
+            />
+            {menuItems
+              .filter((x) => x.appbar)
+              .map((item) => (
+                <Link href={item.link} underline="hover" color="white">
+                  {item.label}
+                </Link>
+              ))}
           </Box>
           <Stack sx={{ width: "100%" }} direction={"row-reverse"}>
             <ThemeProvider theme={theme}>

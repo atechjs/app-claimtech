@@ -37,6 +37,7 @@ export default function DialogCreaNotaAccredito({
         </Box>
       </Dialog>
     );
+
   return (
     <Dialog open={open} onClose={handleClose} fullScreen>
       <Box p={2} width={"100%"}>

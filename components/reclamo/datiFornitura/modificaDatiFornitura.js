@@ -72,6 +72,14 @@ export default function ModificaDatiFornitura({
         options: [],
       },
       {
+        id: "lotto",
+        codice: "lotto",
+        nome: "Lotto",
+        codiceTipo: "LABEL",
+        associazioneList: [],
+        options: [],
+      },
+      {
         id: "codicePartitaCliente",
         codice: "codicePartitaCliente",
         nome: "Codice partita cliente",
@@ -327,7 +335,6 @@ export default function ModificaDatiFornitura({
           expr = expr.replaceAll("[spessoreArticolo]", rowData.spessore);
           expr = expr.replaceAll("[altezzaArticolo]", rowData.altezza);
           expr = expr.replaceAll("[lunghezzaArticolo]", rowData.lunghezza);
-          console.log("rowData", rowData);
           Object.keys(rowData).forEach(
             (campo) => (expr = expr.replace("[" + campo + "]", rowData[campo]))
           );
@@ -405,6 +412,14 @@ export default function ModificaDatiFornitura({
       return {
         position: "sticky",
         left: 0,
+        background: "white",
+        boxShadow: "5px 2px 5px grey",
+        zIndex: "200",
+      };
+    if (index == 1)
+      return {
+        position: "sticky",
+        left: 130,
         background: "white",
         boxShadow: "5px 2px 5px grey",
         zIndex: "200",
@@ -576,12 +591,14 @@ export default function ModificaDatiFornitura({
     setData(newData);
   };
   //Inizialmente era width: window.innerWidth - 160
+  //169 è la dimensione del drawer
+  const offset = true ? 0 : widthOffset ? widthOffset : 169;
   return (
     <Stack
       direction={"column"}
       spacing={1}
       p={1}
-      sx={{ width: window.innerWidth - (widthOffset ? widthOffset : 169) }}
+      sx={{ width: window.innerWidth - offset }}
     >
       <Paper square>
         <Stack direction={"column"} p={1}>

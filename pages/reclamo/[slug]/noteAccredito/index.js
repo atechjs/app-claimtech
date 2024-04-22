@@ -10,6 +10,7 @@ import {
   Grid,
   Paper,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
@@ -22,14 +23,24 @@ import EuroIcon from "@mui/icons-material/Euro";
 import DialogCreaNotaAccredito from "../../../../components/creaNotaAccredito/dialogCreaNotaAccredito";
 import getApiUrl from "../../../../utils/BeUrl";
 import GetCurrentAxiosInstance from "../../../../utils/Axios";
-import { mandaNotifica } from "../../../../utils/ToastUtils";
+import { dismissById, mandaNotifica } from "../../../../utils/ToastUtils";
+import IconButton from "@mui/material/IconButton";
+import CreateIcon from "@mui/icons-material/Create";
+import DialogModificaNotaAccredito from "../../../../components/creaNotaAccredito/dialogModificaNotaAccredito";
+import DownloadIcon from "@mui/icons-material/Download";
+import { LoadingButton } from "@mui/lab";
+import axios from "axios";
+
 export default function Page() {
   const router = useRouter();
   const instance = GetCurrentAxiosInstance();
   const { data, mutate } = UseReclamoNoteAccredito(router.query.slug);
   const [dialogCreaNotaAccreditoOpened, setDialogCreaNotaAccreditoOpened] =
     useState(false);
-
+  const [elemSelezionato, setElemSelezionato] = useState(undefined);
+  const handleCloseDialogModifica = () => {
+    setElemSelezionato(undefined);
+  };
   const handleOpenDialogCreaNotaAccredito = () => {
     setDialogCreaNotaAccreditoOpened(true);
   };
@@ -61,6 +72,54 @@ export default function Page() {
       );
   };
 
+  const handleOnSubmitModifica = (values) => {
+    mutate();
+  };
+
+  const onClickModificaElemento = (elem) => {
+    setElemSelezionato(elem);
+  };
+
+  const handleDownloadNotaAccredito = (notaAccredito) => {
+    const notifId = mandaNotifica(
+      "Download nota accredito in corso",
+      "loading"
+    );
+    console.log("notifId", notifId);
+    axios({
+      url:
+        getApiUrl() +
+        "api/reclamo/downloadFileNotaAccredito?id=" +
+        notaAccredito.id +
+        "&idReclamo=" +
+        router.query.slug,
+      method: "GET",
+      responseType: "blob",
+    })
+      .then((response) => {
+        // create file link in browser's memory
+        const href = URL.createObjectURL(response.data);
+        const link = document.createElement("a");
+        link.href = href;
+        link.setAttribute("download", notaAccredito.codice + ".pdf");
+        document.body.appendChild(link);
+        link.click();
+        // clean up "a" element & remove ObjectURL
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+        dismissById(notifId);
+        mandaNotifica("Nota accredito scaricata correttamente", "success");
+      })
+      .catch((error) => {
+        console.log("error", error);
+        dismissById(notifId);
+        mandaNotifica(
+          "Non è stato possibile scaricare il file, sei sicuro che è una NC di Business Central?",
+          "error"
+        );
+      });
+  };
+
   const displayNotaAccredito = (notaAccredito) => {
     return (
       <Grid item key={notaAccredito.id} xs={6} sm={6} md={3}>
@@ -80,6 +139,18 @@ export default function Page() {
               >
                 {dayjs(notaAccredito.data).format("DD/MM/YYYY")}
               </Typography>
+              <Stack width={"100%"} direction={"row-reverse"}>
+                <Tooltip title="Modifica">
+                  <div>
+                    <IconButton
+                      color="warning"
+                      onClick={() => onClickModificaElemento(notaAccredito)}
+                    >
+                      <CreateIcon />
+                    </IconButton>
+                  </div>
+                </Tooltip>
+              </Stack>
             </Stack>
             <Typography variant="h5" component="div">
               {notaAccredito.codice}
@@ -91,6 +162,13 @@ export default function Page() {
                 " " +
                 notaAccredito.codice}
             </Typography>
+            <Button
+              onClick={() => handleDownloadNotaAccredito(notaAccredito)}
+              startIcon={<DownloadIcon />}
+              loading={notaAccredito.loading}
+            >
+              PDF
+            </Button>
             <Stack direction={"row"} spacing={1} pb={1}>
               <Stack
                 direction={"row"}
@@ -169,6 +247,12 @@ export default function Page() {
         handleClose={handleCloseDialogCreaNotaAccredito}
         handleOnSubmit={handleOnSubmitCreaNotaAccredito}
         idReclamoList={[router.query.slug]}
+      />
+      <DialogModificaNotaAccredito
+        opened={elemSelezionato !== undefined}
+        handleClose={handleCloseDialogModifica}
+        handleOnSubmit={handleOnSubmitModifica}
+        notaAccredito={elemSelezionato}
       />
     </Stack>
   ) : (

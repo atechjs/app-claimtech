@@ -34,6 +34,10 @@ export function useTableStateSaverV2() {
       case "salvaPagina": {
         return { ...state, page: action.page };
       }
+      case "salvaPosizione": {
+        //TODO
+        return { ...state, scrollPosition: action.scrollPosition };
+      }
       case "createInitialState": {
         const filterList = action.query["filterList"]
           ? JSON.parse(action.query["filterList"])
@@ -43,13 +47,16 @@ export function useTableStateSaverV2() {
         const ordinamento = action.query["ordinamento"]
           ? JSON.parse(action.query["ordinamento"])
           : {};
-
+        const scrollPosition = action.query["scrollPosition"]
+          ? JSON.parse(action.query["scrollPosition"])
+          : 0;
         const newState = {
           ...state,
           filterList: filterList,
           text: text,
           page: page,
           ordinamento: ordinamento,
+          scrollPosition: scrollPosition,
         };
         return newState;
       }
@@ -74,6 +81,10 @@ export function useTableStateSaverV2() {
 
   function salvaPagina(page) {
     dispatch({ type: "salvaPagina", page: page });
+  }
+
+  function salvaPosizione(scrollPosition) {
+    dispatch({ type: "salvaPosizione", scrollPosition: scrollPosition });
   }
 
   function createIntialState(router, searchParams, pathname) {
@@ -102,6 +113,7 @@ export function useTableStateSaverV2() {
     salvaOrdinamento,
     salvaText,
     salvaPagina,
+    salvaPosizione,
     ottieniFiltroDaStato,
     createIntialState,
     resetFiltro,

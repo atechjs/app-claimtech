@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Divider, Stack, Typography } from "@mui/material";
@@ -9,6 +9,7 @@ import GetCurrentAxiosInstance from "../../../utils/Axios";
 import getApiUrl from "../../../utils/BeUrl";
 import { mandaNotifica } from "../../../utils/ToastUtils";
 import LabelInformazione from "../labelInformazione";
+import { LoadingButton } from "@mui/lab";
 
 export default function DialogInfo({
   opened,
@@ -18,6 +19,8 @@ export default function DialogInfo({
 }) {
   const [open, setOpen] = React.useState(opened);
   const instance = GetCurrentAxiosInstance();
+  const [loading, setLoading] = useState(false);
+
   React.useEffect(() => {
     setOpen(opened);
   }, [opened]);
@@ -28,6 +31,7 @@ export default function DialogInfo({
     const codiceFattura = infoData.codiceFattura;
     const nomePdfDef = nomePdf;
     const url = getApiUrl() + "api/reclamo/pdfFattura";
+    setLoading(true);
     instance({
       url,
       method: "POST",
@@ -47,22 +51,32 @@ export default function DialogInfo({
         window.URL.revokeObjectURL(href);
         mandaNotifica("Fattura scaricata correttamente", "success");
         handleClose();
+        setLoading(false);
       })
       .catch((error) => {
         mandaNotifica("Impossibile generare il report", "error");
         console.log("error", error);
+        setLoading(false);
       });
   };
 
   if (infoData == undefined) return;
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth={"sm"}>
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth={"md"}>
       <Stack direction={"column"} width={"100%"} p={1}>
         <DialogTitle>INFO PARTITA {infoData.codice}</DialogTitle>
+        <Stack direction={"row"} spacing={1} width={"100%"}>
+          <LabelInformazione label={"Lotto"} value={infoData.lotto} />
+        </Stack>
+        <Divider />
         <Stack direction={"row"} spacing={1} width={"100%"}>
           <LabelInformazione
             label={"Codice articolo"}
             value={infoData.codiceArticolo}
+          />
+          <LabelInformazione
+            label={"Descrizione articolo"}
+            value={infoData.descrizioneRicercaArticolo}
           />
           <LabelInformazione label={"Spessore"} value={infoData.spessore} />
           <LabelInformazione label={"Altezza"} value={infoData.altezza} />
@@ -105,14 +119,15 @@ export default function DialogInfo({
             ).toFixed(4)}
           />
         </Stack>
-        <Button
+        <LoadingButton
           color="error"
           variant="outlined"
           startIcon={<DownloadIcon />}
           onClick={() => scaricaPdfFattura()}
+          loading={loading}
         >
           Scarica file fattura
-        </Button>
+        </LoadingButton>
       </Stack>
     </Dialog>
   );

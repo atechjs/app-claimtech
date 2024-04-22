@@ -26,3 +26,7 @@ export function mandaNotifica(text, tipo) {
       return toast.default(text, option);
   }
 }
+
+export function dismissById(id) {
+  toast.dismiss(id);
+}

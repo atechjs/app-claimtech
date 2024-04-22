@@ -40,7 +40,6 @@ import useClienteSelect from "../components/fetching/useClienteSelect";
 import { useTableStateSaverV2 } from "../components/my-mui-data-table/useTableStateSaverV2";
 import ReclamiCustomToolbar from "../components/reclamiAssegnati/reclamiCustomToolbar";
 import ToolbarPulsanteAggiungi from "../components/my-mui-data-table/ToolbarPulsanteAggiungi";
-import StatoReclamo from "../components/statoReclamo";
 import ModificaDatiFornitura from "../components/reclamo/datiFornitura/modificaDatiFornitura";
 import { getNumList, getPartiteUnivoche } from "../utils/OdlUtils";
 import { getCodiciArticoloUnivoci } from "../utils/articoloUtils";
@@ -91,8 +90,13 @@ export default function Page() {
     actionSalvataggio.createIntialState(router, searchParams, pathname);
   }, [isReady]);
 
+  useEffect(() => {}, []);
+
   const onDataSuccess = (data) => {
     setIdFiltroSelezionatoInterno(data.idFiltroSelezionato);
+    if (state.scrollPosition !== null)
+      window.scrollTo(0, parseInt(state.scrollPosition, 10));
+    actionSalvataggio.salvaPosizione(null);
   };
 
   const {
@@ -128,6 +132,7 @@ export default function Page() {
       { key: "text", value: state.text !== null ? state.text : "" },
       { key: "page", value: JSON.stringify(state.page) },
       { key: "ordinamento", value: JSON.stringify(state.ordinamento) },
+      { key: "scrollPosition", value: JSON.stringify(window.scrollY) },
     ];
     setParamList(paramList);
   }
@@ -359,9 +364,9 @@ export default function Page() {
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
           const codiceReclamoCliente = rowData[4];
-          const tagList = rowData[8];
-          const aperto = rowData[9];
-          const codiceTipologiaReclamo = rowData[10];
+          const tagList = rowData[9];
+          const aperto = rowData[10];
+          const codiceTipologiaReclamo = rowData[11];
           return (
             <RenderDatiReclamo
               codiceReclamoCliente={codiceReclamoCliente}
@@ -655,8 +660,37 @@ export default function Page() {
         filterOptions: {
           names: [],
           logic(codList, value) {
-            const numList = getNumList(codList.flatMap((x) => x.codice));
-            const o = numList.find((x) => x === Number(value[0]));
+            const arrTemp = codList.flatMap((x) => x.lotto);
+            const o = arrTemp.find((x) => x.includes(value[0]));
+            return o === undefined;
+          },
+        },
+        sort: true,
+        display: true,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          return (
+            <Stack direction={"column"}>
+              {getPartiteUnivoche(
+                reclamiList[dataIndex].partitaList.map((x) => x.lotto)
+              ).map((x) => (
+                <span>{x}</span>
+              ))}
+            </Stack>
+          );
+        },
+      },
+    },
+    {
+      name: "partitaList",
+      label: "Partite",
+      options: {
+        filter: true,
+        filterType: "textField",
+        filterOptions: {
+          names: [],
+          logic(codList, value) {
+            const arrTemp = codList.flatMap((x) => x.codice);
+            const o = arrTemp.find((x) => x.includes(value[0]));
             return o === undefined;
           },
         },
@@ -710,7 +744,7 @@ export default function Page() {
         sort: false,
         display: false,
         filterType: "custom",
-        filterList: actionSalvataggio.ottieniFiltroDaStato(11),
+        filterList: actionSalvataggio.ottieniFiltroDaStato(12),
         customFilterListOptions:
           autocompleteCustomFilterListOptions(actionSalvataggio),
         filterOptions: autocompleteFilterOption(
@@ -729,7 +763,7 @@ export default function Page() {
         display: true,
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
-          const descrizioneCliente = rowData[13];
+          const descrizioneCliente = rowData[14];
           return (
             <Stack direction={"column"}>
               <span>{value}</span>
@@ -776,9 +810,9 @@ export default function Page() {
         display: true,
         customBodyRender: (value, tableMeta, update) => {
           const rowData = tableMeta.rowData;
-          const valorizzazioneValuta = rowData[16];
-          const valorizzazioneEuro = rowData[29];
-          const codiceValuta = rowData[19];
+          const valorizzazioneValuta = rowData[17];
+          const valorizzazioneEuro = rowData[30];
+          const codiceValuta = rowData[20];
           return (
             <RenderDatiArticoloValorizzazione
               codiceArticoloList={value}
@@ -1111,16 +1145,16 @@ export default function Page() {
     responsive: "standard",
     renderExpandableRow: (rowData, rowMeta) => {
       const idReclamo = rowData[0];
-      const idForm = rowData[18];
-      const codiceValuta = rowData[19];
-      const costoCartaAdesivo = rowData[20];
-      const costoRibobinatrice = rowData[21];
-      const costoFermoMacchina = rowData[22];
-      const partitaList = rowData[23];
-      const columnData = rowData[24];
-      const exprValuta = rowData[25];
+      const idForm = rowData[19];
+      const codiceValuta = rowData[20];
+      const costoCartaAdesivo = rowData[21];
+      const costoRibobinatrice = rowData[22];
+      const costoFermoMacchina = rowData[23];
+      const partitaList = rowData[24];
+      const columnData = rowData[25];
+      const exprValuta = rowData[26];
       const modificaLista = false;
-      const permessiModifica = rowData[27];
+      const permessiModifica = rowData[28];
       return (
         <>
           <tr>

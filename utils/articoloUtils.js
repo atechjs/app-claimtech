@@ -1,4 +1,5 @@
 export const formattaArticolo = (articolo) => {
+  if (!articolo) return "";
   const arr = articolo.split("/");
   try {
     if (arr.length < 3) return articolo;

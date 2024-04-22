@@ -18,6 +18,7 @@ export const getNumList = (codiceList) => {
 };
 
 export const getPartiteUnivoche = (partitaList) => {
+  console.log("partitaList", partitaList);
   const formattaList = partitaList.map((cod) => formattaPartita(cod));
   let map = {};
   formattaList.forEach((cod) => (map = { ...map, [cod]: true }));

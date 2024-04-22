@@ -34,6 +34,7 @@ import ChipValorizzazioneEuro from "../chipValorizzazioneEuro";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import DialogCreaProposta from "../proposta/dialogCreaProposta";
 import DialogCondivisioneUtenti from "../condivisioneUtente/dialogCondivisioneUtenti";
+import { convertiInEuro } from "../../utils/valutaUtils";
 
 export default function ReclamiCustomToolbar({
   selectedRows,
@@ -44,13 +45,13 @@ export default function ReclamiCustomToolbar({
   //COSTANTI DI ACCESSO AI CAMPI
   const INDEX_ID = 0;
   const INDEX_FASE = 2;
-  const INDEX_CLIENTE = 11;
-  const INDEX_VALORIZZAZIONE_VALUTA = 16;
-  const INDEX_FORM = 18;
-  const INDEX_VALUTA = 19;
-  const INDEX_ID_FORNITURA_LIST = 23;
-  const INDEX_MODIFICA_ABILITATA = 27;
-  const INDEX_VALORIZZAZIONE_EURO = 29;
+  const INDEX_CLIENTE = 12;
+  const INDEX_VALORIZZAZIONE_VALUTA = 17;
+  const INDEX_FORM = 19;
+  const INDEX_VALUTA = 20;
+  const INDEX_ID_FORNITURA_LIST = 24;
+  const INDEX_MODIFICA_ABILITATA = 28;
+  const INDEX_VALORIZZAZIONE_EURO = 30;
 
   const [reclamiSelezionati, setReclamiSelezionati] = useState([]);
   const [openedDialogCondivisione, setOpenedDialogCondivisione] =
@@ -338,46 +339,161 @@ export default function ReclamiCustomToolbar({
     );
   };
 
-  const displayForniturePerStatoFornitura = () => {
+  const displaySommaValorizzazioni = () => {
     if (reclamiSelezionati === undefined) return;
-    const fornituraList = reclamiSelezionati
-      .flatMap((x) => x[INDEX_ID_FORNITURA_LIST])
-      .flatMap((x) => x.causaReclamoList);
-    const perStatiFornitura = fornituraList.reduce((group, fornitura) => {
+    let mapped = [];
+    reclamiSelezionati.forEach((reclamo) => {
+      const codiceValuta = reclamo[INDEX_VALUTA];
+      const partitaList = reclamo[INDEX_ID_FORNITURA_LIST];
+      partitaList.forEach((partita) =>
+        partita.causaReclamoList.map((fornituraCausaReclamo) => {
+          const obj = {
+            id: fornituraCausaReclamo.id,
+            codice: partita.codice,
+            valoreContestazione: fornituraCausaReclamo.valoreContestazione,
+            idStato: fornituraCausaReclamo.idStato,
+            codiceStato: fornituraCausaReclamo.codiceStato,
+            cambioValuta: partita.cambioValuta,
+            codiceValuta: codiceValuta,
+          };
+          mapped = [...mapped, obj];
+        })
+      );
+    });
+    const perStatiFornitura = mapped.reduce((group, fornitura) => {
       const { idStato } = fornitura;
       group[idStato] = group[idStato] ?? [];
       group[idStato].push(fornitura);
       return group;
     }, {});
+
     const arr = Object.keys(perStatiFornitura).sort((a, b) => a - b);
+    let totaleTotaleEuro = 0;
+    let totaleTotaleLength = 0;
+    let totaleTotaleValute = [];
     return (
       <Stack direction={"column"}>
-        <Typography variant="button">Somma stati</Typography>
+        <Typography variant="button">Resoconto</Typography>
         <Stack spacing={0.5} direction={"column"}>
-          {arr.map((stato) => (
-            <Chip
-              label={
-                perStatiFornitura[stato][0].codiceStato +
-                " (" +
-                perStatiFornitura[stato].length +
-                ")"
+          {arr.map((idStato) => {
+            const arrObj = perStatiFornitura[idStato];
+            const codiceStato = arrObj[0].codiceStato;
+            const numForniture = arrObj.length;
+            //Calcolo i totali per valuta
+            const raggruppamentoValuta = arrObj.reduce((group, fornitura) => {
+              const { codiceValuta } = fornitura;
+              group[codiceValuta] = group[codiceValuta] ?? [];
+              group[codiceValuta].push(fornitura);
+              return group;
+            }, {});
+
+            const arrValute = Object.keys(raggruppamentoValuta).sort(
+              (a, b) => a - b
+            );
+            let arrDaVisualizzare = [];
+            let totaleEuro = 0;
+            arrValute.map((codValuta) => {
+              let sum = 0;
+              const arrObjValute = raggruppamentoValuta[codValuta];
+              arrObjValute.forEach((objValuta) => {
+                totaleEuro += convertiInEuro(
+                  objValuta.valoreContestazione,
+                  objValuta.cambioValuta
+                );
+                sum += objValuta.valoreContestazione;
+              });
+              arrDaVisualizzare = [
+                ...arrDaVisualizzare,
+                { codiceValuta: codValuta, sum: sum },
+              ];
+            });
+            totaleTotaleEuro += totaleEuro;
+            totaleTotaleLength += numForniture;
+            arrDaVisualizzare.forEach((sumValuta) => {
+              let valFind = totaleTotaleValute.find(
+                (x) => x.codiceValuta === sumValuta.codiceValuta
+              );
+              if (valFind !== undefined) {
+                valFind = { ...valFind, sum: valFind.sum + sumValuta.sum };
+                const temp = totaleTotaleValute.filter(
+                  (x) => x.codiceValuta !== valFind.codiceValuta
+                );
+                totaleTotaleValute = [...temp, valFind];
+              } else {
+                totaleTotaleValute = [...totaleTotaleValute, sumValuta];
               }
-              variant="outlined"
-              size="small"
-            />
-          ))}
-          <Chip
-            label={"TOTALE (" + fornituraList.length + ")"}
-            variant="outlined"
-            size="small"
-            color="primary"
-          />
+            });
+            return (
+              <Stack direction={"row"} spacing={1} width={"100%"}>
+                <Stack
+                  direction={"row"}
+                  alignItems={"start"}
+                  justifyContent={"start"}
+                >
+                  <Chip
+                    label={codiceStato + "(" + numForniture + ")"}
+                    variant="outlined"
+                    size="small"
+                  />
+                </Stack>
+                <Stack
+                  direction={"row"}
+                  alignItems={"start"}
+                  justifyContent={"end"}
+                  width={"100%"}
+                  spacing={1}
+                >
+                  {arrDaVisualizzare
+                    .filter((x) => x.codiceValuta !== "EUR")
+                    .map((counter) => (
+                      <ChipValorizzazioneValuta
+                        valorizzazione={counter.sum}
+                        codiceValuta={counter.codiceValuta}
+                      />
+                    ))}
+                  <ChipValorizzazioneEuro valorizzazione={totaleEuro} />
+                </Stack>
+              </Stack>
+            );
+          })}
+          <Divider flexItem />
+          <Stack direction={"row"} spacing={1} width={"100%"}>
+            <Stack
+              direction={"row"}
+              alignItems={"start"}
+              justifyContent={"start"}
+            >
+              <Chip
+                label={"TOTALE (" + totaleTotaleLength + ")"}
+                variant="outlined"
+                size="small"
+                color="primary"
+              />
+            </Stack>
+            <Stack
+              direction={"row"}
+              alignItems={"flex-start"}
+              justifyContent={"end"}
+              width={"100%"}
+              spacing={1}
+            >
+              {totaleTotaleValute
+                .filter((x) => x.codiceValuta !== "EUR")
+                .map((counter) => (
+                  <ChipValorizzazioneValuta
+                    valorizzazione={counter.sum}
+                    codiceValuta={counter.codiceValuta}
+                  />
+                ))}
+              <ChipValorizzazioneEuro valorizzazione={totaleTotaleEuro} />
+            </Stack>
+          </Stack>
         </Stack>
       </Stack>
     );
-  };
-  const displaySommaValorizzazioni = () => {
-    if (reclamiSelezionati === undefined) return;
+
+    //Questo lo lascio coosì per il momento
+    /*
     const sommaValorizzazioniEuro = reclamiSelezionati
       .flatMap((x) => x[INDEX_VALORIZZAZIONE_EURO])
       .reduce((partialSum, a) => partialSum + a, 0);
@@ -386,21 +502,7 @@ export default function ReclamiCustomToolbar({
       sommaValorizzazioniValuta = reclamiSelezionati
         .flatMap((x) => x[INDEX_VALORIZZAZIONE_VALUTA])
         .reduce((partialSum, a) => partialSum + a, 0);
-    }
-    return (
-      <Stack direction={"column"}>
-        <Typography variant="button">Somma val.</Typography>
-        <Stack spacing={0.5} direction={"column"}>
-          {tuttiStessaValuta() && getCodiceValuta() !== "EUR" ? (
-            <ChipValorizzazioneValuta
-              valorizzazione={sommaValorizzazioniValuta}
-              codiceValuta={getCodiceValuta()}
-            />
-          ) : null}
-          <ChipValorizzazioneEuro valorizzazione={sommaValorizzazioniEuro} />
-        </Stack>
-      </Stack>
-    );
+    }*/
   };
   return (
     <Stack
@@ -410,8 +512,6 @@ export default function ReclamiCustomToolbar({
       alignItems="center"
       pr={2}
     >
-      {displayForniturePerStatoFornitura()}
-      <Divider orientation="vertical" flexItem />
       {displaySommaValorizzazioni()}
       <Divider orientation="vertical" flexItem />
       {fasiList !== undefined &&

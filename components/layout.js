@@ -30,12 +30,14 @@ export default function Layout({ children }) {
       link: "/reclamiAssegnati",
       icon: <AssignmentIcon />,
       ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE", "ROLE_STANDARD"],
+      appbar: true,
     },
     {
       label: "Proposte",
       link: "/proposte",
       icon: <FactCheckIcon />,
       ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE", "ROLE_STANDARD"],
+      appbar: true,
     },
     {
       label: "Tags",
@@ -83,6 +85,7 @@ export default function Layout({ children }) {
       link: "/kpiT",
       icon: <NetworkPingIcon />,
       ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE", "ROLE_STANDARD"],
+      appbar: true,
     },
     {
       label: "divider",

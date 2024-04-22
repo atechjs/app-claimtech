@@ -54,39 +54,41 @@ export default function SelectCambiaFase({
 
   return (
     <Stack
-      direction={"row"}
+      direction={"column"}
       onSubmit={handleSubmit(onSubmit)}
       component={"form"}
       spacing={1}
       noValidate
       justifyContent="flex-start"
-      alignItems="center"
+      alignItems="start"
     >
       <Typography variant="button" gutterBottom>
         STATO RECLAMO
       </Typography>
-      <MyReactSelect
-        control={control}
-        name="idFase"
-        label=""
-        options={fasiList}
-        styles={{
-          placeholder: (provided) => ({
-            ...provided,
-            position: "static",
-            transform: "none",
-          }),
-          singleValue: (provided) => ({
-            ...provided,
-            position: "static",
-            transform: "none",
-          }),
-        }}
-        isDisabled={disabled}
-      />
-      <Button type="submit" variant="outlined" disabled={disabled}>
-        Salva
-      </Button>
+      <Stack direction={"row"} spacing={1}>
+        <MyReactSelect
+          control={control}
+          name="idFase"
+          label=""
+          options={fasiList}
+          styles={{
+            placeholder: (provided) => ({
+              ...provided,
+              position: "static",
+              transform: "none",
+            }),
+            singleValue: (provided) => ({
+              ...provided,
+              position: "static",
+              transform: "none",
+            }),
+          }}
+          isDisabled={disabled}
+        />
+        <Button type="submit" variant="outlined" disabled={disabled}>
+          Salva
+        </Button>
+      </Stack>
     </Stack>
   );
 }

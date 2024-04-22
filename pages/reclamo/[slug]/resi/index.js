@@ -9,6 +9,7 @@ import {
   Grid,
   Paper,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
@@ -22,11 +23,15 @@ import { mandaNotifica } from "../../../../utils/ToastUtils";
 import useReclamoReso from "../../../../components/fetching/useReclamoReso";
 import DownloadIcon from "@mui/icons-material/Download";
 import axios from "axios";
+import IconButton from "@mui/material/IconButton";
+import CreateIcon from "@mui/icons-material/Create";
+import DialogModificaReso from "../../../../components/reso/dialogModificaReso";
 export default function Page() {
   const router = useRouter();
   const instance = GetCurrentAxiosInstance();
   const { data, mutate } = useReclamoReso(router.query.slug);
   const [dialogCreaResoOpened, setDialogCreaResoOpened] = useState(false);
+  const [elemSelezionato, setElemSelezionato] = useState(undefined);
 
   const handleOpenDialogCreaReso = () => {
     setDialogCreaResoOpened(true);
@@ -34,6 +39,10 @@ export default function Page() {
 
   const handleCloseDialogCreaReso = () => {
     setDialogCreaResoOpened(false);
+  };
+
+  const handleCloseDialogModifica = () => {
+    setElemSelezionato(undefined);
   };
 
   const handleOnSubmitCreaReso = (values) => {
@@ -99,6 +108,18 @@ export default function Page() {
               >
                 {dayjs(reso.data).format("DD/MM/YYYY")}
               </Typography>
+              <Stack width={"100%"} direction={"row-reverse"}>
+                <Tooltip title="Modifica">
+                  <div>
+                    <IconButton
+                      color="warning"
+                      onClick={() => onClickModificaElemento(reso)}
+                    >
+                      <CreateIcon />
+                    </IconButton>
+                  </div>
+                </Tooltip>
+              </Stack>
             </Stack>
             <Typography variant="h5" component="div">
               Codice: {reso.codice}
@@ -154,6 +175,14 @@ export default function Page() {
     );
   };
 
+  const onClickModificaElemento = (elem) => {
+    setElemSelezionato(elem);
+  };
+
+  const handleOnSubmitModifica = (values) => {
+    mutate();
+  };
+
   return data ? (
     <Stack direction={"column"} spacing={1} p={1}>
       <Paper sx={{ p: 1 }}>
@@ -183,6 +212,12 @@ export default function Page() {
         handleClose={handleCloseDialogCreaReso}
         handleOnSubmit={handleOnSubmitCreaReso}
         idReclamoList={[router.query.slug]}
+      />
+      <DialogModificaReso
+        opened={elemSelezionato !== undefined}
+        handleClose={handleCloseDialogModifica}
+        handleOnSubmit={handleOnSubmitModifica}
+        reso={elemSelezionato}
       />
     </Stack>
   ) : (

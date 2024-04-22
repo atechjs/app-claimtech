@@ -92,7 +92,9 @@ export default function SelezioneDatiFornitura({
                               partita.descrizioneCliente}
                           </b>{" "}
                           Codice articolo: <b>{partita.codiceArticolo}</b>{" "}
-                          Linea: <b>{partita.codiceLinea}</b>
+                          Descrizione articolo:{" "}
+                          <b>{partita.descrizioneRicercaArticolo}</b> Linea:{" "}
+                          <b>{partita.codiceLinea}</b>
                         </Typography>
 
                         {partita.numReclamoGiaReclamata !== null ? (
