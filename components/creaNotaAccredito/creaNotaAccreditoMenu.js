@@ -19,14 +19,12 @@ import Checkbox from "@mui/material/Checkbox";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import { Controller, useForm } from "react-hook-form";
-import getConverterApiKey from "../../utils/converterApi";
-import { mandaNotifica } from "../../utils/ToastUtils";
 import axios from "axios";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import DatiNotaAccredito from "./datiNotaAccredito";
-import convertiInEuro from "../../utils/valutaUtils";
+import { mandaNotifica } from "../../utils/ToastUtils";
+import { convertiInEuro } from "../../utils/valutaUtils";
 
 export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
   const getAll = (list) => {
@@ -57,9 +55,14 @@ export default function CreaNotaAccreditoMenu({ dataList, onSubmit }) {
 
   const getTotaleEuroSelezionato = (dataList) => {
     let sum = 0;
-    dataList.forEach(
-      (f) => (sum = sum + convertiInEuro(f.valoreContestazione, f.cambioValuta))
-    );
+    try {
+      dataList.forEach(
+        (f) =>
+          (sum = sum + convertiInEuro(f.valoreContestazione, f.cambioValuta))
+      );
+    } catch (ex) {
+      console.log("ex", ex);
+    }
     return approssima(sum);
   };
 
