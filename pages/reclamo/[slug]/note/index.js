@@ -66,6 +66,7 @@ export default function Page() {
   } = form;
   const { errors } = formState;
   const onFileLoaded = (acceptedFiles) => {
+    console.log("acceptedFiles", acceptedFiles);
     setValue("files", getValues("files").concat(acceptedFiles));
   };
 

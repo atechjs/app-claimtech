@@ -24,6 +24,7 @@ export default function KpiEmissioneNotaAccredito({ isActive, filterValues }) {
       <SezioneTempiGenerica
         titolo="Tempi di emissione note accredito"
         descrizione="Il tempo di emissione nota accredito è dato dalla differenza tra l'autorizzazione e l'emissione effettiva."
+        dataList={data.dataList}
         minTempo={data.minTempo}
         maxTempo={data.maxTempo}
         avgTempo={data.avgTempo}

@@ -18,8 +18,8 @@ import dayjs from "dayjs";
 import useValutaSelect from "../../components/fetching/useValutaSelect";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import useGetStatNc from "../../components/fetching/statistiche/useGetStatNc";
-import CardStatoFornitura from "../../components/statNoteAccredito/cards/cardStatoFornitura";
-import CardGrafico from "../../components/statNoteAccredito/cards/cardGrafico";
+import CardStatoFornitura from "../../components/kpiT/cards/cardStatoFornitura";
+import CardGrafico from "../../components/kpiT/cards/cardGrafico";
 import {
   Area,
   AreaChart,

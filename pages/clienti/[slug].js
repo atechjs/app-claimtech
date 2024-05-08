@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import NestedLayout from "../../components/nestedLayout";
 import Layout from "../../components/layout";
 import {
+  Box,
   Button,
+  Chip,
   Divider,
   Paper,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
@@ -25,13 +28,18 @@ import TableRow from "@mui/material/TableRow";
 import AggiungiDatiAggiuntiviCliente from "../../components/cliente/aggiungiDatiAggiuntiviCliente";
 import AggiungiClienteForm from "../../components/cliente/aggiungiClienteForm";
 import useUtentiSelect from "../../components/fetching/useUtentiSelect";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { styled } from "@mui/material/styles";
+import MyDropzone from "../../components/dropzone/myDropzone";
+import dayjs from "dayjs";
+import axios from "axios";
 
 export default function Page() {
   const router = useRouter();
   const [id, setId] = useState(undefined);
   const instance = GetCurrentAxiosInstance();
   const { utentiList } = useUtentiSelect();
-
+  const [testList, setTestList] = useState([]);
   useEffect(() => {
     if (router.query.slug === undefined) return;
     setId(router.query.slug);
@@ -56,6 +64,8 @@ export default function Page() {
       formClienteList: data.formClienteList,
       datiAggiuntiviList: data.datiAggiuntiviList,
       idUtenteList: data.idUtenteList,
+      scpList: data.scpList,
+      scpFileList: [],
     });
   }, [data]);
 
@@ -70,6 +80,8 @@ export default function Page() {
       formClienteList: [],
       datiAggiuntiviList: [],
       idUtenteList: [],
+      scpList: [],
+      scpFileList: [],
     },
   });
   const {
@@ -85,9 +97,21 @@ export default function Page() {
   const { errors } = formState;
 
   const onSubmit = (data) => {
+    const formData = new FormData();
+    data.scpFileList.forEach((file) => {
+      formData.append("files", file);
+    });
+    formData.append(
+      "request",
+      new Blob([JSON.stringify(data)], {
+        type: "application/json",
+      })
+    );
     if (data.id === undefined || data.id === "nuovo" || data.id === null) {
       instance
-        .post(getApiUrl() + "api/cliente/nuovo", data)
+        .post(getApiUrl() + "api/cliente/nuovo", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
         .then((response) => {
           setId(response.data);
           mandaNotifica("Creazione completata con successo", "success");
@@ -95,7 +119,7 @@ export default function Page() {
         .catch(() => mandaNotifica("Creazione fallita", "error"));
     } else {
       instance
-        .post(getApiUrl() + "api/cliente/update", data)
+        .post(getApiUrl() + "api/cliente/update", formData)
         .then(() => {
           mandaNotifica("Aggiornamento completato con successo", "success");
         })
@@ -158,12 +182,59 @@ export default function Page() {
     }),
   };
 
-  const selectStyles2 = {
-    menu: (base) => ({
-      ...base,
-      zIndex: 200,
-    }),
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+
+  const onFileLoaded = (acceptedFiles) => {
+    setValue(
+      "scpList",
+      getValues("scpList").concat({ id: null, name: acceptedFiles[0].name })
+    );
+    setValue("scpFileList", getValues("scpFileList").concat(acceptedFiles));
   };
+
+  const handleDownloadScp = (scp) => {
+    axios({
+      url: getApiUrl() + "api/cliente/downloadFileScp?id=" + scp.id,
+      method: "GET",
+      responseType: "blob",
+    }).then((response) => {
+      const href = URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = href;
+      link.setAttribute("download", scp.name);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+    });
+  };
+
+  const handleDeleteScp = (scp) => {
+    setValue(
+      "scpList",
+      getValues("scpList").filter((x) => x.name !== scp.name)
+    );
+    setValue(
+      "scpFileList",
+      getValues("scpFileList").filter((x) => x.name !== scp.name)
+    );
+  };
+
+  const handleClickScp = (scp) => {
+    if (scp.id === null) return;
+    //TODO Download file
+  };
+
   return (
     <Paper sx={{ m: 2, p: 2 }}>
       <Stack
@@ -335,6 +406,55 @@ export default function Page() {
                           variant="outlined"
                           color="error"
                           onClick={() => rimuoviDatoAggiuntivo(dato)}
+                        >
+                          Rimuovi
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Divider />
+            <Typography variant="button">
+              Lista SCP(Supplier Complaint Procedure)
+            </Typography>
+            <MyDropzone callback={onFileLoaded} />
+            <TableContainer>
+              <Table aria-label="tabella SCP">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Id</TableCell>
+                    <TableCell>File</TableCell>
+                    <TableCell>Data creazione</TableCell>
+                    <TableCell>Utente creazione</TableCell>
+                    <TableCell>Scarica</TableCell>
+                    <TableCell>Rimuovi</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {watch("scpList").map((scp) => (
+                    <TableRow>
+                      <TableCell>{scp.id !== null ? scp.id : "-"}</TableCell>
+                      <TableCell>{scp.name}</TableCell>
+                      <TableCell>
+                        {dayjs(scp.timestampCreazione).format("DD/MM/YYYY")}
+                      </TableCell>
+                      <TableCell>{scp.username}</TableCell>
+                      <TableCell>
+                        {scp.id !== null ? (
+                          <Button onClick={() => handleDownloadScp(scp)}>
+                            Download
+                          </Button>
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => handleDeleteScp(scp)}
+                          color="error"
+                          variant="outlined"
                         >
                           Rimuovi
                         </Button>

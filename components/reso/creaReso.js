@@ -28,6 +28,7 @@ import DatiReso from "./datiReso";
 export default function CreaReso({ dataList, onSubmit }) {
   const getColonnaDataFromDataList = (dataList) => {
     if (!dataList) return;
+    console.log("dataList", dataList);
     const reclamo = dataList[0];
     const fornitura = reclamo.fornituraList[0];
     const fornituraCausaReclamo = fornitura.fornituraCausaReclamoList[0];

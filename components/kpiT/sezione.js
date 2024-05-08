@@ -2,7 +2,7 @@ import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
 
 export default function Sezione({ label, icon, subsection = false, children }) {
   return (
-    <Stack direction={"column"} width={"100%"}>
+    <Stack direction={"column"} width={"100%"} spacing={1}>
       <Stack
         direction={"row"}
         justifyContent="flex-start"

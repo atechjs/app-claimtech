@@ -26,6 +26,7 @@ export default function KpiApprovazioneGestione({ isActive, filterValues }) {
         titolo="Tempi di approvazione della proposta TCS"
         descrizione="Il tempo di approvazione della proposta TCS è dato dalla differenza tra
         la creazione della proposta e la sua conferma a sistema."
+        dataList={data.dataList}
         minTempo={data.minTempo}
         maxTempo={data.maxTempo}
         avgTempo={data.avgTempo}

@@ -25,6 +25,7 @@ export default function KpiFaseAnalisi({ isActive, filterValues }) {
         titolo="Tempi di analisi reclamo"
         descrizione="Il tempo di analisi di un reclamo è dato dalla differenza tra
         l'apertura del reclamo e la creazione della proposta TCS."
+        dataList={data.dataList}
         minTempo={data.minTempo}
         maxTempo={data.maxTempo}
         avgTempo={data.avgTempo}
