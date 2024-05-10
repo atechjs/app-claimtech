@@ -1181,7 +1181,6 @@ export default function Page() {
         handleClose={handleCloseDialogCondivisione}
         handleOnSubmit={handleOnCondividiSubmit}
       />
-      <Stack direction={"row"}></Stack>
     </Stack>
   );
 }
