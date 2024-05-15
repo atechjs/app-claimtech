@@ -36,10 +36,12 @@ export default function Page() {
   const handleCloseDialogAssociaTags = () => setDialogAssociaTagsOpened(false);
 
   const handleSubmitDialogAssociaTags = (values) => {
+    console.log("values", values);
     instance
       .post(getApiUrl() + "api/reclamo/associaTag", {
         idReclamoList: [router.query.slug],
         tags: values.tags,
+        assegna: values.assegna,
       })
       .then(() => {
         mutate();
