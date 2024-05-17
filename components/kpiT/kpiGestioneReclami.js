@@ -44,7 +44,7 @@ export default function KpiGestioneReclami({ isActive, filterValues }) {
   return (
     <KpiLayout titolo={"KPI Gestione Reclami"}>
       <Sezione
-        label={"Numerosità reclami"}
+        label={"Numerosità reclami aperti"}
         icon={<DatasetIcon color="primary" fontSize="medium" />}
         subsection
       >
