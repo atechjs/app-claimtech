@@ -315,7 +315,7 @@ export default function ModificaDatiFornitura({
           const kgFatt = rowData.qtaKgFattura;
           const qtaFatt = rowData.qtaFattura;
           const valoreFatt = rowData.valoreFattura;
-          const rapportoValore = (valoreFatt / qtaFatt) * rowData.cambioValuta;
+          const rapportoValore = (valoreFatt * rowData.cambioValuta) / qtaFatt;
           const finalCostoCartaAdesivo =
             costoCartaAdesivo * rowData.cambioValuta;
           const finalCostoRibobinatrice =

@@ -114,8 +114,8 @@ export default function DialogInfo({
               "Coefficiente " + codiceValuta + "/" + infoData.unitaMisuraFattura
             }
             value={(
-              (infoData.valoreFattura / infoData.qtaFattura) *
-              infoData.cambioValuta
+              (infoData.valoreFattura * infoData.cambioValuta) /
+              infoData.qtaFattura
             ).toFixed(4)}
           />
         </Stack>
