@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f9f9f9
+}
+
+.color-primary, .text-primary {
+  color: #0d3450;
+}
+
+.color-secondary, .text-secondary {
+  color: #ffa852;
+}
+
+
+.border-primary {
+  border-color: #0d3450;
+}
+
+.border-secondary {
+  border-color: #ffa852;
+}
+
+.color-tertiary, .text-tertiary {
+  color: #fed5ac;
+}
+
+
+.bg-primary {
+  background-color: #0d3450;
+  /* #e06254 */
+  /* #4063a8 */
+}
+
+.bg-secondary {
+  background-color: #ffa852;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+img {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 12px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #787878;
+}
+
+.login-left{
+  clip-path: polygon(0px 0px, 100% 0px, 73% 100%, 0% 100%);
+}
+
+.button {
+  -webkit-appearance: button;
+  background-color: transparent;
+  background-image: none;
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+
+/* to center align content from both sides */
+.all-center {
+	@apply flex items-center justify-center;
+}
+
+.primary-gradient {
+	@apply bg-gradient-to-br from-violet-500 to-violet-400;
+}
+
+/* width */
+::-webkit-scrollbar {
+	width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+	@apply bg-gray-100;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+	@apply bg-gray-300 hover:bg-gray-400;
+  }
+
+
+  ::-webkit-scrollbar {
+    @apply h-1 w-1;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    /* background: #f1f1f1;  */
+    @apply bg-gray-200 rounded-md;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-md hover:bg-gray-400;
+  }
+
+
+
+@media only screen and (max-width: 800px) {
+  .login-left{
+  
+    clip-path: polygon(0px 0px, 100% 0px, 100% 100%, 0% 100%);
+  }
+}

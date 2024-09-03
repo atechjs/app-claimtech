@@ -6,13 +6,13 @@ export default function Copyright(props) {
   return (
     <Typography
       variant="body2"
-      color="text.secondary"
+      className="text-primary"
       align="center"
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://www.mondorevive.com/">
-        Mondorevive S.p.A.
+      <Link color="inherit" href="https://www.atechjs.com/">
+       Atech.js
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

@@ -1,9 +1,10 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
+
 import MyToastContainer from "../components/toast/MyToastContainer";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/it";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import "../styles/globals.css";
 
 const theme = createTheme({
   components: {
@@ -26,6 +27,7 @@ const theme = createTheme({
     },
   },
 });
+
 
 export default function MyApp({ Component, pageProps }) {
   // Use the layout defined at the page level, if available
