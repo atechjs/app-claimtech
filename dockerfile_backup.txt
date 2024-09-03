@@ -1,0 +1,9 @@
+FROM node:19
+WORKDIR /app
+COPY . /app/
+COPY test-BeUrl.js /app/utils/BeUrl.js
+RUN npm install -g yarn --force
+RUN yarn install --production
+RUN yarn build
+EXPOSE 3005
+CMD ["yarn","run","start","-p","3005"]
