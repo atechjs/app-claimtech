@@ -1,20 +1,25 @@
 import { Button, Container, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import authServ from "../services/auth.service";
+
 
 export default function Page() {
   const router = useRouter();
-  return (
-    <Container maxWidth="lg">
-      <Typography variant="h5">CLAIMTECH - Gestionale reclami</Typography>
-      <Typography variant="h6">©Atech.js</Typography>
-      <Button
-        variant="contained"
-        className="bg-primary"
-        onClick={() => router.replace("/login")}
-      >
-        Vai al login
-      </Button>
-    </Container>
-  );
+  const [utente, setUtente] = useState(null);
+
+  useEffect(() => {
+    const currentUser = authServ.getCurrentUser();
+    setUtente(currentUser);
+
+    if (!currentUser) {
+      router.push("/login"); // Redirect to login page if the user is not logged in
+    }
+    else
+    {
+      router.push("/home");
+    }
+  }, [router]);
+
+
 }

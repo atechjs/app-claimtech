@@ -35,10 +35,11 @@ export default function MyApp({ Component, pageProps }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"it"}>
-        <MyToastContainer />
-        {getLayout(<Component {...pageProps} />)}
-      </LocalizationProvider>
-    </ThemeProvider>
+    <title>ClaimTech -  Atech.js</title>
+   <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"it"}>
+     <MyToastContainer />
+     {getLayout(<Component {...pageProps} />)}
+   </LocalizationProvider>
+ </ThemeProvider>
   );
 }

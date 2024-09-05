@@ -1,13 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+
+import { motion } from 'framer-motion'
 import {
   Box,
   Button,
   Checkbox,
+  Divider,
   FormControlLabel,
   Stack,
   TextField,
@@ -26,6 +28,8 @@ import Tab from "@mui/material/Tab";
 import TabFiltroDialog from "./tabFiltroDialog";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import { CheckBoxSharp } from "@mui/icons-material";
+import { ChartSuccess, Record, RecordCircle, TickCircle } from "iconsax-react";
 export default function AggiungiFiltroDialog({
   aperto,
   ooo,
@@ -55,14 +59,14 @@ export default function AggiungiFiltroDialog({
 
   const { tagList, isLoading: tagLoading, isError: tagError } = useTagSelect();
   const statiList = [
-    { label: "TUTTI", value: null },
-    { label: "SOLO APERTI", value: true },
-    { label: "SOLO CHIUSI", value: false },
+    { label: "Tutti", value: null },
+    { label: "Solo aperti", value: true },
+    { label: "Solo chiusi", value: false },
   ];
 
   const rateoOptions = [
-    { label: "SI", value: true },
-    { label: "NO", value: false },
+    { label: "Si", value: true },
+    { label: "No", value: false },
   ];
   const { data: tipologiaStatoEvidenzaList } =
     useTipologiaStatoEvidenzaSelect();
@@ -130,6 +134,7 @@ export default function AggiungiFiltroDialog({
     ooo();
   }
   const selectStyles = {
+    
     menu: (base) => ({
       ...base,
       zIndex: 100,
@@ -170,14 +175,25 @@ export default function AggiungiFiltroDialog({
     setValue(0);
   }, [defaultValues]);
 
+
+
   useEffect(() => {
     if (getValues("idTipologiaReclamo") === undefined) return;
     triggerFase({ id: getValues("idTipologiaReclamo") });
   }, [watch("idTipologiaReclamo")]);
+
+
   const [value, setValue] = React.useState(0);
-  const handleTabChange = (event, newValue) => {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabChange = (newValue) => {
     setValue(newValue);
   };
+  
+
+  
+
+
   return (
     <Dialog
       open={aperto}
@@ -185,17 +201,20 @@ export default function AggiungiFiltroDialog({
       disableEscapeKeyDown
       fullWidth
       maxWidth="md"
+      className="border"
     >
-      <DialogTitle>
+      <h1 className="text-gray-800 font-medium pl-5 pt-5 pb-1 text-xl text-primary " >
         {isDialogUpdate()
           ? "Modifica la categoria"
           : "Aggiungi una nuova categoria"}
-      </DialogTitle>
+      </h1>
+      <p className="text-xs pl-5 pb-4 text-gray-500">{isDialogUpdate()
+            ? "Compila il form seguente per modificare la categoria selezionata"
+            : "Compila il form seguente per aggiungere una nuova categoria alla tua collezione"}</p>
+      <hr class="bg-gray-400 mx-4"></hr>
       <DialogContent>
         <DialogContentText>
-          {isDialogUpdate()
-            ? "Compila il form seguente per modificare la categoria selezionata"
-            : "Compila il form seguente per aggiungere una nuova categoria alla tua collezione"}
+          
         </DialogContentText>
         <Stack
           component="form"
@@ -204,6 +223,7 @@ export default function AggiungiFiltroDialog({
           onSubmit={handleSubmit(onSubmit)}
           spacing={1}
           direction={"column"}
+         
         >
           <TextField
             {...register("label", {
@@ -219,18 +239,42 @@ export default function AggiungiFiltroDialog({
             error={!!errors.label}
             helperText={errors.label?.message}
             autoFocus
+          
           />
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs value={value} onChange={handleTabChange}>
-              <Tab label="Generale" />
+          <div className="h-[1]" />
+          <div className='flex text-sm font-medium relative bg-gray-100 p-3 rounded-lg py-3 '>
+                <a onClick={() => {setActiveTab(0), setValue(0)}} className={`cursor-pointer button z-10 w-full px-2 py-1 ${activeTab === 0 ? '' : ''}`}>Generale</a>
+                <a onClick={() => {setActiveTab(1), setValue(1)}} className={`cursor-pointer button z-10 w-full px-2 py-1 rounded-lg ${activeTab === 1 ? '' : ''}`}>Stati</a>
+                <a onClick={() => {setActiveTab(2), setValue(2)}} className={`cursor-pointer button z-10 w-full px-2 py-1 ${activeTab === 2 ? '' : ''}`}>Articolo</a>
+                <a onClick={() => {setActiveTab(3), setValue(3)}} className={`cursor-pointer button z-10 w-full px-2 py-1 ${activeTab === 3 ? '' : ''}`}>Tags</a>
+                <a onClick={() => {setActiveTab(4), setValue(4)}} className={`cursor-pointer button z-10 w-full px-2 py-1 ${activeTab === 4 ? '' : ''}`}>Periodo</a>
+                <a onClick={() => {setActiveTab(5), setValue(5)}} className={`cursor-pointer button z-10 w-full px-2 py-1 ${activeTab === 5 ? '' : ''}`}>Rateo</a>
+
+                <div className='absolute items-center px-1 top-0 left-0 w-full h-full flex'>
+                <motion.div
+                    // Animate x to the correct position based on the active tab index
+                    animate={{
+                      x: activeTab === 0 ? 0 : activeTab === 1? '100%' : activeTab === 2 ? '200%' : activeTab === 3 ? '300%' : activeTab === 4 ? '400%' : '500%',
+                    }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    className="w-1/6 bg-white border h-7 rounded-lg"
+                  />
+                </div>
+               
+            </div>
+            {/* <Tabs value={value} onChange={handleTabChange} >
+              <Tab label={<button class="z-10 w-full px-2 py-1 ">Generale</button>} />
               <Tab label="Stati" />
               <Tab label="Articolo" />
               <Tab label="Tags" />
               <Tab label="Periodo" />
               <Tab label="Rateo" />
-            </Tabs>
-          </Box>
-          <TabFiltroDialog value={value} index={0}>
+            </Tabs> */}
+            <div className="h-[1]" />
+          
+          <div className="h-[25vh]" >
+          
+          <TabFiltroDialog value={value} index={0} >
             <MyReactSelect
               control={control}
               name="idStabilimento"
@@ -243,7 +287,7 @@ export default function AggiungiFiltroDialog({
               <MyReactSelect
                 control={control}
                 name="idTipologiaReclamo"
-                label="Tipologia reclamo(facoltativo)"
+                label="Tipologia reclamo (facoltativo)"
                 options={tipologiaReclamoList}
                 menuPosition="fixed"
                 styles={selectStyles}
@@ -254,18 +298,21 @@ export default function AggiungiFiltroDialog({
             <MyReactSelect
               control={control}
               name="cliente"
-              label="Cliente(facoltativo)"
+              label="Cliente (facoltativo)"
               options={clientiList}
               menuPosition="fixed"
               styles={selectStyles}
+              
             />
             <Controller
+
               control={control}
               name={"pinned"}
               render={({ field: { onChange, value } }) => (
                 <FormControlLabel
-                  control={<Checkbox checked={value} onChange={onChange} />}
-                  label="Fissa in alto"
+                className="pt-8"
+                  control={<Checkbox icon={<Record className={ value ? "text-secondary " : "text-primary  "} />} checkedIcon={<TickCircle className={ value ? "text-secondary " : "text-primary  "} variant="Bold" />} checked={value} onChange={onChange} />}
+                  label={<p className={ value ? "text-secondary " : "text-primary  "}>Fissa in alto</p>}
                 />
               )}
             />
@@ -364,23 +411,21 @@ export default function AggiungiFiltroDialog({
               name={"timestampCreazioneAttivo"}
               render={({ field: { onChange, value } }) => (
                 <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={value}
-                      onChange={(e) => {
-                        setValueForm(
-                          "timestampCreazioneAttivo",
-                          e.target.checked
-                        );
-                        if (!e.target.checked) {
-                          setValueForm("timestampCreazioneDa", null);
-                          setValueForm("timestampCreazioneA", null);
-                        }
-                      }}
-                    />
-                  }
-                  label="Filtro per data apertura"
+                className="pt-8"
+                checked={value}
+                  control={<Checkbox value={value} icon={<Record className={ value ? "text-secondary " : "text-primary  "} />} checkedIcon={<TickCircle className={ value ? "text-secondary " : "text-primary  "} variant="Bold" />} checked={value} onChange={(e) => {
+                    setValueForm(
+                      "timestampCreazioneAttivo",
+                      e.target.checked
+                    );
+                    if (!e.target.checked) {
+                      setValueForm("timestampCreazioneDa", null);
+                      setValueForm("timestampCreazioneA", null);
+                    }
+                  }} />}
+                  label={<p className={ value ? "text-secondary " : "text-primary  "}>Filtro per data apertura</p>}
                 />
+               
               )}
             />
             {watch("timestampCreazioneAttivo") ? (
@@ -438,25 +483,24 @@ export default function AggiungiFiltroDialog({
             <Controller
               control={control}
               name={"timestampChiusuraAttivo"}
+
               render={({ field: { onChange, value } }) => (
                 <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={value}
-                      onChange={(e) => {
-                        setValueForm(
-                          "timestampChiusuraAttivo",
-                          e.target.checked
-                        );
-                        if (!e.target.checked) {
-                          setValueForm("timestampChiusuraDa", null);
-                          setValueForm("timestampChiusuraA", null);
-                        }
-                      }}
-                    />
-                  }
-                  label="Filtro per data chiusura"
+                className="pt-8"
+               
+                  control={<Checkbox value={value} icon={<Record className={ value ? "text-secondary " : "text-primary  "} />} checkedIcon={<TickCircle className={ value ? "text-secondary " : "text-primary  "} variant="Bold" />} checked={value} onChange={(e) => {
+                    setValueForm(
+                      "timestampChiusuraAttivo",
+                      e.target.checked
+                    );
+                    if (!e.target.checked) {
+                      setValueForm("timestampChiusuraDa", null);
+                      setValueForm("timestampChiusuraA", null);
+                    }
+                  }} />}
+                  label={<p className={ value ? "text-secondary " : "text-primary  "}>Filtro per data apertura</p>}
                 />
+    
               )}
             />
             {watch("timestampChiusuraAttivo") ? (
@@ -518,20 +562,21 @@ export default function AggiungiFiltroDialog({
               name={"rateoAttivo"}
               render={({ field: { onChange, value } }) => (
                 <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={value}
-                      onChange={(e) => {
-                        setValueForm("rateoAttivo", e.target.checked);
-                        if (!e.target.checked) {
-                          setValueForm("rateo", null);
-                          setValueForm("annoRateo", null);
-                        }
-                      }}
-                    />
-                  }
-                  label="Filtro per rateo"
+                className="pt-8"
+               
+                  control={<Checkbox value={value} icon={<Record className={ value ? "text-secondary " : "text-primary  "} />} checkedIcon={<TickCircle className={ value ? "text-secondary " : "text-primary  "} variant="Bold" />} checked={value} onChange={(e) => {
+                    setValueForm(
+                      "rateoAttivo",
+                      e.target.checked
+                    );
+                    if (!e.target.checked) {
+                      setValueForm("rateo", null);
+                      setValueForm("annoRateo", null);
+                    }
+                  }} />}
+                  label={<p className={ value ? "text-secondary " : "text-primary  "}>Filtro per rateo</p>}
                 />
+                        
               )}
             />
             {watch("rateoAttivo") ? (
@@ -562,11 +607,12 @@ export default function AggiungiFiltroDialog({
               </Stack>
             ) : null}
           </TabFiltroDialog>
+          </div>
           <Stack direction={"row-reverse"} spacing={2}>
-            <Button type="submit" variant="contained">
-              {isDialogUpdate() ? "Aggiorna" : "Crea"}
-            </Button>
-            <Button onClick={() => onCloseDialog()}>Annulla</Button>
+            <button type="submit" className="h-8 gap-1 bg-primary hidden py-1 px-4 duration-200 text-white rounded-lg text-sm md:flex items-center justify-center" variant="contained">
+              {isDialogUpdate() ? "Aggiorna" : "Aggiungi"} 
+            </button>
+            <button className="text-red-500 text-sm pr-2" onClick={() => onCloseDialog()}>Annulla</button>
           </Stack>
         </Stack>
       </DialogContent>

@@ -1120,16 +1120,8 @@ export default function Page() {
   }
 
   return (
-    <Stack
-      sx={{
-        minHeight: vhToPixels(100) - 64 + "px",
-        width: "100%",
-      }}
-      spacing={1}
-      direction={"row"}
-      p={1}
-      m={0}
-    >
+    <div className="grid grid-cols-12">
+  <div className="md:col-span-3 col-span-12  md:pr-1 xs:mb-8 2xl:mb-0 2xl:order-1 ">
       <MenuFiltri
         filtroSelezionato={idFiltroSelezionatoInterno}
         filterList={filtriList}
@@ -1140,6 +1132,8 @@ export default function Page() {
         onFilterDelete={onFilterDelete}
         isLoading={isLoading}
       />
+      </div>
+      <div className="md:col-span-9 col-span-12 w-full 2xl:order-2">
       <Box width={"100%"} id="drawer-container" position="relative">
         {isLoading !== undefined && !isLoading && isReady ? (
           <ThemeProvider theme={getMuiTheme}>
@@ -1181,7 +1175,8 @@ export default function Page() {
         handleClose={handleCloseDialogCondivisione}
         handleOnSubmit={handleOnCondividiSubmit}
       />
-    </Stack>
+    </div>
+    </div>
   );
 }
 

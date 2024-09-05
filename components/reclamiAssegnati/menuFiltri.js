@@ -26,6 +26,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import LayoutMenuFiltri from "../menuFiltri/layoutMenuFiltri";
+import { Refresh } from "iconsax-react";
 export default function MenuFiltri({
   filtroSelezionato,
   filterList,
@@ -102,6 +103,7 @@ export default function MenuFiltri({
       onFilterSelected={onFilterSelected}
       isLoading={isLoading}
     >
+       <div className="p-3 h-full" >
       <Stack direction={"column"} spacing={1}>
         <Stack
           pr={1}
@@ -126,12 +128,13 @@ export default function MenuFiltri({
           />
           <Tooltip title="Ricarica reclami">
             <Button variant="outlined" size="small" type="submit">
-              <SyncIcon />
+              <Refresh className="w-4" variant="Outlined" />
             </Button>
           </Tooltip>
         </Stack>
         <Divider sx={{ marginBottom: 0 }} />
       </Stack>
+      </div>
     </LayoutMenuFiltri>
   );
 }

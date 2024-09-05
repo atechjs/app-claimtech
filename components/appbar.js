@@ -31,6 +31,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import authServ from "../services/auth.service";
 import { useRouter } from "next/router";
 import MenuIcon from "@mui/icons-material/Menu";
+import { HambergerMenu, Slack } from "iconsax-react";
 export default function MyAppBar({ utente, menuItems, onToggle }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -53,8 +54,9 @@ export default function MyAppBar({ utente, menuItems, onToggle }) {
       <AppBar
         position="fixed"
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        className="text-white bg-primary"
       >
-        <Toolbar>
+        <Toolbar className="pl-5">
           <Box
             sx={{
               display: "flex",
@@ -62,24 +64,21 @@ export default function MyAppBar({ utente, menuItems, onToggle }) {
               gap: 2,
             }}
           >
-            <ThemeProvider theme={theme}>
-              <IconButton color="primary" onClick={() => onToggle()}>
-                <MenuIcon />
-              </IconButton>
-            </ThemeProvider>
-            <Divider
-              orientation="vertical"
-              flexItem
-              sx={{ bgcolor: "white" }}
-            />
-            <Typography variant="h6" noWrap component="div">
-              CLAIMOT - Gestionale Reclami
-            </Typography>
-            <Divider
-              orientation="vertical"
-              flexItem
-              sx={{ bgcolor: "white" }}
-            />
+           
+               <HambergerMenu className="cursor-pointer" onClick={() => onToggle()}/>
+            
+            
+          
+            <div className=" md:p-4 flex cursor-pointer group items-center gap-2">
+            <div className="h-10 outline w-10 flex items-center bg-gradient-to-br justify-center rounded-full bg-primary text-orange-100">
+              <Slack size={24} className="relative group-hover:scale-75 duration-200" />
+            </div>
+            <div>
+              <h1 className="text-sm font-bold text-tertiary">ClaimTech</h1>
+              <p className="text-xs text-gray-500 ml-2 font-medium">by Atech.js</p>
+            </div>
+          </div>
+           
             {menuItems
               .filter((x) => x.appbar)
               .map((item) => (

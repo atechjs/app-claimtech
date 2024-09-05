@@ -13,6 +13,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import LayoutBarFiltri from "../menuFiltri/layoutBarFiltri";
+import { AddCircle, BoxAdd, Category, Edit, Edit2, FilterAdd, Trash } from "iconsax-react";
 export default function BarFiltri({
   f,
   onAddClick,
@@ -20,7 +21,8 @@ export default function BarFiltri({
   onDeleteClick,
 }) {
   return (
-    <LayoutBarFiltri icon={<CategoryOutlinedIcon />} title={"CATEGORIE"}>
+    
+    <LayoutBarFiltri icon={<Category className="text-primary w-4" />} title={"Categorie"} >
       <Stack sx={{ width: "100%" }} direction={"row-reverse"} spacing={0}>
         <Tooltip title="Nuova categoria">
           <IconButton
@@ -29,7 +31,7 @@ export default function BarFiltri({
             size="small"
             onClick={() => onAddClick()}
           >
-            <AddIcon />
+            <AddCircle className="text-primary w-5" variant="Outline" />
           </IconButton>
         </Tooltip>
         <Tooltip title="Elimina categoria">
@@ -40,7 +42,7 @@ export default function BarFiltri({
             size="small"
             onClick={() => onDeleteClick(f)}
           >
-            <DeleteIcon />
+             <Trash className="text-danger w-5" variant="Outline" />
           </IconButton>
         </Tooltip>
         <Tooltip title="Aggiorna categoria">
@@ -51,7 +53,7 @@ export default function BarFiltri({
             size="small"
             onClick={() => onUpdateClick(f)}
           >
-            <EditIcon />
+            <Edit2 className="text-warning w-5" variant="Outline" />
           </IconButton>
         </Tooltip>
       </Stack>

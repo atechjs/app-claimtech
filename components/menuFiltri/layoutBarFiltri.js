@@ -2,14 +2,15 @@ import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
 
 export default function LayoutBarFiltri({ icon, title, children }) {
   return (
-    <Paper elevation={0} square>
-      <Stack direction={"column"}>
+    <div className="">
+      <Stack direction={"column"} className="">
         <Box
           sx={{
             display: "flex",
           }}
           pr={1}
           pl={1}
+          className="mt-4 mb-2"
         >
           <Stack
             direction={"row"}
@@ -17,16 +18,17 @@ export default function LayoutBarFiltri({ icon, title, children }) {
             alignItems="center"
             spacing={1}
             mr={3}
+            
           >
             {icon}
-            <Typography variant="button" noWrap component="div">
+            <p className="ext-gray-800 font-medium">
               {title}
-            </Typography>
+            </p>
           </Stack>
           {children}
         </Box>
         <Divider />
       </Stack>
-    </Paper>
+    </div>
   );
 }

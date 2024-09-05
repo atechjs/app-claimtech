@@ -12,18 +12,45 @@ import {
 import MyAppBar from "./appbar";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useEffect } from "react";
 
-const drawerWidth = 300;
-//IN CASO DI DUBBI SU COME FARE I LAYOUT GUARDARE QUESTO LINK
-//https://blog.logrocket.com/guide-next-js-layouts-nested-layouts/
+import LoadingBar from "react-top-loading-bar";
+import { usePathname } from "next/navigation";
+
+const drawerWidthOpen = 300;
+const drawerWidthClosed = 60;
 
 export default function Navbar({ menuItems, utente }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
+  const pathname = usePathname();
+
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      ref.current?.continuousStart();
+    };
+
+    const handleRouteChangeComplete = () => {
+      ref.current?.complete();
+    };
+
+    router.events.on("routeChangeStart", handleRouteChangeStart);
+    router.events.on("routeChangeComplete", handleRouteChangeComplete);
+    router.events.on("routeChangeError", handleRouteChangeComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChangeStart);
+      router.events.off("routeChangeComplete", handleRouteChangeComplete);
+      router.events.off("routeChangeError", handleRouteChangeComplete);
+    };
+  }, [router]);
+
   const handleToggleDrawer = () => {
-    setOpen((open) => !open);
+    setOpen((prevOpen) => !prevOpen);
   };
 
   const handleCloseDrawer = () => {
@@ -36,45 +63,73 @@ export default function Navbar({ menuItems, utente }) {
 
   return (
     <>
+      <LoadingBar color="#e47908" ref={ref} shadow={true} />
       <MyAppBar
         utente={utente}
         onToggle={handleToggleDrawer}
         menuItems={menuItems}
       />
       <Drawer
+       PaperProps={{
+        sx: {
+          backgroundColor: "#bdc7cf",
+          color: "#0d3450",
+        }}}
+        variant="permanent"
         open={open}
         sx={{
-          width: drawerWidth,
+          width: open ? drawerWidthOpen : drawerWidthClosed,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
+            width: open ? drawerWidthOpen : drawerWidthClosed,
             boxSizing: "border-box",
+            transition: "width 0.1s", 
+            overflowX: "hidden",
           },
         }}
         onClose={handleCloseDrawer}
       >
         <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            {menuItems.map((item) =>
-              item.label !== "divider" ? (
-                <ListItem key={item.label} disablePadding>
-                  <ListItemButton
-                    LinkComponent={Link}
-                    href={item.link}
-                    selected={activeRoute(item.link, router.pathname)}
-                    onClick={() => handleCloseDrawer()}
-                  >
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.label} />
+        <List className="mt-2">
+          {menuItems.map((item) =>
+            item.label !== "divider" ? (
+              <Link key={item.key} href={item.link}>
+                <ListItem disablePadding sx = {{color: activeRoute(item.link, pathname) ? "#e47908" : "#0d3450"}}>
+                <ListItemButton
+                      sx={{
+                        minHeight: 60, 
+                        height: open ? "auto" : 60, 
+                        justifyContent: open ? "initial" : "center",
+                        px: 2.5,
+                        
+                      }}
+                    >
+
+
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                        color: activeRoute(item.link, pathname) ? "#e47908" : "#0d3450",
+                      }}
+                    
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.label}
+                      sx={{ opacity: open ? 1 : 0 }}
+                      
+                    />
                   </ListItemButton>
                 </ListItem>
-              ) : (
-                <Divider orientation="horizontal" key={item.key}></Divider>
-              )
-            )}
-          </List>
-        </Box>
+              </Link>
+            ) : (
+              <Divider orientation="horizontal" key={item.key}></Divider>
+            )
+          )}
+        </List>
       </Drawer>
     </>
   );

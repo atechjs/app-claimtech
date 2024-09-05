@@ -32,12 +32,12 @@ export default function ItemFiltro({
               width: "100%",
             }}
           >
-            {filtro.pinned ? <PushPinTwoToneIcon fontSize="small" /> : <></>}
-            <ListItemText primary={filtro.label} />
+            {filtro.pinned ? <PushPinTwoToneIcon className="text-secondary " fontSize="small" /> : <></>}
+            <ListItemText className={(filtro.pinned ? " ml-2" : " ml-7") + " text-gray-600 " } primary={filtro.label} />
           </Box>
           <Stack direction={"row-reverse"} spacing={0}>
             {filtro.count !== undefined && filtro.count !== null ? (
-              <Tag label={filtro.count} colore="gray" />
+              <Tag label={filtro.count} colore="orange" />
             ) : null}
           </Stack>
         </Stack>
