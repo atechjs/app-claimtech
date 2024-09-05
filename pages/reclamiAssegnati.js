@@ -55,6 +55,7 @@ import RenderDatiReclamo from "../components/my-mui-data-table/components/render
 import RenderDatiArticoloValorizzazione from "../components/my-mui-data-table/components/renderDatiArticoloValorizzazione";
 import DialogCondivisioneUtenti from "../components/condivisioneUtente/dialogCondivisioneUtenti";
 import DrawerFornituraRapida from "../components/reclamo/drawerFornituraRapida";
+import TanstackTable from "../components/tanstackTable/tanstackTable";
 
 export default function Page() {
   var isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
@@ -1144,6 +1145,13 @@ export default function Page() {
               data={reclamiList}
             />
           </ThemeProvider>
+
+          // <TanstackTable 
+          //   columns={columns}
+          //   data={reclamiList}
+          //   />
+         
+
         ) : (
           <Container>
             <Stack
