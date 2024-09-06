@@ -53,8 +53,10 @@ export default function MyAppBar({ utente, menuItems, onToggle }) {
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        className="text-white bg-primary"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: "#0d3450" }}
+        className="text-white "
+        
+     
       >
         <Toolbar className="pl-5">
           <Box

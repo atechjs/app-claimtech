@@ -20,7 +20,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import NetworkPingIcon from "@mui/icons-material/NetworkPing";
-import { Notepad2, LampCharge, Hashtag, Danger, ChartFail, ChemicalGlass, Building, WalletMoney, Diagram, Personalcard, DocumentText, Data, ReceiptSearch, UserSquare, Profile2User, Layer, SearchNormal1, DirectNotification, CalendarEdit, AddCircle, TaskSquare } from "iconsax-react";
+import { Notepad2, LampCharge, Hashtag, Danger, ChartFail, ChemicalGlass, Building, WalletMoney, Diagram, Personalcard, DocumentText, Data, ReceiptSearch, UserSquare, Profile2User, Layer, SearchNormal1, DirectNotification, CalendarEdit, AddCircle, TaskSquare, Home } from "iconsax-react";
 
 import { usePathname } from "next/navigation";
 export default function Layout({ children }) {
@@ -150,6 +150,12 @@ export default function Layout({ children }) {
 
 
   const [menuItems, setMenuItems] = useState([{
+    label: "Home",
+    link: "/home",
+    icon: <Home  variant="Outline" />,
+    ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE", "ROLE_STANDARD"],
+    appbar: true,
+  },{
     label: "Reclami",
     link: "/reclamiAssegnati",
     icon: <Notepad2  variant="Outline" />,
@@ -292,7 +298,7 @@ export default function Layout({ children }) {
               menuItems={getMenuItemsAutorizzati(menuItems, utente)}
               
             />
-            <Box component="main" sx={{  height: "100%" }}>
+            <Box component="main" sx={{  height: "100%", width: "100%" }}>
               <Toolbar className="mt-0"/>
               {children}
             </Box>

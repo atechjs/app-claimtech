@@ -12,10 +12,13 @@ import {
   filterFn,
   SortingState
 } from "@tanstack/react-table";
+import { Popover, Button } from "@mui/material";
 import { Checkbox } from "@mui/material";
-import { ArrowDown2, ArrowRight2, ArrowUp2, Record, TickCircle } from "iconsax-react";
+import { ArrowDown2, ArrowRight2, ArrowSwapVertical, ArrowUp2, CloseSquare, Record, SearchNormal1, TickCircle, Trash } from "iconsax-react";
+import dayjs from "dayjs";
 
 export default function TanstackTable({ data }) {
+
   // Resizable column
   const [columnResizeMode, setColumnResizeMode] = useState("onChange");
   const [columnResizeDirection, setColumnResizeDirection] = useState("ltr");
@@ -39,12 +42,22 @@ const renderSubComponent = ({ row }) => {
 
 
 
+  const handleRowClick = (row) => {
+    row.toggleExpanded(); // Espande o riduce la riga
+  };
+
+
+  console.log("data", data);
+
+
   const columns = useMemo(
     () => [
     {
         id: "id",
+        size: 10,
+        enableResizing: false,
         header: ({ table}) => (
-            <div className=" space-x-2 text-primary ml-3 ">
+            <div className=" space-x-2 text-primary ">
              <IndeterminateCheckbox
               {...{
                 checked: table.getIsAllRowsSelected(),
@@ -68,7 +81,7 @@ const renderSubComponent = ({ row }) => {
                     onChange: row.getToggleSelectedHandler(),
                     indeterminate: row.getIsSomeSelected()
                 }} /> 
-                <button {...{onClick: row.getToggleExpandedHandler(), className: "text-center align-middle cursor-pointer"}}>
+                <button {...{ className: "text-center align-middle cursor-pointer"}}>
                     {row.getIsExpanded() ? <ArrowDown2 className="text-secondary" /> : <ArrowRight2  />}
                 </button>
                 </div>
@@ -79,20 +92,39 @@ const renderSubComponent = ({ row }) => {
     },
     
       {
-        accessorKey: "reclamo",
+        accessorKey: "numero",
         filterFn: 'includesString',
-        header: () => <span className="text-primary text-start p-1 ml-3 w-5/6">Reclamo</span>,
-        cell: (info) => info.getValue(),
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Reclamo</span>,
+        cell: (info) => <a className=" text-secondary p-1 xl:ml-3 w-5/6 underline" >Reclamo {info.getValue()}</a>,
         footer: (props) => props.column.id,
       },
       {
         accessorFn: (row) => row.evidenze,
         id: "evidenze",
         filterFn: 'includesString',
-        cell: (info) => info.getValue(),
-        header: () => <span className="text-primary p-1">Evidenze</span>,
+        header: () => <span  className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Evidenze</span>,
+        cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6">{info.getValue()}</span>, 
         footer: (props) => props.column.id,
       },
+      {
+        accessorKey: "partitaList",
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Cause</span>,
+        cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6">{info.getValue()[0].causaReclamoList[0]?.codiceCausa}</span>, 
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorKey: "timestampCreazione",
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Data creazione</span>,
+        cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6">{dayjs(info.getValue()).format("DD/MM/YYYY")}</span>, 
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorKey: "codiceFase",
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Fase</span>,
+        cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6">{info.getValue()}</span>, 
+        footer: (props) => props.column.id,
+      }
+      
     ],
     []
   );
@@ -100,7 +132,7 @@ const renderSubComponent = ({ row }) => {
   const [fallbackData, setFallbackData] = useState(() => [
     {
       id: 1,
-      reclamo: "Reclamo 1",
+      numero: "Reclamo 1",
       evidenze: "Evidenza 1",
       sottoRighe: [
         {
@@ -110,18 +142,7 @@ const renderSubComponent = ({ row }) => {
       ]
       
     },
-    {
-        id: 2,
-        reclamo: "Reclamo 21",
-        evidenze: "Evidenza 2",
-        sottoRighe: [
-          {
-              reclamo: "Reclamo 1.1",
-              evidenze: "Evidenza 1.1",
-          }
-        ]
-        
-      },
+   
   ]);
 
   // Use data if provided, otherwise fallback to fallbackData
@@ -161,56 +182,40 @@ const renderSubComponent = ({ row }) => {
   </div>
 
 
-
-    <div style={{ direction: table.options.columnResizeDirection,  }} >
+  <div className=" block max-w-full w-full h-[75vh] overflow-auto">
+    {/* <div style={{ direction: table.options.columnResizeDirection,  }} > */}
       <table
-        className="tanstakTable"
+        className="tanstakTable w-full "
         
       >
-        <thead>
+        <thead className="border-b-2 border-t-2">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => {
                 return (
-                <th key={header.id} colSpan={header.colSpan} style={{ width: header.getSize() }}>
+                  <th key={header.id} colSpan={header.colSpan} className="items-center justify-between text-gray-500">
                   {header.isPlaceholder ? null : (
                     <>
-                    <div
-                    onClick={header.column.getToggleSortingHandler()}
-                      title={
-                        header.column.getCanSort()
-                          ? header.column.getNextSortingOrder() === 'asc'
-                            ? 'Ordine crescente'
-                            : header.column.getNextSortingOrder() === 'desc'
-                              ? 'Ordine decrescente'
-                              : 'Annulla ordinamento'
-                          : undefined
-                      }
-                      className="cursor-pointer align-middle flex mt-2"
-                    > 
-                      <div 
-                        onDoubleClick={() => header.column.resetSize()}
-                        onMouseDown={header.getResizeHandler()}
-                        onTouchStart={header.getResizeHandler()}
-                        className={`resizer ${table.options.columnResizeDirection} ${
-                          header.column.getIsResizing() ? "isResizing" : ""
-                        }`}
-                      />
-                      
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {{
-                          asc: <ArrowUp2 className="text-secondary text-end mt-1 mr-3" />,
-                          desc: <ArrowDown2 className="text-secondary  mt-1 mr-3" />,
-                      }[header.column.getIsSorted()] ?? null}
-                    </div>
-                       <div className="flex-none">
+                      <div
+                       
+                        className="cursor-pointer align-middle flex mt-2"
+                      > 
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {{
+                          asc: <ArrowSwapVertical className="text-secondary w-5 text-end mt-1 mr-3"  onClick={header.column.getToggleSortingHandler()}/>,
+                          desc: <ArrowSwapVertical className="text-secondary w-5 mt-1 mr-3"  onClick={header.column.getToggleSortingHandler()} />,
+                        }[header.column.getIsSorted()] ?? (
+                          header.column.getCanSort() ? <ArrowSwapVertical className="w-5 mt-1 mr-3"  onClick={header.column.getToggleSortingHandler()} /> : null
+                        )}
                         {header.column.getCanFilter() ? <Filter column={header.column} /> : null}
                       </div>
+                      
+                        
+                     
                     </>
-              
-                    )}
-                    
+                  )}
                 </th>
+                
                 ) 
               })}
             </tr>
@@ -218,14 +223,14 @@ const renderSubComponent = ({ row }) => {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <Fragment key={row.id}>
-            <tr>
+            <Fragment key={row.id} >
+            <tr className="hover:bg-slate-100 cursor-pointer border-t border-b text-lg"  onClick={() => handleRowClick(row)}>
               {/* first row is a normal row */}
               {row.getVisibleCells().map(cell => {
                 return (
                   <td key={cell.id} >
 
-                    <div className="ml-3 my-1">
+                    <div className=" my-1">
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext()
@@ -249,10 +254,9 @@ const renderSubComponent = ({ row }) => {
         </tbody>
       </table>
 
-    
-
-      <div className="h-2" />
-      <div className="flex items-center gap-2">
+  
+     </div>
+     <div className="flex items-center gap-2 pt-20 ml-4 mb-4">
         <button
           className="border rounded p-1"
           onClick={() => table.setPageIndex(0)}
@@ -302,6 +306,7 @@ const renderSubComponent = ({ row }) => {
             className="border p-1 rounded w-16"
           />
         </span>
+        
         <select
           value={table.getState().pagination.pageSize}
           onChange={e => {
@@ -315,9 +320,9 @@ const renderSubComponent = ({ row }) => {
           ))}
         </select>
       </div>
-      <div>{table.getRowModel().rows.length} Rows</div>
-      <div> {table.getPreFilteredRowModel().rows.length} Total Rows Selected</div>
-    </div>
+      <div className="ml-10 text-secondary">{table.getRowModel().rows.length} di {table.getPreFilteredRowModel().rows.length} totali</div>
+      
+    
     </>
   );
 }
@@ -334,7 +339,7 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   }, [ref, indeterminate]);
 
   return (
-    <Checkbox icon={<Record className={ rest.checked ? "text-secondary " : "text-primary  "} />} checkedIcon={<TickCircle className={ rest.checked ? "text-secondary " : "text-primary  "} variant="Bold" />} checked={rest.checked} ref={ref} {...rest} />
+    <Checkbox onClick={e => e.stopPropagation()} icon={<Record className={ rest.checked ? "text-secondary " : "text-primary  "} />} checkedIcon={<TickCircle className={ rest.checked ? "text-secondary " : "text-primary  "} variant="Bold" />} checked={rest.checked} ref={ref} {...rest} />
     
   )
    }
@@ -362,22 +367,56 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
     }, [value])
   
     return (
-      <input  {...props} value={value} onChange={e => setValue(e.target.value) } className="w-[90%] border font-medium m-1 p-1 shadow rounded mb-3" />
+      <input  {...props} value={value} onChange={e => setValue(e.target.value) } className="w-full border font-medium p-2 shadow rounded " />
     )
   }
 
 
 //Filtro per colonna
 function Filter({ column }) {
-  const columnFilterValue = column.getFilterValue()
+  const columnFilterValue = column.getFilterValue();
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+ 
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   return (
-    <DebouncedInput
-      type="text"
-      value={(columnFilterValue ?? '')}
-      onChange={value => column.setFilterValue(value)}
-      placeholder={`Cerca...`}
-      
-    />
-  )
+    <div>
+      <SearchNormal1  aria-describedby={id} variant="contained" onClick={handleClick} className="text-primary cursor-pointer mt-1 w-6" />
+        
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <div className="p-2  flex">
+          <DebouncedInput
+          
+            type="text"
+            value={columnFilterValue ?? ''}
+            onChange={value => column.setFilterValue(value)}
+            placeholder={`Cerca...`}
+          />
+     
+            
+          <Button  onClick={() => column.setFilterValue(undefined)} variant="outlined" color="warning" className="ml-1 border-orange text-orange-300 cursor-pointer">Annulla</Button>
+          
+        </div>
+      </Popover>
+    </div>
+  );
 }

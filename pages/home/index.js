@@ -1,12 +1,11 @@
 import Layout from "../../components/layout";
-import TanstackTable from "../../components/tanstackTable/tanstackTable";
 
 
 
 export default function Page() {
     return (
-        <div className="p-20">
-      <TanstackTable />
+        <div className=" w-full">
+      
       </div>
     );
 }

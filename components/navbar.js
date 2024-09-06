@@ -72,7 +72,7 @@ export default function Navbar({ menuItems, utente }) {
       <Drawer
        PaperProps={{
         sx: {
-          backgroundColor: "#bdc7cf",
+          backgroundColor: "#d1d5db",
           color: "#0d3450",
         }}}
         variant="permanent"

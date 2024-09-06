@@ -23,7 +23,7 @@
   }
 
   body {
-    background-color: #f9f9f9;
+    background-color: #fff;
   }
 
   img {
@@ -152,21 +152,21 @@
 
   th,
   .th {
-    padding: 2px 4px;
+    padding: 1rem 1.5rem;
     position: relative;
     font-weight: bold;
     text-align: center;
     height: 30px;
-    border: 1px solid rgb(217, 217, 217);
+    /* border: 1px solid rgb(217, 217, 217); */
   }
 
   td,
   .td {
     height: 30px;
-   
+    padding: 1rem 1.5rem;
   }
 
-  .resizer {
+  /* .resizer {
     position: absolute;
     top: 0;
     height: 100%;
@@ -175,7 +175,7 @@
     cursor: col-resize;
     user-select: none;
     touch-action: none;
-  }
+  } */
 
   .resizer.ltr {
     right: 0;

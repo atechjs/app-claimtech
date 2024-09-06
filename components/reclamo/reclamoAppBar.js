@@ -178,7 +178,7 @@ export default function ReclamoAppBar({ data, onSync, permessiReclamoUtente }) {
   if (data === undefined)
     return (
       <ThemeProvider theme={getMuiTheme}>
-        <AppBar position="static" sx={{ maxWidth: "100%" }}>
+        <AppBar color="primary" position="static" sx={{ maxWidth: "100%" }}>
           <Toolbar>
             <Typography>Caricamento reclamo...</Typography>
           </Toolbar>

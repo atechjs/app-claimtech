@@ -12,6 +12,7 @@ import {
   createTheme,
   FormLabel,
   FormGroup,
+  Button,
 } from "@mui/material";
 import Layout from "../components/layout";
 
@@ -1122,35 +1123,40 @@ export default function Page() {
 
   return (
     <div className="grid grid-cols-12">
-  <div className="md:col-span-3 col-span-12  md:pr-1 xs:mb-8 2xl:mb-0 2xl:order-1 ">
-      <MenuFiltri
-        filtroSelezionato={idFiltroSelezionatoInterno}
-        filterList={filtriList}
-        onSync={onSyncClicked}
-        onFilterSelected={onFilterSelected}
-        onFilterAdd={onFilterAdd}
-        onFilterUpdate={onFilterUpdate}
-        onFilterDelete={onFilterDelete}
-        isLoading={isLoading}
-      />
+  <div className="md:col-span-2 col-span-12  md:pr-1 xs:mb-8 2xl:mb-0 2xl:order-1 ">
+      
+        <div className="border">
+        <Button className="p-8 w-full" onClick={clickButtonNuovo()}>Nuovo Reclamo</Button>
+          <MenuFiltri
+            filtroSelezionato={idFiltroSelezionatoInterno}
+            filterList={filtriList}
+            onSync={onSyncClicked}
+            onFilterSelected={onFilterSelected}
+            onFilterAdd={onFilterAdd}
+            onFilterUpdate={onFilterUpdate}
+            onFilterDelete={onFilterDelete}
+            isLoading={isLoading}
+          />
+        </div>
       </div>
-      <div className="md:col-span-9 col-span-12 w-full 2xl:order-2">
+      <div className="md:col-span-10 col-span-12 w-full 2xl:order-2">
       <Box width={"100%"} id="drawer-container" position="relative">
         {isLoading !== undefined && !isLoading && isReady ? (
-          <ThemeProvider theme={getMuiTheme}>
+         <> 
+         {/* <ThemeProvider theme={getMuiTheme}>
             <MUIDataTable
               title={"Reclami assegnati a me"}
               columns={columns}
               options={tableOptions}
               data={reclamiList}
             />
-          </ThemeProvider>
+          </ThemeProvider> */}
 
-          // <TanstackTable 
-          //   columns={columns}
-          //   data={reclamiList}
-          //   />
-         
+          <TanstackTable 
+            columns={columns}
+            data={reclamiList}
+            />
+         </>
 
         ) : (
           <Container>

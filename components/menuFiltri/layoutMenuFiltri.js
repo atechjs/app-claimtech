@@ -11,7 +11,7 @@ export default function LayoutMenuFiltri({
 }) {
   return (
 <div class="break-inside-avoid-column space-y-4" >
-  <div class="border text-gray-500 w-full  p-3 h-[95vh] rounded-2xl" style={{ backgroundColor: "#fff" }}>
+  <div class=" text-gray-500 w-full  p-3 h-[95vh] rounded-2xl" style={{ backgroundColor: "#fff" }}>
     
       <Stack direction={"column"} spacing={1}>
         {barFiltri}
