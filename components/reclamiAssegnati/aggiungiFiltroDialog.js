@@ -11,7 +11,9 @@ import {
   Checkbox,
   Divider,
   FormControlLabel,
+  makeStyles,
   Stack,
+  styled,
   TextField,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
@@ -28,8 +30,9 @@ import Tab from "@mui/material/Tab";
 import TabFiltroDialog from "./tabFiltroDialog";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { CheckBoxSharp } from "@mui/icons-material";
+import { CheckBoxSharp, Padding } from "@mui/icons-material";
 import { ChartSuccess, Record, RecordCircle, TickCircle } from "iconsax-react";
+import MyButton from "../button/myButton";
 export default function AggiungiFiltroDialog({
   aperto,
   ooo,
@@ -192,6 +195,11 @@ export default function AggiungiFiltroDialog({
   
 
   
+const StyledDialog = styled(Dialog)(({theme}) => ({
+  "& .MuiDialog-container": {
+    alignItems: "flex-start",
+  }
+}));
 
 
   return (
@@ -200,17 +208,22 @@ export default function AggiungiFiltroDialog({
       onClose={() => onCloseDialog()}
       disableEscapeKeyDown
       fullWidth
-      maxWidth="md"
-      className="border"
+      maxWidth="lg"
+      className="border "
+      
+      
     >
-      <h1 className="text-gray-800 font-medium pl-5 pt-5 pb-1 text-xl text-primary " >
+      <div className="px-10 py-3">
+      <div className="p-6">
+      <h1 className="text-gray-800 font-medium  pb-1 p text-xl text-primary " >
         {isDialogUpdate()
           ? "Modifica la categoria"
           : "Aggiungi una nuova categoria"}
       </h1>
-      <p className="text-xs pl-5 pb-4 text-gray-500">{isDialogUpdate()
+      <p className="text-xs pb-2 text-gray-500">{isDialogUpdate()
             ? "Compila il form seguente per modificare la categoria selezionata"
             : "Compila il form seguente per aggiungere una nuova categoria alla tua collezione"}</p>
+      </div>
       <hr class="bg-gray-400 mx-4"></hr>
       <DialogContent>
         <DialogContentText>
@@ -608,15 +621,20 @@ export default function AggiungiFiltroDialog({
             ) : null}
           </TabFiltroDialog>
           </div>
-          <Stack direction={"row-reverse"} spacing={2}>
-            <button type="submit" className="h-8 gap-1 bg-primary hidden py-1 px-4 duration-200 text-white rounded-lg text-sm md:flex items-center justify-center" variant="contained">
-              {isDialogUpdate() ? "Aggiorna" : "Aggiungi"} 
-            </button>
-            <button className="text-red-500 text-sm pr-2" onClick={() => onCloseDialog()}>Annulla</button>
-          </Stack>
+          
+         
+            <div className=" text-center ">
+              <MyButton type="submit" label={isDialogUpdate() ? "Aggiorna" : "Aggiungi"} color={"secondary"}  className=" py-1 px-6  2xl:py-4 2xl:px-16 rounded-lg 2xl:text-xl text-sm   " variant="contained" />
+            </div>
+            <button style={{ letterSpacing: "0.1rem"}} className="text-red-500 text-center text-sm 2xl:text-base pt-2 " onClick={() => onCloseDialog()}>Annulla</button>
+    
+            
+           
+         
         </Stack>
       </DialogContent>
       <DialogActions></DialogActions>
+      </div>
     </Dialog>
   );
 }

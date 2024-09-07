@@ -12,20 +12,17 @@ export default function LayoutBarFiltri({ icon, title, children }) {
           pl={1}
           className="mt-4 mb-2"
         >
-          <Stack
-            direction={"row"}
-            justifyContent="flex-start"
-            alignItems="center"
-            spacing={1}
-            mr={3}
-            
-          >
-            {icon}
-            <p className="ext-gray-800 font-medium">
-              {title}
-            </p>
-          </Stack>
-          {children}
+          <div className="grid grid-cols-12 gap-4" >
+            <div className="col-span-1" >
+              {icon}
+            </div>
+            <div className="col-span-3 md:col-span-10 2xl:col-span-3" >
+              <p className="text-gray-800 font-medium 2xl:text-xl ">{title}</p>
+            </div>
+            <div className="col-span-8 md:col-span-12 2xl:col-span-7" >
+             {children}
+            </div>
+          </div>
         </Box>
         <Divider />
       </Stack>

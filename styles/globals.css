@@ -142,6 +142,10 @@
    
   }
 
+  thead {
+    background-color: linen;
+  }
+
 
   th,
   .th,

@@ -57,6 +57,7 @@ import RenderDatiArticoloValorizzazione from "../components/my-mui-data-table/co
 import DialogCondivisioneUtenti from "../components/condivisioneUtente/dialogCondivisioneUtenti";
 import DrawerFornituraRapida from "../components/reclamo/drawerFornituraRapida";
 import TanstackTable from "../components/tanstackTable/tanstackTable";
+import MyButton from "../components/button/myButton";
 
 export default function Page() {
   var isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
@@ -1123,10 +1124,12 @@ export default function Page() {
 
   return (
     <div className="grid grid-cols-12">
-  <div className="md:col-span-2 col-span-12  md:pr-1 xs:mb-8 2xl:mb-0 2xl:order-1 ">
+  <div className="lg:col-span-2 2xl:col-span-3 col-span-12 xs:mb-8 2xl:mb-0 2xl:order-1">
       
-        <div className="border">
-        <Button className="p-8 w-full" onClick={clickButtonNuovo()}>Nuovo Reclamo</Button>
+        <div className="border ">
+          <div className="px-8 pt-8 pb-4">
+            <MyButton className=" w-full 2xl:text-xl p-3 rounded-lg" color={"secondary"}  variant="contained" onClick={clickButtonNuovo} label = "Nuovo Reclamo" />
+          </div>
           <MenuFiltri
             filtroSelezionato={idFiltroSelezionatoInterno}
             filterList={filtriList}
@@ -1139,7 +1142,7 @@ export default function Page() {
           />
         </div>
       </div>
-      <div className="md:col-span-10 col-span-12 w-full 2xl:order-2">
+      <div className="lg:col-span-10 2xl:col-span-9 col-span-12 w-full 2xl:order-2">
       <Box width={"100%"} id="drawer-container" position="relative">
         {isLoading !== undefined && !isLoading && isReady ? (
          <> 

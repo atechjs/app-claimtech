@@ -103,11 +103,13 @@ export default function MenuFiltri({
       onFilterSelected={onFilterSelected}
       isLoading={isLoading}
     >
-       <div className="p-3 h-full" >
+       <div className="p-3 h-full s" >
       <Stack direction={"column"} spacing={1}>
         <Stack
           pr={1}
           pl={1}
+          pb={2}
+          
           direction={"row"}
           spacing={1}
           component="form"
@@ -116,13 +118,16 @@ export default function MenuFiltri({
         >
           <TextField
             {...register("esercizio")}
-            size="small"
+            
             required
             fullWidth
             id="esercizio"
             label="Anno esercizio"
             type="number"
             name="esercizio"
+            inputProps={{style: {fontSize: "1.4rem"}}} // font size of input text
+            InputLabelProps={{style: {fontSize: "1.3rem"}}}
+     
             error={!!errors.esercizio}
             helperText={errors.esercizio?.message}
           />

@@ -101,7 +101,7 @@ export default function CondivisioneUtente({ onSubmit, onBack }) {
   };
 
   const onFormSubmit = (data) => {
-    console.log("data", data);
+    // console.log("data", data);
     onSubmit({ list: utentiSelezionati, ...data });
   };
 

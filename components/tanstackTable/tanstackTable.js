@@ -47,8 +47,7 @@ const renderSubComponent = ({ row }) => {
   };
 
 
-  console.log("data", data);
-
+  
 
   const columns = useMemo(
     () => [
@@ -109,12 +108,18 @@ const renderSubComponent = ({ row }) => {
       {
         accessorKey: "partitaList",
         header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Cause</span>,
-        cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6">{info.getValue()[0].causaReclamoList[0]?.codiceCausa}</span>, 
+        cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6"> {info?.getValue()?.length > 0 ?info?.getValue()[0]?.causaReclamoList[0]?.codiceCausa : ""}</span>, 
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorKey: "descrizioneCliente",
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Cliente</span>,
+        cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6 truncate" title={info.getValue()}>{info.getValue()}</span>, 
         footer: (props) => props.column.id,
       },
       {
         accessorKey: "timestampCreazione",
-        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Data creazione</span>,
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Creazione</span>,
         cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6">{dayjs(info.getValue()).format("DD/MM/YYYY")}</span>, 
         footer: (props) => props.column.id,
       },
@@ -413,7 +418,7 @@ function Filter({ column }) {
           />
      
             
-          <Button  onClick={() => column.setFilterValue(undefined)} variant="outlined" color="warning" className="ml-1 border-orange text-orange-300 cursor-pointer">Annulla</Button>
+          <Button  onClick={() => column.setFilterValue(undefined)} variant="outlined" color="warning" className="ml-1 border-orange text-orange-300 cursor-pointer">Pulisci</Button>
           
         </div>
       </Popover>

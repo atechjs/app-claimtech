@@ -10,7 +10,7 @@ export default function ItemFiltro({
 }) {
   if (filtro === undefined) return;
   return (
-    <ListItem key={filtro.id} disablePadding>
+    <ListItem key={filtro.id} disablePadding className="cursor-pointer">
       <ListItemButton
         sx={{ pr: 1, pl: 1 }}
         onClick={() => onFilterSelected(filtro)}
@@ -23,6 +23,7 @@ export default function ItemFiltro({
           width={"100%"}
           justifyContent="flex-start"
           alignItems="center"
+          className="p-2"
         >
           <Box
             sx={{
@@ -32,16 +33,17 @@ export default function ItemFiltro({
               width: "100%",
             }}
           >
-            {filtro.pinned ? <PushPinTwoToneIcon className="text-secondary " fontSize="small" /> : <></>}
-            <ListItemText className={(filtro.pinned ? " ml-2" : " ml-7") + " text-gray-600 " } primary={filtro.label} />
+            {filtro.pinned ? <PushPinTwoToneIcon className="text-secondary " fontSize="medium" /> : <></>}
+            <p className={(filtro.pinned ? " ml-2" : " ml-7") + " text-gray-600 2xl:text-lg text-base" }>{filtro.label} </p>
           </Box>
           <Stack direction={"row-reverse"} spacing={0}>
             {filtro.count !== undefined && filtro.count !== null ? (
-              <Tag label={filtro.count} colore="orange" />
+              <span className="bg-orange-200 px-3 py-1 font-bold rounded-xl  2xl:text-lg text-base text-orange-400" >{filtro.count}</span>
             ) : null}
           </Stack>
         </Stack>
       </ListItemButton>
+    
     </ListItem>
   );
 }
