@@ -1124,11 +1124,11 @@ export default function Page() {
 
   return (
     <div className="grid grid-cols-12">
-  <div className="lg:col-span-2 2xl:col-span-3 col-span-12 xs:mb-8 2xl:mb-0 2xl:order-1">
+  <div className="lg:col-span-2 3xl:col-span-3 col-span-12 xs:mb-8 2xl:mb-0 2xl:order-1">
       
         <div className="border ">
-          <div className="px-8 pt-8 pb-4">
-            <MyButton className=" w-full 2xl:text-xl p-3 rounded-lg" color={"secondary"}  variant="contained" onClick={clickButtonNuovo} label = "Nuovo Reclamo" />
+          <div className="px-2 pt-8 pb-4">
+            <MyButton className=" w-full 3xl:text-xl text-base p-3 rounded-lg" color={"secondary"}  variant="contained" onClick={clickButtonNuovo} label = "Nuovo Reclamo" />
           </div>
           <MenuFiltri
             filtroSelezionato={idFiltroSelezionatoInterno}
@@ -1142,18 +1142,18 @@ export default function Page() {
           />
         </div>
       </div>
-      <div className="lg:col-span-10 2xl:col-span-9 col-span-12 w-full 2xl:order-2">
+      <div className="lg:col-span-10 3xl:col-span-9 col-span-12 w-full 2xl:order-2">
       <Box width={"100%"} id="drawer-container" position="relative">
         {isLoading !== undefined && !isLoading && isReady ? (
          <> 
-         {/* <ThemeProvider theme={getMuiTheme}>
+         <ThemeProvider theme={getMuiTheme}>
             <MUIDataTable
               title={"Reclami assegnati a me"}
               columns={columns}
               options={tableOptions}
               data={reclamiList}
             />
-          </ThemeProvider> */}
+          </ThemeProvider>
 
           <TanstackTable 
             columns={columns}

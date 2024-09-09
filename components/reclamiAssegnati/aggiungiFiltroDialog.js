@@ -626,7 +626,7 @@ const StyledDialog = styled(Dialog)(({theme}) => ({
             <div className=" text-center ">
               <MyButton type="submit" label={isDialogUpdate() ? "Aggiorna" : "Aggiungi"} color={"secondary"}  className=" py-1 px-6  2xl:py-4 2xl:px-16 rounded-lg 2xl:text-xl text-sm   " variant="contained" />
             </div>
-            <button style={{ letterSpacing: "0.1rem"}} className="text-red-500 text-center text-sm 2xl:text-base pt-2 " onClick={() => onCloseDialog()}>Annulla</button>
+            <button type="button" style={{ letterSpacing: "0.1rem"}} className="text-red-500 text-center text-sm 2xl:text-base pt-2 " onClick={() => onCloseDialog()}>Annulla</button>
     
             
            

@@ -43,6 +43,8 @@ export default function MyAppBar({ utente, menuItems, onToggle }) {
     setAnchorEl(null);
   };
 
+
+
   const vaiAlMioAccount = () => {
     router.push("/profilo");
     handleClose();

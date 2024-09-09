@@ -93,39 +93,45 @@ const renderSubComponent = ({ row }) => {
       {
         accessorKey: "numero",
         filterFn: 'includesString',
-        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Reclamo</span>,
-        cell: (info) => <a className=" text-secondary p-1 xl:ml-3 w-5/6 underline" >Reclamo {info.getValue()}</a>,
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 ">Reclamo</span>,
+        cell: (info) => <a className=" text-orange-400 p-1 xl:ml-3 w-5/6 underline" >Reclamo {info.getValue()}</a>,
         footer: (props) => props.column.id,
       },
       {
         accessorFn: (row) => row.evidenze,
         id: "evidenze",
         filterFn: 'includesString',
-        header: () => <span  className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Evidenze</span>,
+        header: () => <span  className=" text-start p-1 ml-3 w-5/6  ">Evidenze</span>,
         cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6">{info.getValue()}</span>, 
         footer: (props) => props.column.id,
       },
       {
         accessorKey: "partitaList",
-        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Cause</span>,
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 ">Cause</span>,
         cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6"> {info?.getValue()?.length > 0 ?info?.getValue()[0]?.causaReclamoList[0]?.codiceCausa : ""}</span>, 
         footer: (props) => props.column.id,
       },
       {
         accessorKey: "descrizioneCliente",
-        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Cliente</span>,
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 ">Cliente</span>,
+        cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6 truncate" title={info.getValue()}>{info.getValue()}</span>, 
+        footer: (props) => props.column.id,
+      },
+       {
+        accessorKey: "descrizioneCliente",
+        header: () => <span className=" text-start p-1 ml-3 w-5/6 ">Cliente</span>,
         cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6 truncate" title={info.getValue()}>{info.getValue()}</span>, 
         footer: (props) => props.column.id,
       },
       {
         accessorKey: "timestampCreazione",
-        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Creazione</span>,
+        header: () => <span className=" text-start p-1 ml-3 w-5/6  ">Creazione</span>,
         cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6">{dayjs(info.getValue()).format("DD/MM/YYYY")}</span>, 
         footer: (props) => props.column.id,
       },
       {
         accessorKey: "codiceFase",
-        header: () => <span className=" text-start p-1 ml-3 w-5/6 text-gray-800 text-xl">Fase</span>,
+        header: () => <span className=" text-start p-1 ml-3 w-5/6  ">Fase</span>,
         cell: (info) => <span className=" text-start p-1 xl:ml-3 w-5/6">{info.getValue()}</span>, 
         footer: (props) => props.column.id,
       }
@@ -195,7 +201,7 @@ const renderSubComponent = ({ row }) => {
       >
         <thead className="border-b-2 border-t-2">
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <tr key={headerGroup.id} className="3xl:text-xl">
               {headerGroup.headers.map(header => {
                 return (
                   <th key={header.id} colSpan={header.colSpan} className="items-center justify-between text-gray-500">
@@ -229,7 +235,7 @@ const renderSubComponent = ({ row }) => {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id} >
-            <tr className="hover:bg-slate-100 cursor-pointer border-t border-b text-lg"  onClick={() => handleRowClick(row)}>
+            <tr className="hover:bg-slate-100 cursor-pointer border-t border-b 3xl:text-lg"  onClick={() => handleRowClick(row)}>
               {/* first row is a normal row */}
               {row.getVisibleCells().map(cell => {
                 return (
@@ -263,42 +269,42 @@ const renderSubComponent = ({ row }) => {
      </div>
      <div className="flex items-center gap-2 pt-20 ml-4 mb-4">
         <button
-          className="border rounded p-1"
+          className="border rounded p-4"
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
         >
           {'<<'}
         </button>
         <button
-          className="border rounded p-1"
+          className="border rounded p-4"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
           {'<'}
         </button>
         <button
-          className="border rounded p-1"
+          className="border rounded p-4"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
           {'>'}
         </button>
         <button
-          className="border rounded p-1"
+          className="border rounded p-4"
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
         >
           {'>>'}
         </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{' '}
+        <span className="flex items-center gap-1 ml-20">
+          <div>Pagina</div>
+          <strong >
+            {table.getState().pagination.pageIndex + 1} di{' '}
             {table.getPageCount()}
           </strong>
         </span>
         <span className="flex items-center gap-1">
-          | Go to page:
+          | Vai a pagina:
           <input
             type="number"
             min="1"
@@ -312,18 +318,22 @@ const renderSubComponent = ({ row }) => {
           />
         </span>
         
+        <div className="ml-20">
         <select
           value={table.getState().pagination.pageSize}
           onChange={e => {
             table.setPageSize(Number(e.target.value))
           }}
+          className="mr-3"
         >
           {[10, 20, 30, 40, 50].map(pageSize => (
             <option key={pageSize} value={pageSize}>
-              Show {pageSize}
+              Mostra {pageSize}
             </option>
           ))}
         </select>
+         righe per pagina
+        </div>
       </div>
       <div className="ml-10 text-secondary">{table.getRowModel().rows.length} di {table.getPreFilteredRowModel().rows.length} totali</div>
       
@@ -396,7 +406,7 @@ function Filter({ column }) {
 
   return (
     <div>
-      <SearchNormal1  aria-describedby={id} variant="contained" onClick={handleClick} className="text-primary cursor-pointer mt-1 w-6" />
+      <SearchNormal1  aria-describedby={id} variant="contained" onClick={handleClick} className="text-primary cursor-pointer mt-1 3xl:w-6 w-5" />
         
       <Popover
         id={id}
@@ -408,7 +418,7 @@ function Filter({ column }) {
           horizontal: 'left',
         }}
       >
-        <div className="p-2  flex">
+        <div className="p-2 flex">
           <DebouncedInput
           
             type="text"

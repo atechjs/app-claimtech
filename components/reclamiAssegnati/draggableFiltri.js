@@ -19,9 +19,7 @@ const RowDragHandleCell = ({ rowId }) => {
   })
   return (
    
-    <Pharagraphspacing className='text-secondary' {...attributes} {...listeners}>
-      🟰
-    </Pharagraphspacing>
+    <Pharagraphspacing className='text-secondary 3xl:w-6 w-4' {...attributes} {...listeners} />
   )
 }
 
@@ -40,7 +38,7 @@ const DraggableRow = ({ row, onClick, filtroSelezionato }) => {
   }
   return (
     
-    <tr ref={setNodeRef} style={style} className={'hover:bg-gray-100 ' + (row.id === filtroSelezionato ? 'bg-gray-100' : '')} onClick={onClick} >
+    <tr ref={setNodeRef} style={style} className={'hover:bg-orange-100 ' + (row.id === filtroSelezionato ? 'bg-orange-50' : '')} onClick={onClick} >
       {row.getVisibleCells().map(cell => (
         <td key={cell.id} className='p-3 cursor-pointer' >
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -68,14 +66,14 @@ export default function draggableFiltri({stdData, filtroSelezionato, onFilterSel
       },
       {
         accessorKey: 'label',
-        cell: info => <p className='text-gray-600 2xl:text-lg text-base'>{info.getValue()}</p>, 
+        cell: info => <p className='text-gray-600 3xl:text-lg text-sm'>{info.getValue()}</p>, 
       },
      
       {
         accessorKey: 'count', 
         cell: info => 
         <div className='flex items-center justify-center'>
-        <span className="bg-orange-200 px-3 py-1 font-bold rounded-xl  2xl:text-lg text-base text-orange-400" >{info.getValue()}</span>
+        <span className="bg-orange-200 px-2 3xl:px-3 3xl:py-1 font-bold 3xl:rounded-xl rounded-lg 2xl:text-lg text-base text-orange-400" >{info.getValue()}</span>
         </div>,
       },
       

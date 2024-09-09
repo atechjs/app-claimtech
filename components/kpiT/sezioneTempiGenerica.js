@@ -27,6 +27,8 @@ export default function SezioneTempiGenerica({
   avgTempo,
   dataList,
 }) {
+
+  if (dataList === undefined || dataList.length === 0) return null;
   const convertiInGiorni = (dataList) => {
     return dataList.map((data) => ({
       ...data,

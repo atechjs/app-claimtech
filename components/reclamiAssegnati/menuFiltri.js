@@ -103,13 +103,10 @@ export default function MenuFiltri({
       onFilterSelected={onFilterSelected}
       isLoading={isLoading}
     >
-       <div className="p-3 h-full s" >
+       <div className=" h-full s pt-1 pb-2" >
       <Stack direction={"column"} spacing={1}>
         <Stack
-          pr={1}
-          pl={1}
-          pb={2}
-          
+        
           direction={"row"}
           spacing={1}
           component="form"
@@ -125,8 +122,8 @@ export default function MenuFiltri({
             label="Anno esercizio"
             type="number"
             name="esercizio"
-            inputProps={{style: {fontSize: "1.4rem"}}} // font size of input text
-            InputLabelProps={{style: {fontSize: "1.3rem"}}}
+            inputProps={{style: {fontSize: "1.2rem"}}} // font size of input text
+            InputLabelProps={{style: {fontSize: "1.1rem"}}}
      
             error={!!errors.esercizio}
             helperText={errors.esercizio?.message}
@@ -137,9 +134,10 @@ export default function MenuFiltri({
             </Button>
           </Tooltip>
         </Stack>
-        <Divider sx={{ marginBottom: 0 }} />
+      
       </Stack>
       </div>
+      <Divider />
     </LayoutMenuFiltri>
   );
 }

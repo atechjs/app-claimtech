@@ -187,12 +187,12 @@ export default function Layout({ children }) {
     icon: <ChartFail  className="w-5" variant="Outline"  />,
     ruoli: ["ROLE_AMMINISTRATORE", "ROLE_GESTORE"],
   },
-  {
-    label: "Tipologie analisi",
-    link: "/tipologieAnalisi",
-    icon: <ChemicalGlass className="w-5" variant="Outline" />,
-    ruoli: ["ROLE_AMMINISTRATORE"],
-  },
+  // {
+  //   label: "Tipologie analisi",
+  //   link: "/tipologieAnalisi",
+  //   icon: <ChemicalGlass className="w-5" variant="Outline" />,
+  //   ruoli: ["ROLE_AMMINISTRATORE"],
+  // },
   {
     label: "Stabilimenti",
     link: "/stabilimenti",
